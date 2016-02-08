@@ -5,7 +5,7 @@ package com.oliviercoue.httpwww.nameless.api;
  */
 public interface Url {
 
-    public static final String SOCKET_URL = "http://192.168.1.11:3000";
-    public static final String API_BASE_URL = "http://192.168.1.11:8080/api/";
+    public static final String SOCKET_URL = "http://www.prestapic.com:3000";
+    public static final String API_BASE_URL = "http://www.prestapic.com:8080/api/";
 
 }
