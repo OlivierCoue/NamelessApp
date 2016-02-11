@@ -53,6 +53,47 @@
                 android:text="Start chat"
                 android:textStyle="bold" />
 
+            <SeekBar
+                android:layout_marginTop="200px"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="34"
+                android:id="@+id/range_seekbar"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/range_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="29dp"
+                android:layout_marginTop="14dp" />
+
+            <LinearLayout
+                android:id="@+id/closefriendnb_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20px"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="x"
+                    android:id="@+id/close_friend_nb" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="people connected in range" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
+
 </LinearLayout>

@@ -28,10 +28,7 @@ public class Message {
         this.messageText = messageText;
         this.fromUs = fromUs;
         this.createdDate = createdDate;
-
     }
-
-
 
     public Date getDateFromString(String dateStr){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -42,7 +39,6 @@ public class Message {
         }
         return null;
     }
-
 
     public Integer getId() {
         return id;

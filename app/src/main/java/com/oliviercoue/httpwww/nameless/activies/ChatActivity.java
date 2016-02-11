@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -20,7 +19,6 @@ import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.httpwww.nameless.adapters.ChatArrayAdapter;
 import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
 import com.oliviercoue.httpwww.nameless.api.Url;
-import com.oliviercoue.httpwww.nameless.handlers.FriendFoundHandler;
 import com.oliviercoue.httpwww.nameless.models.Message;
 import com.oliviercoue.httpwww.nameless.models.States;
 import com.oliviercoue.httpwww.nameless.models.User;
@@ -65,11 +63,8 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         friendUserNameView = (TextView) findViewById(R.id.friendUserName);
-
         messageInput = (EditText) findViewById(R.id.message_input);
-
         messageListView = (ListView) findViewById(R.id.message_list_view);
-
         sendMessageButton = (Button) findViewById(R.id.message_send_button);
         nextButton = (Button) findViewById(R.id.next_button);
         cancelButton = (Button) findViewById(R.id.cancel_button);
@@ -78,7 +73,6 @@ public class ChatActivity extends AppCompatActivity {
 
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
         messageListView.setAdapter(chatArrayAdapter);
-
 
         // ON SOCKET EVENT
         ioSocket.on("message_received", onMessageReceived);
@@ -172,8 +166,7 @@ public class ChatActivity extends AppCompatActivity {
             HashMap<String, String> paramMap = new HashMap<String, String>();
             paramMap.put("messageText", messageText);
             RequestParams params = new RequestParams(paramMap);
-            NamelessRestClient.post("message", params, new JsonHttpResponseHandler() {
-            });
+            NamelessRestClient.post("message", params, new JsonHttpResponseHandler() {});
 
             chatArrayAdapter.add(new Message(1, messageText, true, new Date()));
             messageInput.setText("");
