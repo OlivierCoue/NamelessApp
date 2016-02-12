@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -10,15 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activies.StartActivity">
 
-    <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
-
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
@@ -28,33 +20,43 @@
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <ImageView
+                android:background="@mipmap/logo_nameless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/logoNameless"
+                android:layout_gravity="center_horizontal" />
 
-                <EditText
-                    android:id="@+id/username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="username"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="28dp"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:text="Choose your name"
+                android:id="@+id/textStartNameless"
+                android:layout_gravity="center_horizontal" />
 
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/start_chat_button"
-                style="?android:textAppearanceSmall"
+            <EditText
+                android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Start chat"
-                android:textStyle="bold" />
+                android:hint="Your secret identity"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#75FFFFFF"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:background="@drawable/edit_text_nameless"
+                android:paddingBottom="14dp" />
+
 
             <SeekBar
-                android:layout_marginTop="200px"
+                android:layout_marginTop="128px"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="100"
@@ -67,14 +69,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="29dp"
-                android:layout_marginTop="14dp" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="0dp" />
 
             <LinearLayout
                 android:id="@+id/closefriendnb_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:textAlignment="center"
                 android:layout_gravity="center_horizontal">
 
                 <TextView
@@ -92,6 +95,17 @@
                     android:text="people connected in range" />
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/start_chat_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Start chat"
+                android:background="@drawable/start_button"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>
