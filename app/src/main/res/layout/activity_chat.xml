@@ -7,6 +7,14 @@
     android:orientation="vertical"
     tools:context=".activies.StartActivity">
 
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="picture"
+                android:id="@+id/take_picture_button"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
            <ListView
                android:id="@+id/message_list_view"
                android:layout_width="fill_parent"

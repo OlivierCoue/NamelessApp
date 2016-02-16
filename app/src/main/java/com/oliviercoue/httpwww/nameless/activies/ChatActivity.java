@@ -1,6 +1,11 @@
 package com.oliviercoue.httpwww.nameless.activies;
 
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,13 +32,22 @@ import com.oliviercoue.httpwww.nameless.adapters.ChatArrayAdapter;
 import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
 import com.oliviercoue.httpwww.nameless.api.Url;
 import com.oliviercoue.httpwww.nameless.models.Message;
+import com.oliviercoue.httpwww.nameless.models.MessageImage;
+import com.oliviercoue.httpwww.nameless.models.MessageTypes;
 import com.oliviercoue.httpwww.nameless.models.States;
 import com.oliviercoue.httpwww.nameless.models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -50,9 +64,14 @@ public class ChatActivity extends AppCompatActivity {
     private Button sendMessageButton;
     private Button nextButton;
     private Button cancelButton;
+    private Button takePictureButton;
     private LinearLayout friendLeaveLayout;
     private ActionBar actionBar;
 
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_TAKE_PHOTO = 1;
+
+    private String mCurrentPhotoPath;;
     private ChatArrayAdapter chatArrayAdapter;
     private User currentUser;
     private User friendUser;
@@ -75,6 +94,7 @@ public class ChatActivity extends AppCompatActivity {
         sendMessageButton = (Button) findViewById(R.id.message_send_button);
         nextButton = (Button) findViewById(R.id.next_button);
         cancelButton = (Button) findViewById(R.id.cancel_button);
+        takePictureButton = (Button) findViewById(R.id.take_picture_button);
         friendLeaveLayout = (LinearLayout) findViewById(R.id.friend_leave_layout);
         actionBar = getSupportActionBar();
 
@@ -92,6 +112,13 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View arg0) {
                 sendMessage();
+            }
+        });
+
+        takePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                dispatchTakePictureIntent();
             }
         });
 
@@ -141,13 +168,13 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
-                    if(response.getBoolean("found")){
+                    if (response.getBoolean("found")) {
                         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
                         messageListView.setAdapter(chatArrayAdapter);
                         currentUser = User.fromJson(response.getJSONObject("currentUser").getJSONObject("data"));
                         friendUser = User.fromJson(response.getJSONObject("friend").getJSONObject("data"));
                         setupUI();
-                    }else{
+                    } else {
                         Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
                         startActivity(intentSearchAct);
                         finish();
@@ -192,6 +219,8 @@ public class ChatActivity extends AppCompatActivity {
         actionBar.setTitle(friendUser.getUsername());
     }
 
+
+
     private boolean sendMessage() {
         String messageText =  messageInput.getText().toString();
         if(messageText != null && !messageText.isEmpty()) {
@@ -208,16 +237,112 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }else{
+                Log.d(this.getClass().getName(), "nullll");
+            }
+        }
+    }
+
+    private Bitmap getPic(int width, int heigth) {
+        // Get the dimensions of the View
+        int targetW = width;
+        int targetH = heigth;
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        return bitmap;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            File photoFile = new File(mCurrentPhotoPath);
+            Log.d(this.getClass().getName(), mCurrentPhotoPath);
+            Bitmap thumbnailImageBitmap = getPic(480, 480);
+            Bitmap fullImageBitmap =  BitmapFactory.decodeFile(mCurrentPhotoPath);
+            chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), thumbnailImageBitmap));
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            thumbnailImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            byte[] bitmapdata = bos.toByteArray();
+            ByteArrayInputStream thumbnailIS = new ByteArrayInputStream(bitmapdata);
+
+            ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
+            fullImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos2);
+            byte[] bitmapdata2 = bos2.toByteArray();
+            ByteArrayInputStream fullIS = new ByteArrayInputStream(bitmapdata2);
+
+            RequestParams params = new RequestParams();
+            params.put("thumbnail", thumbnailIS, "thumbnail.jpeg");
+            params.put("full", fullIS, "thumbnail.jpeg");
+
+            NamelessRestClient.post("message/image", params, new JsonHttpResponseHandler() {
+            });
+
+        }
+    }
+
     private Emitter.Listener onMessageReceived = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
             final JSONObject response = (JSONObject) args[0];
-            Log.d(this.getClass().getName(), response.toString());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        chatArrayAdapter.add(Message.fromJson(response.getJSONObject("message").getJSONObject("data")));
+                        switch (response.getInt("type")) {
+                            case MessageTypes.TEXT:
+                                chatArrayAdapter.add(Message.fromJson(response.getJSONObject("message").getJSONObject("data")));
+                                break;
+                            case MessageTypes.IMAGE:
+                                Message tempMessage = Message.fromJson(response.getJSONObject("message").getJSONObject("data"));
+                                chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), tempMessage, response.getJSONObject("message_image").getJSONObject("data")));
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
