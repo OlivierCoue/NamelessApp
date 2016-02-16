@@ -54,6 +54,16 @@
                     android:background="@drawable/actions_container"
                     android:orientation="vertical">
 
+                    <!-- Take picture -->
+                    <Button
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="picture"
+                        android:id="@+id/take_picture_button"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentStart="true" />
+
                     <!-- Send button -->
                     <com.oliviercoue.httpwww.nameless.ui.FontButton
                         android:id="@+id/message_send_button"

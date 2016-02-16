@@ -1,7 +1,10 @@
 package com.oliviercoue.httpwww.nameless.api;
 
+import android.content.Context;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 /**
@@ -13,6 +16,10 @@ public class NamelessRestClient {
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);
+    }
+
+    public static void get(String url, FileAsyncHttpResponseHandler fileAsyncHttpResponseHandler ){
+        client.get(url, fileAsyncHttpResponseHandler);
     }
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {

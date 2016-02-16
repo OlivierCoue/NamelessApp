@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.httpwww.nameless.models.Message;
+import com.oliviercoue.httpwww.nameless.models.MessageImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.List;
 public class ChatArrayAdapter extends ArrayAdapter<Message> {
 
     private TextView chatText;
+    private ImageView chatImage;
     private List<Message> chatMessageList = new ArrayList<Message>();
     private Context context;
 
@@ -45,13 +48,31 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
         Message message = getItem(position);
         View row = convertView;
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         if (message.getFromUs()) {
-            row = inflater.inflate(R.layout.message_right, parent, false);
+            if(message instanceof MessageImage){
+                row = inflater.inflate(R.layout.message_image_right, parent, false);
+                chatImage = (ImageView) row.findViewById(R.id.message_image);
+                chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
+            }
+            else{
+                row = inflater.inflate(R.layout.message_right, parent, false);
+                chatText = (TextView) row.findViewById(R.id.message_text_view);
+                chatText.setText(message.getMessageText());
+            }
         }else{
-            row = inflater.inflate(R.layout.message_left, parent, false);
+            if(message instanceof MessageImage){
+                row = inflater.inflate(R.layout.message_image_left, parent, false);
+                chatImage = (ImageView) row.findViewById(R.id.message_image);
+                chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
+            }else{
+                row = inflater.inflate(R.layout.message_left, parent, false);
+                chatText = (TextView) row.findViewById(R.id.message_text_view);
+                chatText.setText(message.getMessageText());
+            }
+
         }
-        chatText = (TextView) row.findViewById(R.id.message_text_view);
-        chatText.setText(message.getMessageText());
+
         return row;
     }
 }
