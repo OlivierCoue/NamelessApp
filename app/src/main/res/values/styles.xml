@@ -5,13 +5,45 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:actionBarStyle">@style/NamelessActionBar</item>
         <item name="actionBarStyle">@style/NamelessActionBar</item>
     </style>
 
     <style name="NamelessActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="elevation">0dp</item>
+    </style>
+
+    <style name="message_send_button">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">53dp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textSize">21dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:shadowRadius">0</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="button_overlay_next">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:radius">@dimen/chat_radius</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:shadowRadius">0</item>
+    </style>
+
+    <style name="button_overlay_cancel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:background">@null</item>
+        <item name="android:shadowRadius">0</item>
+        <item name="android:padding">8dp</item>
     </style>
 
 </resources>

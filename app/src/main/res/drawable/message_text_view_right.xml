@@ -9,7 +9,7 @@
                 android:right="8dp"
                 android:top="8dp" />
 
-            <corners android:radius="2dp" />
+            <corners android:radius="3dp" />
         </shape>
     </item>
 </layer-list>

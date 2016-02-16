@@ -174,14 +174,14 @@ public class ChatActivity extends AppCompatActivity {
     private void closeAlert() {
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Confirmation");
-        alert.setMessage("Do you really want to leave conversation ?");
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alert.setTitle(getResources().getString(R.string.confirm_leave_title));
+        alert.setMessage(getResources().getString(R.string.confirm_leave_message));
+        alert.setPositiveButton(getResources().getString(R.string.confirm_leave_btn1), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 close();
             }
         });
-        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton(getResources().getString(R.string.confirm_leave_btn2), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             }
         });
@@ -190,6 +190,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void setupUI(){
         actionBar.setTitle(friendUser.getUsername());
+        messageInput.setHint(getResources().getString(R.string.chat_input_composer) + " " + friendUser.getUsername());
     }
 
     private boolean sendMessage() {

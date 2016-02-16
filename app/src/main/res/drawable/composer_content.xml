@@ -2,6 +2,17 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:textSize="16dp">
-        <shape></shape>
+        <shape android:shape="rectangle" >
+            <solid
+                android:color="#FFFFFF"
+                />
+            <padding
+                android:left="@dimen/chat_composer_padding"
+                android:top="@dimen/chat_composer_padding"
+                android:right="@dimen/chat_composer_padding"
+                android:bottom="@dimen/chat_composer_padding"
+                />
+            <corners android:radius="@dimen/chat_radius"/>
+        </shape>
     </item>
 </layer-list>

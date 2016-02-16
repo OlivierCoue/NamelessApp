@@ -2,15 +2,40 @@
     <string name="app_name">Nameless</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="login_choose">Choose your name</string>
+    <string name="login_input_username">Your secret identity</string>
+    <string name="login_range">people connected in range</string>
+    <string name="login_button_start">Start chat</string>
+
+    <!-- Strings related to search -->
+    <string name="search_title">Searching</string>
+    <string name="search_cancel">Cancel</string>
+
+    <!-- Strings related to chat -->
+    <string name="chat_button_next">Next</string>
+    <string name="chat_button_cancel">Cancel</string>
+
+    <string name="chat_input_composer">Send a message to </string>
+    <string name="chat_welcome_title">You’re gonna chat with {friend}</string>
+    <string name="chat_welcome_content_1">Welcome to your personal chat box {you}</string>
+    <string name="chat_welcome_content_2">. All messages you write will remain private between you and {friend}</string>
+    <string name="chat_welcome_content_3">. Once you leave the cat there you\'ll never have access again. Take this opportunity to make new acquaintances and pleasant discoveries.</string>
+
+    <!-- Strings related to icons -->
+    <string name="icon_next_button">Next</string>
+    <string name="icon_photo_icon">Picture</string>
+    <string name="icon_photo_camera_icon">Camera</string>
+    <string name="icon_send_message">&#xe900;</string>
+
+    <!-- Strings related to message/confirmations -->
+    <string name="confirm_leave_title">Leave?</string>
+    <string name="confirm_leave_message">Do you really want to leave conversation ?</string>
+    <string name="confirm_leave_btn1">Ok</string>
+    <string name="confirm_leave_btn2">Cancel</string>
+
+    <!-- Strings related to friend leave -->
+    <string name="friend_leave_head">Ooh no!</string>
+    <string name="friend_leave_content">{friend} left the conversation</string>
+    <string name="friend_leave_choice">What to do now?</string>
+
 </resources>
