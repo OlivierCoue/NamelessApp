@@ -1,12 +1,19 @@
 package com.oliviercoue.httpwww.nameless.activies;
 
+import android.content.DialogInterface;
+import android.support.v7.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,12 +45,13 @@ import cz.msebera.android.httpclient.Header;
 public class ChatActivity extends AppCompatActivity {
 
     // UI references.
-    private TextView friendUserNameView;
     private ListView messageListView;
     private EditText messageInput;
     private Button sendMessageButton;
     private Button nextButton;
     private Button cancelButton;
+    private LinearLayout friendLeaveLayout;
+    private ActionBar actionBar;
 
     private ChatArrayAdapter chatArrayAdapter;
     private User currentUser;
@@ -62,13 +70,15 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        friendUserNameView = (TextView) findViewById(R.id.friendUserName);
         messageInput = (EditText) findViewById(R.id.message_input);
         messageListView = (ListView) findViewById(R.id.message_list_view);
         sendMessageButton = (Button) findViewById(R.id.message_send_button);
         nextButton = (Button) findViewById(R.id.next_button);
         cancelButton = (Button) findViewById(R.id.cancel_button);
+        friendLeaveLayout = (LinearLayout) findViewById(R.id.friend_leave_layout);
+        actionBar = getSupportActionBar();
 
+        actionBar.setDisplayHomeAsUpEnabled(true);
         init(getIntent().getExtras().getInt("CURRENT_USER_ID"), getIntent().getExtras().getInt("FRIEND_USER_ID"));
 
         chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
@@ -88,41 +98,14 @@ public class ChatActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                NamelessRestClient.get("chat/next", null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        try {
-                            if(response.getBoolean("found")){
-                                chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
-                                messageListView.setAdapter(chatArrayAdapter);
-
-                                currentUser = User.fromJson(response.getJSONObject("currentUser").getJSONObject("data"));
-                                friendUser = User.fromJson(response.getJSONObject("friend").getJSONObject("data"));
-                                setupUI();
-                            }else{
-                                Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
-                                startActivity(intentSearchAct);
-                                finish();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                next();
             }
         });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        Intent intentMainAct = new Intent(getApplicationContext(), StartActivity.class);
-                        startActivity(intentMainAct);
-                        finish();
-                    }
-                });
+                close();
             }
         });
     }
@@ -134,21 +117,18 @@ public class ChatActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try{
                     currentUser = User.fromJson(response.getJSONObject("data"));
-                    if(friendUser != null)
-                        setupUI();
+                    if(friendUser != null)setupUI();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
-
         NamelessRestClient.get("users/"+friendId, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     friendUser = User.fromJson(response.getJSONObject("data"));
-                    if(currentUser != null)
-                        setupUI();
+                    if(currentUser != null)setupUI();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -156,8 +136,60 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    private void next(){
+        NamelessRestClient.get("chat/next", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    if(response.getBoolean("found")){
+                        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
+                        messageListView.setAdapter(chatArrayAdapter);
+                        currentUser = User.fromJson(response.getJSONObject("currentUser").getJSONObject("data"));
+                        friendUser = User.fromJson(response.getJSONObject("friend").getJSONObject("data"));
+                        setupUI();
+                    }else{
+                        Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
+                        startActivity(intentSearchAct);
+                        finish();
+                    }
+                    friendLeaveLayout.setVisibility(View.GONE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void close(){
+        NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Intent intentMainAct = new Intent(getApplicationContext(), StartActivity.class);
+                startActivity(intentMainAct);
+                finish();
+            }
+        });
+    }
+
+    private void closeAlert() {
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Confirmation");
+        alert.setMessage("Do you really want to leave conversation ?");
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                close();
+            }
+        });
+        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        alert.show();
+    }
+
     private void setupUI(){
-        friendUserNameView.setText(friendUser.getUsername());
+        actionBar.setTitle(friendUser.getUsername());
     }
 
     private boolean sendMessage() {
@@ -202,14 +234,37 @@ public class ChatActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
-                // TO DO
-                // propose to click next or cancel
-
+                    Log.d(this.getClass().getName(), "friend leave");
+                    friendLeaveLayout.setVisibility(View.VISIBLE);
                 }
             });
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        closeAlert();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_next:
+                next();
+                return true;
+            case android.R.id.home:
+                close();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     protected void onResume(){

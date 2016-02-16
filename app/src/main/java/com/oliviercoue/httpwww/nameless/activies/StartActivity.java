@@ -6,6 +6,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +53,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     private static String usernameTxt;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private boolean startClicked = false;
     private int searchRange = 10;
     private static float seekBakProcess = 34;
     private static String socketId;
@@ -85,14 +89,17 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         rangeValueView = (TextView) findViewById(R.id.range_value);
         closeFiendNbView = (TextView) findViewById(R.id.close_friend_nb);
 
-        rangeSeekBar.setProgress((int)seekBakProcess);
+        rangeSeekBar.setProgress((int) seekBakProcess);
         rangeValueView.setText("~" + (int) Math.pow(2, seekBakProcess / 10) + " km");
 
         activity = this;
 
-        if(usernameTxt != null && !usernameTxt.isEmpty()){
+        searchRange = (int)Math.pow(2,seekBakProcess/10);
+        if(mLastLocation != null)
+            setCloseFriendNb();
+
+        if(usernameTxt != null && !usernameTxt.isEmpty())
             usernameView.setText(usernameTxt);
-        }
 
         startChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +107,8 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
                 usernameTxt = usernameView.getText().toString();
 
-                if(mLastLocation != null && usernameTxt != null && !usernameTxt.isEmpty() && socketId != null && !socketId.isEmpty()) {
+                if(!startClicked && mLastLocation != null && usernameTxt != null && !usernameTxt.isEmpty() && socketId != null && !socketId.isEmpty()) {
+                    startClicked = true;
                     HashMap<String, String> paramMap = new HashMap<String, String>();
                     paramMap.put("username", usernameTxt);
                     paramMap.put("socketId", socketId);
@@ -111,7 +119,6 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                     NamelessRestClient.post("chat/start", params, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
                             try {
                                 if (response.getBoolean("found")) {
                                     // user to speak with founded
@@ -127,8 +134,6 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                                 e.printStackTrace();
                             }
                         }
-
-                        ;
                     });
                 }else{
                     Log.d(this.getClass().getName(), "bad params");
@@ -154,7 +159,6 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                         setCloseFriendNb();
                     }
         });
-
     }
 
     private void setCloseFriendNb() {
@@ -164,7 +168,6 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         try {
                             closeFiendNbView.setText(response.getString("friendNb"));
                         } catch (JSONException e) {
