@@ -9,6 +9,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.lang.Object;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Olivier on 08/02/2016.
@@ -19,19 +21,22 @@ public class Message {
     private String messageText;
     private Boolean fromUs;
     private Date createdDate;
+    private User author;
 
     public Message() {
     }
 
-    public Message(Integer id, String messageText, Boolean fromUs, Date createdDate) {
+    public Message(Integer id, String messageText, Boolean fromUs, Date createdDate, User author) {
         this.id = id;
         this.messageText = messageText;
         this.fromUs = fromUs;
         this.createdDate = createdDate;
+        this.author = author;
     }
 
     public Date getDateFromString(String dateStr){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         try {
             return dateFormat.parse(String.valueOf(dateStr));
         } catch (ParseException e) {
@@ -72,8 +77,17 @@ public class Message {
         this.createdDate = createdDate;
     }
 
-    public static Message fromJson(JSONObject jsonObject) {
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public static Message fromJson(User author, JSONObject jsonObject) {
         Message m = new Message();
+        m.author = author;
         try {
             m.id = jsonObject.getInt("id");
             m.messageText = Html.fromHtml(jsonObject.getString("messageText")).toString();

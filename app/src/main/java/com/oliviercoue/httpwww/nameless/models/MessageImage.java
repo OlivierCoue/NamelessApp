@@ -40,8 +40,8 @@ public class MessageImage extends Message{
 
     }
 
-    public MessageImage(Integer id, String messageText, Boolean fromUs, Date createdDate, Bitmap imageBitmap) {
-        super(id, messageText, fromUs, createdDate);
+    public MessageImage(Integer id, String messageText, Boolean fromUs, Date createdDate, User author, Bitmap imageBitmap) {
+        super(id, messageText, fromUs, createdDate, author);
         this.imageBitmap = imageBitmap;
     }
 
@@ -100,6 +100,7 @@ public class MessageImage extends Message{
         mi.setFromUs(m.getFromUs());
         mi.setCreatedDate(m.getCreatedDate());
         mi.setMessageText(m.getMessageText());
+        mi.setAuthor(m.getAuthor());
 
         try {
             mi.thumbnailUploadDir = jsonObject.getString("thumbnail_upload_dir");
