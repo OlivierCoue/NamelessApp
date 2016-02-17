@@ -3,7 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/message_image"
-        style="@style/message_content.imageleft"/>
+    <LinearLayout
+        android:orientation="vertical"
+        style="@style/message_container.left">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/message_container_top"
+            android:layout_gravity="left">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username"
+                style="@style/message_container_top_username.left"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                style="@style/message_container_top_date"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/message_image"
+            style="@style/message_content.imageleft"/>
+    </LinearLayout>
 </RelativeLayout>
