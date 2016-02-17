@@ -14,8 +14,8 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <style name="message_send_button">
-        <item name="android:layout_width">40dp</item>
+    <style name="message_button">
+        <item name="android:layout_width">53dp</item>
         <item name="android:layout_height">53dp</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:gravity">right</item>
@@ -25,7 +25,23 @@
         <item name="android:paddingTop">16dp</item>
         <item name="android:paddingBottom">16dp</item>
         <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <style name="message_button.send">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="message_button.take">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:textColor">#54000000</item>
+        <item name="android:paddingLeft">0dp</item>
+    </style>
+
+    <style name="message_button.choose">
+        <item name="android:textColor">#54000000</item>
     </style>
 
     <style name="button_overlay_next">
@@ -46,4 +62,72 @@
         <item name="android:padding">8dp</item>
     </style>
 
+    <style name="message_container">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxWidth">280dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="message_container.left">
+        <item name="android:layout_gravity">left</item>
+    </style>
+
+    <style name="message_container.right">
+        <item name="android:layout_gravity">right</item>
+    </style>
+
+    <style name="message_container_top">
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="message_container_top_username">
+        <item name="android:textColor">#444444</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+
+    <style name="message_container_top_username.left">
+        <item name="android:layout_marginRight">4dp</item>
+    </style>
+
+    <style name="message_container_top_username.right">
+        <item name="android:layout_marginLeft">4dp</item>
+    </style>
+
+    <style name="message_container_top_date">
+        <item name="android:textColor">#909090</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+
+    <style name="message_content">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">Sample text</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="message_content.left">
+        <item name="android:layout_gravity">left</item>
+        <item name="android:background">@drawable/message_text_view_left</item>
+        <item name="android:textColor">#444444</item>
+    </style>
+
+    <style name="message_content.right">
+        <item name="android:layout_gravity">right</item>
+        <item name="android:background">@drawable/message_text_view_right</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="message_content.imageleft">
+        <item name="android:layout_gravity">left</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="message_content.imageright">
+        <item name="android:layout_gravity">right</item>
+        <item name="android:padding">0dp</item>
+    </style>
 </resources>

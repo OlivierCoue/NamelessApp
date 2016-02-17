@@ -26,6 +26,8 @@
     <string name="icon_photo_icon">Picture</string>
     <string name="icon_photo_camera_icon">Camera</string>
     <string name="icon_send_message">&#xe900;</string>
+    <string name="icon_take_photo">&#xe903;</string>
+    <string name="icon_choose_photo">&#xe904;</string>
 
     <!-- Strings related to message/confirmations -->
     <string name="confirm_leave_title">Leave?</string>

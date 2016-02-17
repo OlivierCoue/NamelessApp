@@ -52,24 +52,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/actions_container"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <!-- Take picture -->
-                    <Button
-                        style="?android:attr/buttonStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="picture"
-                        android:id="@+id/take_picture_button"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentStart="true" />
-
-                    <!-- Send button -->
+                    <!-- Take photo -->
                     <com.oliviercoue.httpwww.nameless.ui.FontButton
-                        android:id="@+id/message_send_button"
-                        android:text="@string/icon_send_message"
-                        android:layout_gravity="right"
-                        style="@style/message_send_button" />
+                        android:id="@+id/take_picture_button"
+                        android:text="@string/icon_take_photo"
+                        style="@style/message_button.take" />
+
+                    <!-- Choose photo -->
+                    <com.oliviercoue.httpwww.nameless.ui.FontButton
+                        android:text="@string/icon_choose_photo"
+                        style="@style/message_button.choose" />
+
+
+                    <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <!-- Send button -->
+                        <com.oliviercoue.httpwww.nameless.ui.FontButton
+                            android:id="@+id/message_send_button"
+                            android:text="@string/icon_send_message"
+                            android:layout_gravity="end"
+                            style="@style/message_button.send" />
+
+                    </GridLayout>
 
                 </LinearLayout>
 
@@ -85,8 +93,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/colorOverlay"
-        android:visibility="visible">
+        android:background="#D8000000"
+        android:visibility="gone">
 
         <ImageView
             android:background="@mipmap/racoon"
