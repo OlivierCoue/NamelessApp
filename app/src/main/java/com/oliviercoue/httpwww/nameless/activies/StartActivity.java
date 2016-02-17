@@ -1,26 +1,25 @@
 package com.oliviercoue.httpwww.nameless.activies;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -29,7 +28,6 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-
 import com.google.android.gms.location.LocationServices;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -58,6 +56,8 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     private SeekBar     rangeSeekBar;
     private TextView    rangeValueView;
     private TextView    closeFiendNbView;
+    private LinearLayout seekbarGradientLayout;
+    private ActionBar   actionBar;
 
     private LocationManager mLocationManager;
     boolean gps_enabled = false;
@@ -69,6 +69,9 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     private boolean startClicked = false;
     private int searchRange = 10;
     private static float seekBakProcess = 34;
+    private Display display;
+    private Point screenSize = new Point();
+
     private static String socketId;
     private Socket ioSocket;
     {
@@ -129,12 +132,15 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                     .build();
         }
 
+        actionBar = getSupportActionBar();
         usernameView = (EditText) findViewById(R.id.username);
         startChatButton = (Button) findViewById(R.id.start_chat_button);
         rangeSeekBar = (SeekBar) findViewById(R.id.range_seekbar);
+        seekbarGradientLayout = (LinearLayout) findViewById(R.id.seekbar_gradient_layout);
         rangeValueView = (TextView) findViewById(R.id.range_value);
         closeFiendNbView = (TextView) findViewById(R.id.close_friend_nb);
 
+        actionBar.setTitle("");
         rangeSeekBar.setProgress((int) seekBakProcess);
         rangeValueView.setText("~" + (int) Math.pow(2, seekBakProcess / 10) + " km");
 
@@ -192,6 +198,12 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 seekBakProcess = progresValue;
+                display = getWindowManager().getDefaultDisplay();
+                display.getSize(screenSize);
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                        (int)(seekBakProcess*(screenSize.x/100))+60,
+                        LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                seekbarGradientLayout.setLayoutParams(param);
                 rangeValueView.setText("~" + (int) (Math.pow(2, seekBakProcess / 10)) + " km");
                 searchRange = (int) Math.pow(2, seekBakProcess / 10);
             }
@@ -238,6 +250,11 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+
+    }
 
     protected void onResume(){
         super.onResume();

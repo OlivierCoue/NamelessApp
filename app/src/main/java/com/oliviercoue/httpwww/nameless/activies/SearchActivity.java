@@ -60,14 +60,19 @@ public class SearchActivity extends AppCompatActivity {
         cancelSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        Intent intentMainAct = new Intent(getApplicationContext(), StartActivity.class);
-                        startActivity(intentMainAct);
-                        finish();
-                    }
-                });
+                cancel();
+            }
+        });
+    }
+
+
+    private void cancel(){
+        NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Intent intentMainAct = new Intent(getApplicationContext(), StartActivity.class);
+                startActivity(intentMainAct);
+                finish();
             }
         });
     }
@@ -78,6 +83,11 @@ public class SearchActivity extends AppCompatActivity {
             new FriendFoundHandler(activity, (JSONObject) args[0]);
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        cancel();
+    }
 
     @Override
     protected void onResume(){

@@ -66,10 +66,10 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                 row = inflater.inflate(R.layout.message_right, parent, false);
                 chatText = (TextView) row.findViewById(R.id.message_text_view);
                 chatText.setText(message.getMessageText());
+            }
 
-                if((lastMessage != null && !lastMessage.getFromUs()) || position == 0) {
-                    setMessageTop(row, message);
-                }
+            if((lastMessage != null && !lastMessage.getFromUs()) || position == 0) {
+                setMessageTop(row, message);
             }
         }else{
             if(message instanceof MessageImage){
@@ -80,10 +80,10 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                 row = inflater.inflate(R.layout.message_left, parent, false);
                 chatText = (TextView) row.findViewById(R.id.message_text_view);
                 chatText.setText(message.getMessageText());
+            }
 
-                if((lastMessage != null && lastMessage.getFromUs()) || position == 0) {
-                    setMessageTop(row, message);
-                }
+            if((lastMessage != null && lastMessage.getFromUs()) || position == 0) {
+                setMessageTop(row, message);
             }
         }
         return row;

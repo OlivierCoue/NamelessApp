@@ -65,6 +65,34 @@
                 android:id="@+id/range_seekbar"
                 android:layout_gravity="center_horizontal" />
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/seekbar_gradient_layout"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#FFFFFF"></RelativeLayout>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:gravity="left"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/range_seekbar_gradient"></RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/range_value"
                 android:layout_width="wrap_content"

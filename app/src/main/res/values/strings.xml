@@ -37,7 +37,7 @@
 
     <!-- Strings related to friend leave -->
     <string name="friend_leave_head">Ooh no!</string>
-    <string name="friend_leave_content">{friend} left the conversation</string>
+    <string name="friend_leave_content">left the conversation</string>
     <string name="friend_leave_choice">What to do now?</string>
 
 </resources>

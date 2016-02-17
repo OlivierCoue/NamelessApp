@@ -1,11 +1,13 @@
 package com.oliviercoue.httpwww.nameless.activies;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.ActionBar;
@@ -13,7 +15,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -69,6 +74,7 @@ public class ChatActivity extends AppCompatActivity {
     private Button cancelButton;
     private Button takePictureButton;
     private Button selectPictureButton;
+    private TextView friendLeaveTextView;
     private LinearLayout friendLeaveLayout;
     private ActionBar actionBar;
 
@@ -79,11 +85,13 @@ public class ChatActivity extends AppCompatActivity {
     private boolean nextClicked = false;
     private boolean cancelClicked = false;
     private boolean changingState = false;
+    private boolean isAway = false;
 
     private String mCurrentPhotoPath;;
     private ChatArrayAdapter chatArrayAdapter;
     private User currentUser;
     private User friendUser;
+    private Vibrator vibrator;
     private Socket ioSocket;
     {
         try {
@@ -98,6 +106,8 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         messageInput = (EditText) findViewById(R.id.message_input);
         messageListView = (ListView) findViewById(R.id.message_list_view);
         sendMessageButton = (Button) findViewById(R.id.message_send_button);
@@ -105,6 +115,7 @@ public class ChatActivity extends AppCompatActivity {
         cancelButton = (Button) findViewById(R.id.cancel_button);
         takePictureButton = (Button) findViewById(R.id.take_picture_button);
         selectPictureButton = (Button) findViewById(R.id.select_picture_button);
+        friendLeaveTextView = (TextView) findViewById(R.id.friend_leave_text);
         friendLeaveLayout = (LinearLayout) findViewById(R.id.friend_leave_layout);
         actionBar = getSupportActionBar();
 
@@ -117,6 +128,24 @@ public class ChatActivity extends AppCompatActivity {
         // ON SOCKET EVENT
         ioSocket.on("message_received", onMessageReceived);
         ioSocket.on("friend_quit", onFriendQuit);
+
+        messageInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(count>0){
+                    sendMessageButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                }else{
+                    sendMessageButton.setTextColor(getResources().getColor(R.color.colorSecondary));
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -328,28 +357,28 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void handleImageToSend(){
-        File photoFile = new File(mCurrentPhotoPath);
-        Log.d(this.getClass().getName(), mCurrentPhotoPath);
-        Bitmap thumbnailImageBitmap = getPic(480, 480);
-        Bitmap fullImageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-        chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), currentUser, ImageHelper.getRoundedCornerBitmap(thumbnailImageBitmap, 16)));
+        if(mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty()) {
+            Bitmap thumbnailImageBitmap = getPic(480, 480);
+            Bitmap fullImageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+            chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), currentUser, ImageHelper.getRoundedCornerBitmap(thumbnailImageBitmap, 16)));
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        thumbnailImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        byte[] bitmapdata = bos.toByteArray();
-        ByteArrayInputStream thumbnailIS = new ByteArrayInputStream(bitmapdata);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            thumbnailImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            byte[] bitmapdata = bos.toByteArray();
+            ByteArrayInputStream thumbnailIS = new ByteArrayInputStream(bitmapdata);
 
-        ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
-        fullImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos2);
-        byte[] bitmapdata2 = bos2.toByteArray();
-        ByteArrayInputStream fullIS = new ByteArrayInputStream(bitmapdata2);
+            ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
+            fullImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos2);
+            byte[] bitmapdata2 = bos2.toByteArray();
+            ByteArrayInputStream fullIS = new ByteArrayInputStream(bitmapdata2);
 
-        RequestParams params = new RequestParams();
-        params.put("thumbnail", thumbnailIS, "thumbnail.jpeg");
-        params.put("full", fullIS, "thumbnail.jpeg");
+            RequestParams params = new RequestParams();
+            params.put("thumbnail", thumbnailIS, "thumbnail.jpeg");
+            params.put("full", fullIS, "thumbnail.jpeg");
 
-        NamelessRestClient.post("message/image", params, new JsonHttpResponseHandler() {
-        });
+            NamelessRestClient.post("message/image", params, new JsonHttpResponseHandler() {
+            });
+        }
     }
 
     private Emitter.Listener onMessageReceived = new Emitter.Listener() {
@@ -360,6 +389,8 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
+                        if(isAway)vibrator.vibrate(500);
+
                         switch (response.getInt("type")) {
                             case MessageTypes.TEXT:
                                 chatArrayAdapter.add(Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data")));
@@ -386,6 +417,7 @@ public class ChatActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         if (friendUser!=null && response.getInt("friend_id") == friendUser.getId()) {
+                            friendLeaveTextView.setText(friendUser.getUsername() + " " + getResources().getString(R.string.friend_leave_content));
                             friendLeaveLayout.setVisibility(View.VISIBLE);
                         }
                     } catch (JSONException e) {
@@ -426,6 +458,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onResume();
         // change user state to CHATTING
         if(!changingState) {
+            isAway = false;
             changingState = true;
             HashMap<String, String> paramMap = new HashMap<String, String>();
             paramMap.put("state", States.CHATTING.toString());
@@ -449,6 +482,7 @@ public class ChatActivity extends AppCompatActivity {
         if(!isFinishing()){
             // change user state to AWAY
             if(!changingState) {
+                isAway = true;
                 changingState = true;
                 HashMap<String, String> paramMap = new HashMap<String, String>();
                 paramMap.put("state", States.AWAY.toString());
