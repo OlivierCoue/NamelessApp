@@ -71,7 +71,6 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     private static float seekBakProcess = 34;
     private Display display;
     private Point screenSize = new Point();
-
     private static String socketId;
     private Socket ioSocket;
     {
@@ -143,6 +142,10 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         actionBar.setTitle("");
         rangeSeekBar.setProgress((int) seekBakProcess);
         rangeValueView.setText("~" + (int) Math.pow(2, seekBakProcess / 10) + " km");
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                (int)(seekBakProcess*(screenSize.x/100)),
+                LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+        seekbarGradientLayout.setLayoutParams(param);
 
         activity = this;
 
