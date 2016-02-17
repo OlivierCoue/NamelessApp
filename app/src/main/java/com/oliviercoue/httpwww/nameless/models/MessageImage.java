@@ -11,6 +11,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.oliviercoue.httpwww.nameless.adapters.ChatArrayAdapter;
 import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
+import com.oliviercoue.httpwww.nameless.ui.ImageHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -118,7 +119,7 @@ public class MessageImage extends Message{
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, File file) {
-                mi.imageBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                mi.imageBitmap = ImageHelper.getRoundedCornerBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()), 16);
                 adapter.notifyDataSetChanged();
             }
         });
