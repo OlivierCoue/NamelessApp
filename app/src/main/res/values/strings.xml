@@ -28,6 +28,10 @@
     <string name="icon_send_message">&#xe900;</string>
     <string name="icon_take_photo">&#xe903;</string>
     <string name="icon_choose_photo">&#xe904;</string>
+    <string name="icon_seekbar_sofa">&#xe906;</string>
+    <string name="icon_seekbar_walk">&#xe907;</string>
+    <string name="icon_seekbar_car">&#xe905;</string>
+    <string name="icon_seekbar_world">&#xe908;</string>
 
     <!-- Strings related to message/confirmations -->
     <string name="confirm_leave_title">Leave?</string>

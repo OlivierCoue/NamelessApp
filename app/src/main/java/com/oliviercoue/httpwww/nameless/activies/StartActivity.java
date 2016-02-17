@@ -142,7 +142,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
         actionBar.setTitle("");
         rangeSeekBar.setProgress((int) seekBakProcess);
-        rangeValueView.setText("~" + (int) Math.pow(2, seekBakProcess / 10) + " km");
+        rangeValueView.setText(String.valueOf((int) Math.pow(2, seekBakProcess / 10)));
 
         activity = this;
 
@@ -201,10 +201,10 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                 display = getWindowManager().getDefaultDisplay();
                 display.getSize(screenSize);
                 LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        (int)(seekBakProcess*(screenSize.x/100))+60,
+                        (int)(seekBakProcess*(screenSize.x/100)),
                         LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
                 seekbarGradientLayout.setLayoutParams(param);
-                rangeValueView.setText("~" + (int) (Math.pow(2, seekBakProcess / 10)) + " km");
+                rangeValueView.setText(String.valueOf((int) (Math.pow(2, seekBakProcess / 10))));
                 searchRange = (int) Math.pow(2, seekBakProcess / 10);
             }
 
