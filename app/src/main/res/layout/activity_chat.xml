@@ -62,6 +62,7 @@
 
                     <!-- Choose photo -->
                     <com.oliviercoue.httpwww.nameless.ui.FontButton
+                        android:id="@+id/select_picture_button"
                         android:text="@string/icon_choose_photo"
                         style="@style/message_button.choose" />
 

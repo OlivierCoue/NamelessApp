@@ -6,12 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.httpwww.nameless.models.Message;
 import com.oliviercoue.httpwww.nameless.models.MessageImage;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,9 @@ import java.util.List;
  */
 public class ChatArrayAdapter extends ArrayAdapter<Message> {
 
+    private LinearLayout topContainer;
+    private TextView topDate;
+    private TextView topUsername;
     private TextView chatText;
     private ImageView chatImage;
     private List<Message> chatMessageList = new ArrayList<Message>();
@@ -45,6 +50,8 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        Message lastMessage = position > 0 ? getItem(position-1) : null;
         Message message = getItem(position);
         View row = convertView;
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -59,6 +66,10 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                 row = inflater.inflate(R.layout.message_right, parent, false);
                 chatText = (TextView) row.findViewById(R.id.message_text_view);
                 chatText.setText(message.getMessageText());
+
+                if((lastMessage != null && !lastMessage.getFromUs()) || position == 0) {
+                    setMessageTop(row, message);
+                }
             }
         }else{
             if(message instanceof MessageImage){
@@ -69,10 +80,21 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                 row = inflater.inflate(R.layout.message_left, parent, false);
                 chatText = (TextView) row.findViewById(R.id.message_text_view);
                 chatText.setText(message.getMessageText());
+
+                if((lastMessage != null && lastMessage.getFromUs()) || position == 0) {
+                    setMessageTop(row, message);
+                }
             }
-
         }
-
         return row;
+    }
+
+    private void setMessageTop(View row, Message message){
+        topContainer = (LinearLayout) row.findViewById(R.id.message_top_layout);
+        topDate = (TextView) row.findViewById(R.id.message_top_date);
+        topUsername = (TextView) row.findViewById(R.id.message_top_username);
+        topDate.setText(new SimpleDateFormat("HH:mm").format(message.getCreatedDate()));
+        topUsername.setText(message.getAuthor().getUsername());
+        topContainer.setVisibility(View.VISIBLE);
     }
 }

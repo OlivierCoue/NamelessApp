@@ -1,11 +1,13 @@
 package com.oliviercoue.httpwww.nameless.activies;
 
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.CursorLoader;
 import android.support.v7.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,11 +68,17 @@ public class ChatActivity extends AppCompatActivity {
     private Button nextButton;
     private Button cancelButton;
     private Button takePictureButton;
+    private Button selectPictureButton;
     private LinearLayout friendLeaveLayout;
     private ActionBar actionBar;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_SELECT_PHOTO = 2;
+
+    private boolean nextClicked = false;
+    private boolean cancelClicked = false;
+    private boolean changingState = false;
 
     private String mCurrentPhotoPath;;
     private ChatArrayAdapter chatArrayAdapter;
@@ -96,6 +104,7 @@ public class ChatActivity extends AppCompatActivity {
         nextButton = (Button) findViewById(R.id.next_button);
         cancelButton = (Button) findViewById(R.id.cancel_button);
         takePictureButton = (Button) findViewById(R.id.take_picture_button);
+        selectPictureButton = (Button) findViewById(R.id.select_picture_button);
         friendLeaveLayout = (LinearLayout) findViewById(R.id.friend_leave_layout);
         actionBar = getSupportActionBar();
 
@@ -122,6 +131,14 @@ public class ChatActivity extends AppCompatActivity {
                 dispatchTakePictureIntent();
             }
         });
+
+        selectPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                dispatchSelectPictureIntent();
+            }
+        });
+
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,38 +182,45 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void next(){
-        NamelessRestClient.get("chat/next", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    if (response.getBoolean("found")) {
-                        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
-                        messageListView.setAdapter(chatArrayAdapter);
-                        currentUser = User.fromJson(response.getJSONObject("currentUser").getJSONObject("data"));
-                        friendUser = User.fromJson(response.getJSONObject("friend").getJSONObject("data"));
-                        setupUI();
-                    } else {
-                        Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
-                        startActivity(intentSearchAct);
-                        finish();
+        if(!nextClicked) {
+            nextClicked = true;
+            NamelessRestClient.get("chat/next", null, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    try {
+                        if (response.getBoolean("found")) {
+                            chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
+                            messageListView.setAdapter(chatArrayAdapter);
+                            currentUser = User.fromJson(response.getJSONObject("currentUser").getJSONObject("data"));
+                            friendUser = User.fromJson(response.getJSONObject("friend").getJSONObject("data"));
+                            setupUI();
+                            nextClicked = false;
+                        } else {
+                            Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
+                            startActivity(intentSearchAct);
+                            finish();
+                        }
+                        friendLeaveLayout.setVisibility(View.GONE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    friendLeaveLayout.setVisibility(View.GONE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
-        });
+            });
+        }
     }
 
     private void close(){
-        NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Intent intentMainAct = new Intent(getApplicationContext(), StartActivity.class);
-                startActivity(intentMainAct);
-                finish();
-            }
-        });
+        if(!cancelClicked) {
+            cancelClicked = true;
+            NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Intent intentMainAct = new Intent(getApplicationContext(), StartActivity.class);
+                    startActivity(intentMainAct);
+                    finish();
+                }
+            });
+        }
     }
 
     private void closeAlert() {
@@ -227,7 +251,7 @@ public class ChatActivity extends AppCompatActivity {
             paramMap.put("messageText", messageText);
             RequestParams params = new RequestParams(paramMap);
             NamelessRestClient.post("message", params, new JsonHttpResponseHandler() {});
-            chatArrayAdapter.add(new Message(1, messageText, true, new Date()));
+            chatArrayAdapter.add(new Message(1, messageText, true, new Date(), currentUser));
             messageInput.setText("");
             return true;
         }else{
@@ -260,6 +284,14 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    private void dispatchSelectPictureIntent(){
+        Intent intent = new Intent(
+                Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_SELECT_PHOTO);
+    }
+
     private Bitmap getPic(int width, int heigth) {
         int targetW = width;
         int targetH = heigth;
@@ -278,30 +310,46 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            File photoFile = new File(mCurrentPhotoPath);
-            Log.d(this.getClass().getName(), mCurrentPhotoPath);
-            Bitmap thumbnailImageBitmap = getPic(480, 480);
-            Bitmap fullImageBitmap =  BitmapFactory.decodeFile(mCurrentPhotoPath);
-            chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), ImageHelper.getRoundedCornerBitmap(thumbnailImageBitmap, 16)));
-
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            thumbnailImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-            byte[] bitmapdata = bos.toByteArray();
-            ByteArrayInputStream thumbnailIS = new ByteArrayInputStream(bitmapdata);
-
-            ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
-            fullImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos2);
-            byte[] bitmapdata2 = bos2.toByteArray();
-            ByteArrayInputStream fullIS = new ByteArrayInputStream(bitmapdata2);
-
-            RequestParams params = new RequestParams();
-            params.put("thumbnail", thumbnailIS, "thumbnail.jpeg");
-            params.put("full", fullIS, "thumbnail.jpeg");
-
-            NamelessRestClient.post("message/image", params, new JsonHttpResponseHandler() {
-            });
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                handleImageToSend();
+            } else if (requestCode == REQUEST_SELECT_PHOTO) {
+                Uri selectedImageUri = data.getData();
+                String[] projection = { MediaStore.MediaColumns.DATA };
+                CursorLoader cursorLoader = new CursorLoader(this,selectedImageUri, projection, null, null, null);
+                Cursor cursor =cursorLoader.loadInBackground();
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                cursor.moveToFirst();
+                mCurrentPhotoPath = cursor.getString(column_index);
+                handleImageToSend();
+            }
         }
+    }
+
+    private void handleImageToSend(){
+        File photoFile = new File(mCurrentPhotoPath);
+        Log.d(this.getClass().getName(), mCurrentPhotoPath);
+        Bitmap thumbnailImageBitmap = getPic(480, 480);
+        Bitmap fullImageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+        chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), currentUser, ImageHelper.getRoundedCornerBitmap(thumbnailImageBitmap, 16)));
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        thumbnailImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        byte[] bitmapdata = bos.toByteArray();
+        ByteArrayInputStream thumbnailIS = new ByteArrayInputStream(bitmapdata);
+
+        ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
+        fullImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos2);
+        byte[] bitmapdata2 = bos2.toByteArray();
+        ByteArrayInputStream fullIS = new ByteArrayInputStream(bitmapdata2);
+
+        RequestParams params = new RequestParams();
+        params.put("thumbnail", thumbnailIS, "thumbnail.jpeg");
+        params.put("full", fullIS, "thumbnail.jpeg");
+
+        NamelessRestClient.post("message/image", params, new JsonHttpResponseHandler() {
+        });
     }
 
     private Emitter.Listener onMessageReceived = new Emitter.Listener() {
@@ -314,10 +362,11 @@ public class ChatActivity extends AppCompatActivity {
                     try {
                         switch (response.getInt("type")) {
                             case MessageTypes.TEXT:
-                                chatArrayAdapter.add(Message.fromJson(response.getJSONObject("message").getJSONObject("data")));
+                                chatArrayAdapter.add(Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data")));
+                                Log.d(this.getClass().getName(), response.getJSONObject("message").toString() );
                                 break;
                             case MessageTypes.IMAGE:
-                                Message tempMessage = Message.fromJson(response.getJSONObject("message").getJSONObject("data"));
+                                Message tempMessage = Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data"));
                                 chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), tempMessage, response.getJSONObject("message_image").getJSONObject("data")));
                         }
                     } catch (JSONException e) {
@@ -336,8 +385,7 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-                        if (response.getInt("friend_id") == friendUser.getId()) {
-                            Log.d(this.getClass().getName(), "friend leave");
+                        if (friendUser!=null && response.getInt("friend_id") == friendUser.getId()) {
                             friendLeaveLayout.setVisibility(View.VISIBLE);
                         }
                     } catch (JSONException e) {
@@ -377,10 +425,22 @@ public class ChatActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         // change user state to CHATTING
-        HashMap<String, String> paramMap = new HashMap<String, String>();
-        paramMap.put("state", States.CHATTING.toString());
-        RequestParams params = new RequestParams(paramMap);
-        NamelessRestClient.post("users/states", params, new JsonHttpResponseHandler() {});
+        if(!changingState) {
+            changingState = true;
+            HashMap<String, String> paramMap = new HashMap<String, String>();
+            paramMap.put("state", States.CHATTING.toString());
+            RequestParams params = new RequestParams(paramMap);
+            NamelessRestClient.post("users/states", params, new JsonHttpResponseHandler() {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String s, Throwable t ){
+                    changingState = false;
+                }
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    changingState = false;
+                }
+            });
+        }
     }
 
     @Override
@@ -388,10 +448,22 @@ public class ChatActivity extends AppCompatActivity {
         super.onPause();
         if(!isFinishing()){
             // change user state to AWAY
-            HashMap<String, String> paramMap = new HashMap<String, String>();
-            paramMap.put("state", States.AWAY.toString());
-            RequestParams params = new RequestParams(paramMap);
-            NamelessRestClient.post("users/states", params, new JsonHttpResponseHandler() {});
+            if(!changingState) {
+                changingState = true;
+                HashMap<String, String> paramMap = new HashMap<String, String>();
+                paramMap.put("state", States.AWAY.toString());
+                RequestParams params = new RequestParams(paramMap);
+                NamelessRestClient.post("users/states", params, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String s, Throwable t ){
+                        changingState = false;
+                    }
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        changingState = false;
+                    }
+                });
+            }
         }
     }
 
