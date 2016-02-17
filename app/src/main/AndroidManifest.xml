@@ -34,6 +34,7 @@
             android:name=".activies.ChatActivity"
             android:label="@string/app_name">
         </activity>
+
     </application>
 
 </manifest>

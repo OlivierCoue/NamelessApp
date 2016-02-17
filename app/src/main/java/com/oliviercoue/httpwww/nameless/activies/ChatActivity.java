@@ -1,5 +1,6 @@
 package com.oliviercoue.httpwww.nameless.activies;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -43,6 +44,7 @@ import com.oliviercoue.httpwww.nameless.models.MessageImage;
 import com.oliviercoue.httpwww.nameless.models.MessageTypes;
 import com.oliviercoue.httpwww.nameless.models.States;
 import com.oliviercoue.httpwww.nameless.models.User;
+import com.oliviercoue.httpwww.nameless.notifications.MyNotificationManager;
 import com.oliviercoue.httpwww.nameless.ui.ImageHelper;
 
 import org.json.JSONException;
@@ -86,7 +88,10 @@ public class ChatActivity extends AppCompatActivity {
     private boolean cancelClicked = false;
     private boolean changingState = false;
     private boolean isAway = false;
+    private boolean haveClosed = false;
 
+    private MyNotificationManager myNotificationManager;
+    private NotificationManager notificationManager;
     private String mCurrentPhotoPath;;
     private ChatArrayAdapter chatArrayAdapter;
     private User currentUser;
@@ -106,6 +111,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         messageInput = (EditText) findViewById(R.id.message_input);
@@ -134,14 +140,16 @@ public class ChatActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(count>0){
+                if (count > 0) {
                     sendMessageButton.setTextColor(getResources().getColor(R.color.colorPrimary));
-                }else{
+                } else {
                     sendMessageButton.setTextColor(getResources().getColor(R.color.colorSecondary));
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) {
             }
@@ -182,9 +190,11 @@ public class ChatActivity extends AppCompatActivity {
                 close();
             }
         });
+
+        myNotificationManager = new MyNotificationManager(this);
     }
 
-    private void init(Integer currentUserId, Integer friendId){
+    private void init(final Integer currentUserId, Integer friendId){
 
         NamelessRestClient.get("users/"+currentUserId, null, new JsonHttpResponseHandler() {
             @Override
@@ -225,6 +235,7 @@ public class ChatActivity extends AppCompatActivity {
                             setupUI();
                             nextClicked = false;
                         } else {
+                            haveClosed = true;
                             Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
                             startActivity(intentSearchAct);
                             finish();
@@ -240,6 +251,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void close(){
         if(!cancelClicked) {
+            haveClosed = true;
             cancelClicked = true;
             NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
                 @Override
@@ -389,16 +401,20 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-                        if(isAway)vibrator.vibrate(500);
+                        Message receivedMessage = null;
 
                         switch (response.getInt("type")) {
                             case MessageTypes.TEXT:
-                                chatArrayAdapter.add(Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data")));
-                                Log.d(this.getClass().getName(), response.getJSONObject("message").toString() );
+                                receivedMessage = Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data"));
+                                chatArrayAdapter.add(receivedMessage);
                                 break;
                             case MessageTypes.IMAGE:
-                                Message tempMessage = Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data"));
-                                chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), tempMessage, response.getJSONObject("message_image").getJSONObject("data")));
+                                receivedMessage = Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data"));
+                                chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, response.getJSONObject("message_image").getJSONObject("data")));
+                        }
+                        if (isAway) {
+                            vibrator.vibrate(500);
+                            myNotificationManager.displayMessageNotifiaction(receivedMessage, currentUser, friendUser);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -456,6 +472,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+        notificationManager.cancel(123);
         // change user state to CHATTING
         if(!changingState) {
             isAway = false;
@@ -479,6 +496,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onPause(){
         super.onPause();
+        notificationManager.cancel(123);
         if(!isFinishing()){
             // change user state to AWAY
             if(!changingState) {
