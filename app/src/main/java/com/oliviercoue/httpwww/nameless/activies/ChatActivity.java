@@ -36,6 +36,7 @@ import com.oliviercoue.httpwww.nameless.models.MessageImage;
 import com.oliviercoue.httpwww.nameless.models.MessageTypes;
 import com.oliviercoue.httpwww.nameless.models.States;
 import com.oliviercoue.httpwww.nameless.models.User;
+import com.oliviercoue.httpwww.nameless.ui.ImageHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -199,7 +200,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void closeAlert() {
-
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(getResources().getString(R.string.confirm_leave_title));
         alert.setMessage(getResources().getString(R.string.confirm_leave_message));
@@ -220,8 +220,6 @@ public class ChatActivity extends AppCompatActivity {
         messageInput.setHint(getResources().getString(R.string.chat_input_composer) + " " + friendUser.getUsername());
     }
 
-
-
     private boolean sendMessage() {
         String messageText =  messageInput.getText().toString();
         if(messageText != null && !messageText.isEmpty()) {
@@ -229,7 +227,6 @@ public class ChatActivity extends AppCompatActivity {
             paramMap.put("messageText", messageText);
             RequestParams params = new RequestParams(paramMap);
             NamelessRestClient.post("message", params, new JsonHttpResponseHandler() {});
-
             chatArrayAdapter.add(new Message(1, messageText, true, new Date()));
             messageInput.setText("");
             return true;
@@ -239,62 +236,42 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private File createImageFile() throws IOException {
-        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
             File photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            // Continue only if the File was successfully created
             if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }else{
-                Log.d(this.getClass().getName(), "nullll");
             }
         }
     }
 
     private Bitmap getPic(int width, int heigth) {
-        // Get the dimensions of the View
         int targetW = width;
         int targetH = heigth;
-
-        // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
         int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
         bmOptions.inPurgeable = true;
-
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         return bitmap;
     }
@@ -306,7 +283,7 @@ public class ChatActivity extends AppCompatActivity {
             Log.d(this.getClass().getName(), mCurrentPhotoPath);
             Bitmap thumbnailImageBitmap = getPic(480, 480);
             Bitmap fullImageBitmap =  BitmapFactory.decodeFile(mCurrentPhotoPath);
-            chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), thumbnailImageBitmap));
+            chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), ImageHelper.getRoundedCornerBitmap(thumbnailImageBitmap, 16)));
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             thumbnailImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
@@ -324,7 +301,6 @@ public class ChatActivity extends AppCompatActivity {
 
             NamelessRestClient.post("message/image", params, new JsonHttpResponseHandler() {
             });
-
         }
     }
 
@@ -349,7 +325,6 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
             });
-
         }
     };
 
@@ -360,8 +335,14 @@ public class ChatActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(this.getClass().getName(), "friend leave");
-                    friendLeaveLayout.setVisibility(View.VISIBLE);
+                    try {
+                        if (response.getInt("friend_id") == friendUser.getId()) {
+                            Log.d(this.getClass().getName(), "friend leave");
+                            friendLeaveLayout.setVisibility(View.VISIBLE);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }

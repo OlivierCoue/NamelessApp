@@ -1,9 +1,18 @@
 package com.oliviercoue.httpwww.nameless.activies;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +29,7 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+
 import com.google.android.gms.location.LocationServices;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -49,6 +59,9 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     private TextView    rangeValueView;
     private TextView    closeFiendNbView;
 
+    private LocationManager mLocationManager;
+    boolean gps_enabled = false;
+    boolean network_enabled = false;
     private Activity activity;
     private static String usernameTxt;
     private GoogleApiClient mGoogleApiClient;
@@ -70,6 +83,39 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        mLocationManager = (LocationManager)this.getSystemService(this.LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long)500, (float)200, (android.location.LocationListener) mLocationListener);
+        try {
+            gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setMessage("location disabled");
+            dialog.setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(myIntent);
+                    //get gps
+                }
+            });
+            dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+
+                }
+            });
+            dialog.show();
+        }
 
         // init socket connection
         ioSocket.connect();
@@ -94,11 +140,11 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
         activity = this;
 
-        searchRange = (int)Math.pow(2,seekBakProcess/10);
-        if(mLastLocation != null)
+        searchRange = (int) Math.pow(2, seekBakProcess / 10);
+        if (mLastLocation != null)
             setCloseFriendNb();
 
-        if(usernameTxt != null && !usernameTxt.isEmpty())
+        if (usernameTxt != null && !usernameTxt.isEmpty())
             usernameView.setText(usernameTxt);
 
         startChatButton.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +153,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
                 usernameTxt = usernameView.getText().toString();
 
-                if(!startClicked && mLastLocation != null && usernameTxt != null && !usernameTxt.isEmpty() && socketId != null && !socketId.isEmpty()) {
+                if (!startClicked && mLastLocation != null && usernameTxt != null && !usernameTxt.isEmpty() && socketId != null && !socketId.isEmpty()) {
                     startClicked = true;
                     HashMap<String, String> paramMap = new HashMap<String, String>();
                     paramMap.put("username", usernameTxt);
@@ -135,7 +181,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                             }
                         }
                     });
-                }else{
+                } else {
                     Log.d(this.getClass().getName(), "bad params");
                 }
             }
@@ -143,40 +189,42 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
         rangeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
-                        seekBakProcess = progresValue;
-                        rangeValueView.setText("~" + (int)(Math.pow(2,seekBakProcess/10)) + " km");
-                        searchRange = (int)Math.pow(2,seekBakProcess/10);
-                    }
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+                seekBakProcess = progresValue;
+                rangeValueView.setText("~" + (int) (Math.pow(2, seekBakProcess / 10)) + " km");
+                searchRange = (int) Math.pow(2, seekBakProcess / 10);
+            }
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        setCloseFriendNb();
-                    }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                setCloseFriendNb();
+            }
         });
     }
 
     private void setCloseFriendNb() {
-        NamelessRestClient.get("chat/count?lat=" + String.valueOf(mLastLocation.getLatitude()) + "&long=" + String.valueOf(mLastLocation.getLongitude()) + "&range=" + searchRange, null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            closeFiendNbView.setText(response.getString("friendNb"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+        if(mLastLocation != null) {
+            NamelessRestClient.get("chat/count?lat=" + String.valueOf(mLastLocation.getLatitude()) + "&long=" + String.valueOf(mLastLocation.getLongitude()) + "&range=" + searchRange, null, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                closeFiendNbView.setText(response.getString("friendNb"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     }
 
     private Emitter.Listener onConnectSuccess = new Emitter.Listener() {
@@ -198,19 +246,42 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     protected void onStart() {
-        mGoogleApiClient.connect();
+        if(mGoogleApiClient!=null)
+            mGoogleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-        mGoogleApiClient.disconnect();
+        if(mGoogleApiClient!=null)
+            mGoogleApiClient.disconnect();
         super.onStop();
     }
 
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+            mLastLocation = location;
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
     @Override
     public void onConnected(Bundle bundle) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             Log.d(this.getClass().getName(), String.valueOf(mLastLocation.getLatitude()));
             Log.d(this.getClass().getName(), String.valueOf(mLastLocation.getLongitude()));

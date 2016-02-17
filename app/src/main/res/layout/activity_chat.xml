@@ -86,7 +86,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/colorOverlay"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:background="@mipmap/racoon"
