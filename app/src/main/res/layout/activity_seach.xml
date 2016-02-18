@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
+    android:gravity="center_horizontal|center_vertical"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -10,42 +10,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activies.StartActivity">
 
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/search_content"/>
 
-    <ScrollView
-        android:id="@+id/login_form"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <Button
+        android:id="@+id/cancel_search_button"
+        android:text="@string/search_cancel"
+        style="@style/button.search"/>
 
-        <LinearLayout
-            android:id="@+id/email_login_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Searching"
-                android:id="@+id/textView"
-                android:layout_gravity="center_horizontal" />
-
-            <Button
-                android:id="@+id/cancel_search_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Cancel"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-    </ScrollView>
 </LinearLayout>

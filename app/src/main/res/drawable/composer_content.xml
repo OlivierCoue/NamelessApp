@@ -12,7 +12,7 @@
                 android:right="@dimen/chat_composer_padding"
                 android:bottom="@dimen/chat_composer_padding"
                 />
-            <corners android:radius="@dimen/chat_radius"/>
+            <corners android:radius="@dimen/radius"/>
         </shape>
     </item>
 </layer-list>

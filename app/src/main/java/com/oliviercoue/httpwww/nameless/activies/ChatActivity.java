@@ -413,7 +413,7 @@ public class ChatActivity extends AppCompatActivity {
                                 chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, response.getJSONObject("message_image").getJSONObject("data")));
                         }
                         if (isAway) {
-                            vibrator.vibrate(500);
+                            vibrator.vibrate(250);
                             myNotificationManager.displayMessageNotifiaction(receivedMessage, currentUser, friendUser);
                         }
                     } catch (JSONException e) {

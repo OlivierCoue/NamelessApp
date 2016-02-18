@@ -134,17 +134,15 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         actionBar = getSupportActionBar();
         usernameView = (EditText) findViewById(R.id.username);
         startChatButton = (Button) findViewById(R.id.start_chat_button);
-        rangeSeekBar = (SeekBar) findViewById(R.id.range_seekbar);
-        seekbarGradientLayout = (LinearLayout) findViewById(R.id.seekbar_gradient_layout);
+        rangeSeekBar = (SeekBar) findViewById(R.id.sb_range);
+        seekbarGradientLayout = (LinearLayout) findViewById(R.id.sb_gradient_layout);
         rangeValueView = (TextView) findViewById(R.id.range_value);
         closeFiendNbView = (TextView) findViewById(R.id.close_friend_nb);
 
         actionBar.setTitle("");
         rangeSeekBar.setProgress((int) seekBakProcess);
         rangeValueView.setText(String.valueOf((int) Math.pow(2, seekBakProcess / 10)));
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                (int)(seekBakProcess*(screenSize.x/100)),
-                LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)(seekBakProcess*(screenSize.x/100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
         seekbarGradientLayout.setLayoutParams(param);
 
         activity = this;
@@ -203,9 +201,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                 seekBakProcess = progresValue;
                 display = getWindowManager().getDefaultDisplay();
                 display.getSize(screenSize);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        (int)(seekBakProcess*(screenSize.x/100)),
-                        LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)(seekBakProcess*(screenSize.x/100)),LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
                 seekbarGradientLayout.setLayoutParams(param);
                 rangeValueView.setText(String.valueOf((int) (Math.pow(2, seekBakProcess / 10))));
                 searchRange = (int) Math.pow(2, seekBakProcess / 10);

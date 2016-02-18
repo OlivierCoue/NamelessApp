@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorBackground"
     android:layout_width="match_parent"
@@ -12,145 +12,155 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <!-- Messages -->
         <ListView
-           android:id="@+id/message_list_view"
-           android:layout_width="fill_parent"
-           android:layout_height="0dp"
-           android:background="@null"
-           android:divider="@null"
-           android:stackFromBottom="true"
-           android:transcriptMode="alwaysScroll"
-           android:layout_above="@+id/relativeLayout"
-           android:layout_alignParentTop="true">
+            android:id="@+id/message_list_view"
+            android:background="@null"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/composer_container"
+            android:divider="@null"
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll">
         </ListView>
 
-        <!-- Bottom container -->
-        <RelativeLayout
+        <!-- Composer container -->
+        <LinearLayout
+            android:id="@+id/composer_container"
+            android:background="@drawable/composer_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:id="@+id/relativeLayout">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/chat_inputs"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/composer_container">
+                android:visibility="gone"
+                android:labelFor="@+id/message_input"/>
 
-                <!-- Composer field  -->
-                <EditText
-                    android:id="@+id/message_input"
+            <!-- Composer field  -->
+            <EditText
+                android:id="@+id/message_input"
+                android:background="@drawable/composer_content"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:inputType="textCapSentences|textMultiLine"/>
+
+            <!-- Actions buttons: Photo, gallery, send -->
+            <LinearLayout
+                android:background="@drawable/actions_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Take photo -->
+                <com.oliviercoue.httpwww.nameless.ui.FontButton
+                    android:id="@+id/take_picture_button"
+                    android:text="@string/icon_take_photo"
+                    style="@style/message_button.take" />
+
+                <!-- Choose photo -->
+                <com.oliviercoue.httpwww.nameless.ui.FontButton
+                    android:id="@+id/select_picture_button"
+                    android:text="@string/icon_choose_photo"
+                    style="@style/message_button.choose" />
+
+                <GridLayout
                     android:layout_width="match_parent"
-                    android:layout_height="fill_parent"
-                    android:capitalize="sentences"
-                    android:background="@drawable/composer_content" />
+                    android:layout_height="match_parent">
 
-                <!-- Actions buttons: Photo, gallery, send -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/actions_container"
-                    android:orientation="horizontal">
-
-                    <!-- Take photo -->
+                    <!-- Send button -->
                     <com.oliviercoue.httpwww.nameless.ui.FontButton
-                        android:id="@+id/take_picture_button"
-                        android:text="@string/icon_take_photo"
-                        style="@style/message_button.take" />
+                        android:id="@+id/message_send_button"
+                        android:text="@string/icon_send_message"
+                        android:layout_gravity="end"
+                        style="@style/message_button.send" />
 
-                    <!-- Choose photo -->
-                    <com.oliviercoue.httpwww.nameless.ui.FontButton
-                        android:id="@+id/select_picture_button"
-                        android:text="@string/icon_choose_photo"
-                        style="@style/message_button.choose" />
-
-
-                    <GridLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <!-- Send button -->
-                        <com.oliviercoue.httpwww.nameless.ui.FontButton
-                            android:id="@+id/message_send_button"
-                            android:text="@string/icon_send_message"
-                            android:layout_gravity="end"
-                            style="@style/message_button.send" />
-
-                    </GridLayout>
-
-                </LinearLayout>
+                </GridLayout>
 
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </RelativeLayout>
 
     <!-- Friend leave conversation -->
     <LinearLayout
         android:id="@+id/friend_leave_layout"
+        android:background="@color/black85"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#D8000000"
         android:visibility="gone">
 
         <ImageView
-            android:background="@mipmap/racoon"
+            android:id="@+id/logoNameless"
+            android:background="@mipmap/raccoon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="72dp"
-            android:id="@+id/logoNameless"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/app_name"/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_gravity="center_horizontal"
             android:text="@string/friend_leave_head"
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"
-            android:textSize="@dimen/overlay_size_title"
-            android:layout_gravity="center"
-            android:textAlignment="center" />
+            android:textSize="@dimen/overlay_size_title"/>
+
         <TextView
             android:id="@+id/friend_leave_text"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/friend_leave_content"
-            android:textColor="@color/colorOverlayText"
-            android:textSize="@dimen/overlay_size_content"
-            android:layout_gravity="center"
-            android:textAlignment="center" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/overlay_size_content"/>
+
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="@string/friend_leave_choice"
-            android:textColor="#75FFFFFF"
-            android:textSize="16dp"
+            android:layout_marginBottom="16dp"
             android:layout_gravity="center"
-            android:textAlignment="center" />
+            android:text="@string/friend_leave_choice"
+            android:textColor="@color/white75"
+            android:textSize="@dimen/overlay_size_confirmation"/>
+
         <Button
             android:id="@+id/next_button"
-            android:layout_width="185dp"
-            android:layout_marginTop="16dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="@string/chat_button_next"
-            style="@style/button_overlay_next"
-            android:background="@drawable/button_overlay_next" />
+            style="@style/button.next"/>
 
         <Button
             android:id="@+id/cancel_button"
-            android:layout_width="185dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="@string/chat_button_cancel"
-            style="@style/button_overlay_cancel" />
+            style="@style/button.transparent"/>
+
     </LinearLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/overlay_image_layout"
+        android:background="@color/black85"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal|center_vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/raccoon"/>
+
+    </LinearLayout>
+
+</FrameLayout>
