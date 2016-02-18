@@ -1,6 +1,12 @@
 package com.oliviercoue.httpwww.nameless.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +15,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.httpwww.nameless.activies.ChatActivity;
+import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
+import com.oliviercoue.httpwww.nameless.chat.ChatFullSizeImage;
+import com.oliviercoue.httpwww.nameless.chat.ChatImageHelper;
 import com.oliviercoue.httpwww.nameless.models.Message;
 import com.oliviercoue.httpwww.nameless.models.MessageImage;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Olivier on 08/02/2016.
@@ -29,6 +43,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
     private ImageView chatImage;
     private List<Message> chatMessageList = new ArrayList<Message>();
     private Context context;
+    private ChatFullSizeImage chatFullSizeImage;
 
     @Override
     public void add(Message object) {
@@ -39,6 +54,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
     public ChatArrayAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         this.context = context;
+        chatFullSizeImage = (ChatActivity)context;
     }
 
     public int getCount() {
@@ -52,7 +68,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         Message lastMessage = position > 0 ? getItem(position-1) : null;
-        Message message = getItem(position);
+        final Message message = getItem(position);
         View row = convertView;
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -61,6 +77,12 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                 row = inflater.inflate(R.layout.message_image_right, parent, false);
                 chatImage = (ImageView) row.findViewById(R.id.message_image);
                 chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
+                chatImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openFullImage(BitmapFactory.decodeFile(((MessageImage) message).getLocalPath()));
+                    }
+                });
             }
             else{
                 row = inflater.inflate(R.layout.message_right, parent, false);
@@ -76,6 +98,21 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                 row = inflater.inflate(R.layout.message_image_left, parent, false);
                 chatImage = (ImageView) row.findViewById(R.id.message_image);
                 chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
+                chatImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        NamelessRestClient.get("http://prestapic.com:8080/uploads/" + ((MessageImage) message).getFullName(), new FileAsyncHttpResponseHandler(context) {
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+                            }
+
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, File file) {
+                                openFullImage(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                            }
+                        });
+                    }
+                });
             }else{
                 row = inflater.inflate(R.layout.message_left, parent, false);
                 chatText = (TextView) row.findViewById(R.id.message_text_view);
@@ -87,6 +124,10 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
             }
         }
         return row;
+    }
+
+    private void openFullImage(Bitmap image){
+        chatFullSizeImage.onImageClicked(image);
     }
 
     private void setMessageTop(View row, Message message){

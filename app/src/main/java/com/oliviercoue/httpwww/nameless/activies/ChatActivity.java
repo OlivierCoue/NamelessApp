@@ -3,27 +3,25 @@ package com.oliviercoue.httpwww.nameless.activies;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
-import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.ActionBar;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -39,22 +37,21 @@ import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.httpwww.nameless.adapters.ChatArrayAdapter;
 import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
 import com.oliviercoue.httpwww.nameless.api.Url;
+import com.oliviercoue.httpwww.nameless.chat.ChatAsyncResponse;
+import com.oliviercoue.httpwww.nameless.chat.ChatFullSizeImage;
+import com.oliviercoue.httpwww.nameless.chat.ChatImageHelper;
+import com.oliviercoue.httpwww.nameless.chat.ChatManager;
 import com.oliviercoue.httpwww.nameless.models.Message;
 import com.oliviercoue.httpwww.nameless.models.MessageImage;
 import com.oliviercoue.httpwww.nameless.models.MessageTypes;
 import com.oliviercoue.httpwww.nameless.models.States;
 import com.oliviercoue.httpwww.nameless.models.User;
 import com.oliviercoue.httpwww.nameless.notifications.MyNotificationManager;
-import com.oliviercoue.httpwww.nameless.ui.ImageHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -66,37 +63,27 @@ import cz.msebera.android.httpclient.Header;
 /**
  * Created by Olivier on 06/02/2016.
  */
-public class ChatActivity extends AppCompatActivity {
-
-    // UI references.
-    private ListView messageListView;
-    private EditText messageInput;
-    private Button sendMessageButton;
-    private Button nextButton;
-    private Button cancelButton;
-    private Button takePictureButton;
-    private Button selectPictureButton;
-    private TextView friendLeaveTextView;
-    private LinearLayout friendLeaveLayout;
-    private ActionBar actionBar;
+public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse, ChatFullSizeImage {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_SELECT_PHOTO = 2;
 
-    private boolean nextClicked = false;
-    private boolean cancelClicked = false;
-    private boolean changingState = false;
-    private boolean isAway = false;
-    private boolean haveClosed = false;
+    // UI references.
+    private ListView messageListView;
+    private EditText messageInput;
+    private Button sendMessageButton, takePictureButton, selectPictureButton;
+    private TextView friendLeaveTextView;
+    private LinearLayout friendLeaveLayout;
+    private ActionBar actionBar;
 
+    private boolean changingStateAway = false, changingStateChatting = false, isAway = false, firstRun = true, fullSizeImageOpen = false, haveFriendFoundNotif;
     private MyNotificationManager myNotificationManager;
     private NotificationManager notificationManager;
+    private ChatManager chatManager;
     private String mCurrentPhotoPath;;
     private ChatArrayAdapter chatArrayAdapter;
-    private User currentUser;
-    private User friendUser;
-    private Vibrator vibrator;
+    private User currentUser, friendUser;
     private Socket ioSocket;
     {
         try {
@@ -111,27 +98,29 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        chatManager = new ChatManager(this);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        messageInput = (EditText) findViewById(R.id.message_input);
-        messageListView = (ListView) findViewById(R.id.message_list_view);
-        sendMessageButton = (Button) findViewById(R.id.message_send_button);
-        nextButton = (Button) findViewById(R.id.next_button);
-        cancelButton = (Button) findViewById(R.id.cancel_button);
-        takePictureButton = (Button) findViewById(R.id.take_picture_button);
+        Button nextButton   = (Button) findViewById(R.id.next_button);
+        Button cancelButton = (Button) findViewById(R.id.cancel_button);
+        messageInput        = (EditText) findViewById(R.id.message_input);
+        messageListView     = (ListView) findViewById(R.id.message_list_view);
+        sendMessageButton   = (Button) findViewById(R.id.message_send_button);
+        takePictureButton   = (Button) findViewById(R.id.take_picture_button);
         selectPictureButton = (Button) findViewById(R.id.select_picture_button);
         friendLeaveTextView = (TextView) findViewById(R.id.friend_leave_text);
-        friendLeaveLayout = (LinearLayout) findViewById(R.id.friend_leave_layout);
+        friendLeaveLayout   = (LinearLayout) findViewById(R.id.friend_leave_layout);
         actionBar = getSupportActionBar();
 
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        init(getIntent().getExtras().getInt("CURRENT_USER_ID"), getIntent().getExtras().getInt("FRIEND_USER_ID"));
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        haveFriendFoundNotif = getIntent().getExtras().getBoolean("HAVE_NOTIFICATION");
+        chatManager.loadUsers(getIntent().getExtras().getInt("CURRENT_USER_ID"), getIntent().getExtras().getInt("FRIEND_USER_ID"));
 
-        chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
+        chatArrayAdapter = new ChatArrayAdapter(this, R.layout.message_right);
         messageListView.setAdapter(chatArrayAdapter);
 
-        // ON SOCKET EVENT
         ioSocket.on("message_received", onMessageReceived);
         ioSocket.on("friend_quit", onFriendQuit);
 
@@ -140,7 +129,6 @@ public class ChatActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count > 0) {
@@ -149,19 +137,16 @@ public class ChatActivity extends AppCompatActivity {
                     sendMessageButton.setTextColor(getResources().getColor(R.color.colorSecondary));
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
-
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 sendMessage();
             }
         });
-
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -175,93 +160,19 @@ public class ChatActivity extends AppCompatActivity {
                 dispatchSelectPictureIntent();
             }
         });
-
-
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                next();
+            public void onClick(View v) {
+                chatManager.next();
             }
         });
-
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                close();
+            public void onClick(View v) {
+                chatManager.close();
             }
         });
-
         myNotificationManager = new MyNotificationManager(this);
-    }
-
-    private void init(final Integer currentUserId, Integer friendId){
-
-        NamelessRestClient.get("users/"+currentUserId, null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try{
-                    currentUser = User.fromJson(response.getJSONObject("data"));
-                    if(friendUser != null)setupUI();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        NamelessRestClient.get("users/"+friendId, null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    friendUser = User.fromJson(response.getJSONObject("data"));
-                    if(currentUser != null)setupUI();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void next(){
-        if(!nextClicked) {
-            nextClicked = true;
-            NamelessRestClient.get("chat/next", null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    try {
-                        if (response.getBoolean("found")) {
-                            chatArrayAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.message_right);
-                            messageListView.setAdapter(chatArrayAdapter);
-                            currentUser = User.fromJson(response.getJSONObject("currentUser").getJSONObject("data"));
-                            friendUser = User.fromJson(response.getJSONObject("friend").getJSONObject("data"));
-                            setupUI();
-                            nextClicked = false;
-                        } else {
-                            haveClosed = true;
-                            Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
-                            startActivity(intentSearchAct);
-                            finish();
-                        }
-                        friendLeaveLayout.setVisibility(View.GONE);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    }
-
-    private void close(){
-        if(!cancelClicked) {
-            haveClosed = true;
-            cancelClicked = true;
-            NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Intent intentMainAct = new Intent(getApplicationContext(), StartActivity.class);
-                    startActivity(intentMainAct);
-                    finish();
-                }
-            });
-        }
     }
 
     private void closeAlert() {
@@ -270,7 +181,7 @@ public class ChatActivity extends AppCompatActivity {
         alert.setMessage(getResources().getString(R.string.confirm_leave_message));
         alert.setPositiveButton(getResources().getString(R.string.confirm_leave_btn1), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                close();
+                chatManager.close();
             }
         });
         alert.setNegativeButton(getResources().getString(R.string.confirm_leave_btn2), new DialogInterface.OnClickListener() {
@@ -283,20 +194,39 @@ public class ChatActivity extends AppCompatActivity {
     private void setupUI(){
         actionBar.setTitle(friendUser.getUsername());
         messageInput.setHint(getResources().getString(R.string.chat_input_composer) + " " + friendUser.getUsername());
+        messageInput.setEnabled(true);
+        takePictureButton.setEnabled(true);
+        selectPictureButton.setEnabled(true);
+        sendMessageButton.setEnabled(true);
     }
 
-    private boolean sendMessage() {
+    private void disableChatUi(){
+        messageInput.setEnabled(false);
+        takePictureButton.setEnabled(false);
+        selectPictureButton.setEnabled(false);
+        sendMessageButton.setEnabled(false);
+    }
+
+    @Override
+    public void onImageClicked(Bitmap image) {
+        if(!fullSizeImageOpen){
+            fullSizeImageOpen = true;
+        }
+    }
+
+    @Override
+    public void usersLoaded(User[] users) {
+        currentUser = users[0]!= null ? users[0] : null;
+        friendUser = users[1]!= null ? users[1] : null;
+        if(currentUser!=null && friendUser!=null)setupUI();
+    }
+
+    private void sendMessage() {
         String messageText =  messageInput.getText().toString();
-        if(messageText != null && !messageText.isEmpty()) {
-            HashMap<String, String> paramMap = new HashMap<String, String>();
-            paramMap.put("messageText", messageText);
-            RequestParams params = new RequestParams(paramMap);
-            NamelessRestClient.post("message", params, new JsonHttpResponseHandler() {});
+        if(!messageText.isEmpty()) {
+            chatManager.sendMessage(messageText);
             chatArrayAdapter.add(new Message(1, messageText, true, new Date(), currentUser));
             messageInput.setText("");
-            return true;
-        }else{
-            return false;
         }
     }
 
@@ -326,27 +256,9 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void dispatchSelectPictureIntent(){
-        Intent intent = new Intent(
-                Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_SELECT_PHOTO);
-    }
-
-    private Bitmap getPic(int width, int heigth) {
-        int targetW = width;
-        int targetH = heigth;
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        return bitmap;
     }
 
     @Override
@@ -354,43 +266,22 @@ public class ChatActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK) {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
-                handleImageToSend();
+
             } else if (requestCode == REQUEST_SELECT_PHOTO) {
                 Uri selectedImageUri = data.getData();
                 String[] projection = { MediaStore.MediaColumns.DATA };
                 CursorLoader cursorLoader = new CursorLoader(this,selectedImageUri, projection, null, null, null);
-                Cursor cursor =cursorLoader.loadInBackground();
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                Cursor cursor = cursorLoader.loadInBackground();
                 cursor.moveToFirst();
-                mCurrentPhotoPath = cursor.getString(column_index);
-                handleImageToSend();
+                mCurrentPhotoPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA));
             }
+            chatManager.sendImage(mCurrentPhotoPath);
         }
     }
 
-    private void handleImageToSend(){
-        if(mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty()) {
-            Bitmap thumbnailImageBitmap = getPic(480, 480);
-            Bitmap fullImageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), currentUser, ImageHelper.getRoundedCornerBitmap(thumbnailImageBitmap, 16)));
-
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            thumbnailImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-            byte[] bitmapdata = bos.toByteArray();
-            ByteArrayInputStream thumbnailIS = new ByteArrayInputStream(bitmapdata);
-
-            ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
-            fullImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos2);
-            byte[] bitmapdata2 = bos2.toByteArray();
-            ByteArrayInputStream fullIS = new ByteArrayInputStream(bitmapdata2);
-
-            RequestParams params = new RequestParams();
-            params.put("thumbnail", thumbnailIS, "thumbnail.jpeg");
-            params.put("full", fullIS, "thumbnail.jpeg");
-
-            NamelessRestClient.post("message/image", params, new JsonHttpResponseHandler() {
-            });
-        }
+    @Override
+    public void onImageHandled(Bitmap image) {
+        chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), currentUser, ChatImageHelper.getRoundedCornerBitmap(image, 16), mCurrentPhotoPath));
     }
 
     private Emitter.Listener onMessageReceived = new Emitter.Listener() {
@@ -402,7 +293,6 @@ public class ChatActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         Message receivedMessage = null;
-
                         switch (response.getInt("type")) {
                             case MessageTypes.TEXT:
                                 receivedMessage = Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data"));
@@ -413,7 +303,6 @@ public class ChatActivity extends AppCompatActivity {
                                 chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, response.getJSONObject("message_image").getJSONObject("data")));
                         }
                         if (isAway) {
-                            vibrator.vibrate(500);
                             myNotificationManager.displayMessageNotifiaction(receivedMessage, currentUser, friendUser);
                         }
                     } catch (JSONException e) {
@@ -432,7 +321,9 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-                        if (friendUser!=null && response.getInt("friend_id") == friendUser.getId()) {
+                        if (friendUser != null && response.getInt("friend_id") == friendUser.getId()) {
+                            closeKeybord();
+                            disableChatUi();
                             friendLeaveTextView.setText(friendUser.getUsername() + " " + getResources().getString(R.string.friend_leave_content));
                             friendLeaveLayout.setVisibility(View.VISIBLE);
                         }
@@ -443,6 +334,25 @@ public class ChatActivity extends AppCompatActivity {
             });
         }
     };
+
+    private void closeKeybord(){
+        View view = this.getCurrentFocus();
+        if(view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    @Override
+    public void nextUserFounded(User[] users) {
+        messageInput.setText("");
+        chatArrayAdapter = new ChatArrayAdapter(this, R.layout.message_right);
+        messageListView.setAdapter(chatArrayAdapter);
+        currentUser = users[0];
+        friendUser = users[1];
+        friendLeaveLayout.setVisibility(View.GONE);
+        setupUI();
+    }
 
     @Override
     public void onBackPressed() {
@@ -459,10 +369,10 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_next:
-                next();
+                chatManager.next();
                 return true;
             case android.R.id.home:
-                close();
+                chatManager.close();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -472,22 +382,23 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        notificationManager.cancel(123);
-        // change user state to CHATTING
-        if(!changingState) {
-            isAway = false;
-            changingState = true;
+        if(!firstRun && haveFriendFoundNotif)notificationManager.cancel(222);
+        firstRun = false;
+        notificationManager.cancel(111);
+        isAway = false;
+        if(!changingStateChatting) {
+            changingStateChatting = true;
             HashMap<String, String> paramMap = new HashMap<String, String>();
             paramMap.put("state", States.CHATTING.toString());
             RequestParams params = new RequestParams(paramMap);
             NamelessRestClient.post("users/states", params, new JsonHttpResponseHandler() {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String s, Throwable t ){
-                    changingState = false;
+                    changingStateChatting = false;
                 }
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    changingState = false;
+                    changingStateChatting = false;
                 }
             });
         }
@@ -498,25 +409,23 @@ public class ChatActivity extends AppCompatActivity {
         super.onPause();
         notificationManager.cancel(123);
         if(!isFinishing()){
-            // change user state to AWAY
-            if(!changingState) {
+            if(!changingStateAway) {
                 isAway = true;
-                changingState = true;
+                changingStateAway = true;
                 HashMap<String, String> paramMap = new HashMap<String, String>();
                 paramMap.put("state", States.AWAY.toString());
                 RequestParams params = new RequestParams(paramMap);
                 NamelessRestClient.post("users/states", params, new JsonHttpResponseHandler() {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String s, Throwable t ){
-                        changingState = false;
+                        changingStateAway = false;
                     }
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        changingState = false;
+                        changingStateAway = false;
                     }
                 });
             }
         }
     }
-
 }

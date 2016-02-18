@@ -3,23 +3,16 @@ package com.oliviercoue.httpwww.nameless.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
-import android.text.Html;
-import android.util.Log;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.oliviercoue.httpwww.nameless.adapters.ChatArrayAdapter;
 import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
-import com.oliviercoue.httpwww.nameless.ui.ImageHelper;
+import com.oliviercoue.httpwww.nameless.chat.ChatImageHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
@@ -35,14 +28,16 @@ public class MessageImage extends Message{
     String fullUploadDir;
     String fullName;
     String mime;
+    String localPath;
 
     public MessageImage(){
 
     }
 
-    public MessageImage(Integer id, String messageText, Boolean fromUs, Date createdDate, User author, Bitmap imageBitmap) {
+    public MessageImage(Integer id, String messageText, Boolean fromUs, Date createdDate, User author, Bitmap imageBitmap, String localPath) {
         super(id, messageText, fromUs, createdDate, author);
         this.imageBitmap = imageBitmap;
+        this.localPath = localPath;
     }
 
     public Bitmap getImageBitmap() {
@@ -93,6 +88,14 @@ public class MessageImage extends Message{
         this.mime = mime;
     }
 
+    public String getLocalPath() {
+        return localPath;
+    }
+
+    public void setLocalPath(String localPath) {
+        this.localPath = localPath;
+    }
+
     public static MessageImage fromJson(final ChatArrayAdapter adapter, Context context, Message m, JSONObject jsonObject) {
         final MessageImage mi = new MessageImage();
 
@@ -120,7 +123,7 @@ public class MessageImage extends Message{
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, File file) {
-                mi.imageBitmap = ImageHelper.getRoundedCornerBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()), 16);
+                mi.imageBitmap = ChatImageHelper.getRoundedCornerBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()), 16);
                 adapter.notifyDataSetChanged();
             }
         });
