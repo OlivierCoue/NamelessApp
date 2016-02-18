@@ -18,8 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -139,6 +137,9 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         rangeValueView = (TextView) findViewById(R.id.range_value);
         closeFiendNbView = (TextView) findViewById(R.id.close_friend_nb);
 
+        /* init seek bar */
+        display = getWindowManager().getDefaultDisplay();
+        display.getSize(screenSize);
         actionBar.setTitle("");
         rangeSeekBar.setProgress((int) seekBakProcess);
         rangeValueView.setText(String.valueOf((int) Math.pow(2, seekBakProcess / 10)));
@@ -160,7 +161,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
                 usernameTxt = usernameView.getText().toString();
 
-                if (!startClicked && mLastLocation != null && usernameTxt != null && !usernameTxt.isEmpty() && socketId != null && !socketId.isEmpty()) {
+                if (!startClicked && mLastLocation != null && usernameTxt != null && !usernameTxt.isEmpty() && usernameTxt.length() < 30 && socketId != null && !socketId.isEmpty()) {
                     startClicked = true;
                     HashMap<String, String> paramMap = new HashMap<String, String>();
                     paramMap.put("username", usernameTxt);
@@ -174,9 +175,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             try {
                                 if (response.getBoolean("found")) {
-                                    // user to speak with founded
-                                    new FriendFoundHandler(activity, response);
-
+                                   new FriendFoundHandler(activity, response, false);
                                 } else {
                                     // user to speak with not founded
                                     Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
@@ -199,9 +198,9 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 seekBakProcess = progresValue;
-                display = getWindowManager().getDefaultDisplay();
-                display.getSize(screenSize);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)(seekBakProcess*(screenSize.x/100)),LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                        (int)(seekBakProcess*(screenSize.x/100)),
+                        LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
                 seekbarGradientLayout.setLayoutParams(param);
                 rangeValueView.setText(String.valueOf((int) (Math.pow(2, seekBakProcess / 10))));
                 searchRange = (int) Math.pow(2, seekBakProcess / 10);
