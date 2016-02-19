@@ -3,7 +3,6 @@ package com.oliviercoue.httpwww.nameless.activities;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,8 +12,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -49,26 +51,19 @@ import cz.msebera.android.httpclient.Header;
 public class StartActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // UI references.
-    private EditText    usernameView;
-    private Button      startChatButton;
-    private SeekBar     rangeSeekBar;
-    private TextView    rangeValueView;
-    private TextView    closeFiendNbView;
-    private LinearLayout seekbarGradientLayout;
-    private ActionBar   actionBar;
+    private EditText usernameView;
+    private TextView rangeValueView, closeFiendNbView;
+    private LinearLayout seekbarGradientLayout, gradientBackgroundLayout;
 
-    private LocationManager mLocationManager;
-    boolean gps_enabled = false;
-    boolean network_enabled = false;
-    private Activity activity;
+    private boolean gps_enabled = false;
+    private boolean network_enabled = false;
     private static String usernameTxt;
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
     private boolean startClicked = false;
     private int searchRange = 10;
     private static float seekBakProcess = 34;
-    private Display display;
-    private Point screenSize = new Point();
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private Activity activity;
     private static String socketId;
     private Socket ioSocket;
     {
@@ -84,40 +79,38 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        mLocationManager = (LocationManager)this.getSystemService(this.LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long)500, (float)200, (android.location.LocationListener) mLocationListener);
+        LocationManager mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) 500, (float) 200, (android.location.LocationListener) mLocationListener);
         try {
             gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
 
         try {
             network_enabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
 
         if(!gps_enabled && !network_enabled) {
-            // notify user
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setMessage("location disabled");
             dialog.setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
                     Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(myIntent);
-                    //get gps
                 }
             });
             dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-
                 }
             });
             dialog.show();
         }
 
-        // init socket connection
         ioSocket.connect();
         ioSocket.on("connect_success", onConnectSuccess);
 
@@ -129,22 +122,19 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                     .build();
         }
 
-        actionBar = getSupportActionBar();
-        usernameView = (EditText) findViewById(R.id.username);
-        startChatButton = (Button) findViewById(R.id.start_chat_button);
-        rangeSeekBar = (SeekBar) findViewById(R.id.sb_range);
-        seekbarGradientLayout = (LinearLayout) findViewById(R.id.sb_gradient_layout);
-        rangeValueView = (TextView) findViewById(R.id.range_value);
-        closeFiendNbView = (TextView) findViewById(R.id.close_friend_nb);
+        ActionBar actionBar = getSupportActionBar();
+        Button startChatButton   = (Button) findViewById(R.id.start_chat_button);
+        SeekBar rangeSeekBar     = (SeekBar) findViewById(R.id.sb_range);
+        usernameView             = (EditText) findViewById(R.id.username);
+        seekbarGradientLayout    = (LinearLayout) findViewById(R.id.sb_gradient_layout);
+        rangeValueView           = (TextView) findViewById(R.id.range_value);
+        closeFiendNbView         = (TextView) findViewById(R.id.close_friend_nb);
+        gradientBackgroundLayout = (LinearLayout) findViewById(R.id.gradient_background_layout);
 
         /* init seek bar */
-        display = getWindowManager().getDefaultDisplay();
-        display.getSize(screenSize);
         actionBar.setTitle("");
         rangeSeekBar.setProgress((int) seekBakProcess);
         rangeValueView.setText(String.valueOf((int) Math.pow(2, seekBakProcess / 10)));
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)(seekBakProcess*(screenSize.x/100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-        seekbarGradientLayout.setLayoutParams(param);
 
         activity = this;
 
@@ -155,13 +145,23 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         if (usernameTxt != null && !usernameTxt.isEmpty())
             usernameView.setText(usernameTxt);
 
+        ViewTreeObserver observer = gradientBackgroundLayout.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)(seekBakProcess*(gradientBackgroundLayout.getWidth()/100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                seekbarGradientLayout.setLayoutParams(param);;
+                gradientBackgroundLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            }
+        });
+
         startChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 usernameTxt = usernameView.getText().toString();
 
-                if (!startClicked && mLastLocation != null && usernameTxt != null && !usernameTxt.isEmpty() && usernameTxt.length() < 30 && socketId != null && !socketId.isEmpty()) {
+                if (!startClicked && mLastLocation != null && !usernameTxt.isEmpty() && usernameTxt.length() < 30 && socketId != null && !socketId.isEmpty()) {
                     startClicked = true;
                     HashMap<String, String> paramMap = new HashMap<String, String>();
                     paramMap.put("username", usernameTxt);
@@ -175,9 +175,8 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             try {
                                 if (response.getBoolean("found")) {
-                                   new FriendFoundHandler(activity, response, false);
+                                    new FriendFoundHandler(activity, response, false);
                                 } else {
-                                    // user to speak with not founded
                                     Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
                                     startActivity(intentSearchAct);
                                     finish();
@@ -198,9 +197,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 seekBakProcess = progresValue;
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        (int)(seekBakProcess*(screenSize.x/100)),
-                        LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int) (seekBakProcess * (gradientBackgroundLayout.getWidth() / 100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
                 seekbarGradientLayout.setLayoutParams(param);
                 rangeValueView.setText(String.valueOf((int) (Math.pow(2, seekBakProcess / 10))));
                 searchRange = (int) Math.pow(2, seekBakProcess / 10);
@@ -244,7 +241,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             try {
                 socketId = data.getString("socketId");
             } catch (JSONException e) {
-                return;
+                e.printStackTrace();
             }
         }
     };
@@ -252,6 +249,25 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void onBackPressed() {
 
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_start_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_language:
+                Intent intentSearchAct = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(intentSearchAct);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     protected void onResume(){

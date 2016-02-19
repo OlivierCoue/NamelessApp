@@ -116,7 +116,7 @@ public class MessageImage extends Message{
             return null;
         }
 
-        NamelessRestClient.get("http://prestapic.com:8080/uploads/"+mi.thumbnailName, new FileAsyncHttpResponseHandler(context) {
+        NamelessRestClient.get(mi.thumbnailName, new FileAsyncHttpResponseHandler(context) {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
             }

@@ -81,6 +81,7 @@
 
             <!-- Range selection: gradient background -->
             <LinearLayout
+                android:id="@+id/gradient_background_layout"
                 android:background="@color/colorPrimaryDark"
                 android:layout_width="match_parent"
                 android:layout_height="24dp">

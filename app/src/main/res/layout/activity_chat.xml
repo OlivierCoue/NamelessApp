@@ -159,10 +159,10 @@
         android:visibility="gone">
 
         <ImageView
+            android:id="@+id/full_size_image_view"
             android:contentDescription="@string/image_overlay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@mipmap/raccoon"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
