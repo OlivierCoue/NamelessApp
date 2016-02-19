@@ -19,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -90,6 +91,8 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     private String mCurrentPhotoPath;;
     private ChatArrayAdapter chatArrayAdapter;
     private User currentUser, friendUser;
+    private Intent serviceIntent;
+    private int lastMessageId = 0;
     private Socket ioSocket;
     {
         try {
@@ -111,7 +114,8 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
             public void onServiceDisconnected(ComponentName className) {
             }
         };
-        bindService(new Intent(ChatActivity.this, KillNotificationsService.class), mConnection, Context.BIND_AUTO_CREATE);
+        serviceIntent = new Intent(ChatActivity.this, KillNotificationsService.class);
+        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
 
         chatManager = new ChatManager(this);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -311,6 +315,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d(this.getClass().getName(), String.valueOf(isAway));
                     try {
                         Message receivedMessage = null;
                         switch (response.getInt("type")) {
@@ -323,7 +328,10 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
                                 chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, response.getJSONObject("message_image").getJSONObject("data")));
                         }
                         if (isAway) {
-                            myNotificationManager.displayMessageNotifiaction(receivedMessage);
+                            if (lastMessageId != receivedMessage.getId()) {
+                                myNotificationManager.displayMessageNotifiaction(receivedMessage);
+                            }
+                            lastMessageId = receivedMessage.getId();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -412,6 +420,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
         firstRun = false;
         notificationManager.cancel(111);
         isAway = false;
+        Log.d(this.getClass().getName(), "resume");
         if(!changingStateChatting) {
             changingStateChatting = true;
             HashMap<String, String> paramMap = new HashMap<String, String>();
@@ -437,6 +446,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
         if(!isFinishing()){
             if(!changingStateAway) {
                 isAway = true;
+                Log.d(this.getClass().getName(), "pause");
                 changingStateAway = true;
                 HashMap<String, String> paramMap = new HashMap<String, String>();
                 paramMap.put("state", States.AWAY.toString());

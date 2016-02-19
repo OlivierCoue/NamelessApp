@@ -78,7 +78,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
             TextView headerContent = (TextView) row.findViewById(R.id.message_header_content);
             String strTitle = context.getResources().getString(R.string.chat_welcome_title);
             String strContent = context.getResources().getString(R.string.chat_welcome_content);
-            headerTitle.setText(String.format(strTitle, currentUser.getUsername()));
+            headerTitle.setText(String.format(strTitle, friendUser.getUsername()));
             headerContent.setText(String.format(strContent, currentUser.getUsername(), friendUser.getUsername()));
         }else {
 
@@ -99,7 +99,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                     chatText.setText(message.getMessageText());
                 }
 
-                if ((lastMessage != null && !lastMessage.getFromUs()) || position == 0) {
+                if ((lastMessage != null && !lastMessage.getFromUs()) || position == 1) {
                     setMessageTop(row, message);
                 }
             } else {
@@ -128,7 +128,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                     chatText.setText(message.getMessageText());
                 }
 
-                if ((lastMessage != null && lastMessage.getFromUs()) || position == 0) {
+                if ((lastMessage != null && lastMessage.getFromUs()) || position == 1) {
                     setMessageTop(row, message);
                 }
             }
