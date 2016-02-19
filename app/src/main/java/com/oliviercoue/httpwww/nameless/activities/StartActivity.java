@@ -64,6 +64,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Activity activity;
+    private static boolean firstLoad = true;
     private static String socketId;
     private Socket ioSocket;
     {
@@ -110,6 +111,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             });
             dialog.show();
         }
+
 
         ioSocket.connect();
         ioSocket.on("connect_success", onConnectSuccess);
