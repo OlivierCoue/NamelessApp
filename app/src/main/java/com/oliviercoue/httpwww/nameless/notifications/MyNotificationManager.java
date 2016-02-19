@@ -23,26 +23,19 @@ public class MyNotificationManager {
 
     public MyNotificationManager(Context context){
         this.context = context;
-
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
-    public void displayMessageNotifiaction(Message message, User currentUser, User friendUser) {
+    public void displayMessageNotifiaction(Message message) {
         Intent resultIntent = new Intent(context, ChatActivity.class);
 
         resultIntent.putExtra("NOTIFICATION_ID", 123);
-        resultIntent.putExtra("CURRENT_USER_ID", currentUser.getId());
-        resultIntent.putExtra("FRIEND_USER_ID", friendUser.getId());
+
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent pIntent = PendingIntent.getActivity(context, (int)System.currentTimeMillis(), resultIntent, 0);
 
-        Notification myNotification =  new NotificationCompat.Builder(context)
-                                        .setSmallIcon(R.mipmap.logo_nameless)
-                                        .setContentTitle(message.getAuthor().getUsername())
-                                        .setContentText(message.getMessageText())
-                                        .setContentIntent(pIntent)
-                                        .setAutoCancel(true).build();
+        Notification myNotification =  createNotificion(message.getAuthor().getUsername(), message.getMessageText(), pIntent);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -59,17 +52,22 @@ public class MyNotificationManager {
 
         PendingIntent pIntent = PendingIntent.getActivity(context, (int)System.currentTimeMillis(), resultIntent, 0);
 
-        Notification myNotification =  new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("FRIEND FOUNDED")
-                .setContentText("Speak with " + friendUser.getUsername())
-                .setContentIntent(pIntent)
-                .setAutoCancel(true).build();
+        Notification myNotification =  createNotificion("FRIEND FOUNDED", "Speak with " + friendUser.getUsername(), pIntent);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(222, myNotification);
         vibrator.vibrate(250);
+    }
+
+    private Notification createNotificion(String title, String contentText, PendingIntent pIntent){
+        return new NotificationCompat.Builder(context)
+                .setSmallIcon(R.mipmap.logo_nameless)
+                .setColor(context.getResources().getColor(R.color.colorPrimary))
+                .setContentTitle(title)
+                .setContentText(contentText)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true).build();
     }
 
 }

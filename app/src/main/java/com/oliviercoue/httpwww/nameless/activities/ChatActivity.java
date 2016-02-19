@@ -1,14 +1,17 @@
 package com.oliviercoue.httpwww.nameless.activities;
 
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.ActionBar;
@@ -23,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,6 +49,7 @@ import com.oliviercoue.httpwww.nameless.models.MessageImage;
 import com.oliviercoue.httpwww.nameless.models.MessageTypes;
 import com.oliviercoue.httpwww.nameless.models.States;
 import com.oliviercoue.httpwww.nameless.models.User;
+import com.oliviercoue.httpwww.nameless.notifications.KillNotificationsService;
 import com.oliviercoue.httpwww.nameless.notifications.MyNotificationManager;
 
 import org.json.JSONException;
@@ -73,7 +78,9 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     private EditText messageInput;
     private Button sendMessageButton, takePictureButton, selectPictureButton;
     private TextView friendLeaveTextView;
+    private LinearLayout overlayImageLayout;
     private LinearLayout friendLeaveLayout;
+    private ImageView fullSizeImageView;
     private ActionBar actionBar;
 
     private boolean changingStateAway = false, changingStateChatting = false, isAway = false, firstRun = true, fullSizeImageOpen = false, haveFriendFoundNotif;
@@ -97,6 +104,15 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        ServiceConnection mConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className, IBinder binder) {
+                ((KillNotificationsService.KillBinder) binder).service.startService(new Intent(ChatActivity.this, KillNotificationsService.class));
+            }
+            public void onServiceDisconnected(ComponentName className) {
+            }
+        };
+        bindService(new Intent(ChatActivity.this, KillNotificationsService.class), mConnection, Context.BIND_AUTO_CREATE);
+
         chatManager = new ChatManager(this);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -108,17 +124,17 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
         takePictureButton   = (Button) findViewById(R.id.take_picture_button);
         selectPictureButton = (Button) findViewById(R.id.select_picture_button);
         friendLeaveTextView = (TextView) findViewById(R.id.friend_leave_text);
+        overlayImageLayout  = (LinearLayout) findViewById(R.id.overlay_image_layout);
         friendLeaveLayout   = (LinearLayout) findViewById(R.id.friend_leave_layout);
+        fullSizeImageView   = (ImageView) findViewById(R.id.full_size_image_view);
         actionBar = getSupportActionBar();
 
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setShowHideAnimationEnabled(false);
         }
         haveFriendFoundNotif = getIntent().getExtras().getBoolean("HAVE_NOTIFICATION");
         chatManager.loadUsers(getIntent().getExtras().getInt("CURRENT_USER_ID"), getIntent().getExtras().getInt("FRIEND_USER_ID"));
-
-        chatArrayAdapter = new ChatArrayAdapter(this, R.layout.message_right);
-        messageListView.setAdapter(chatArrayAdapter);
 
         ioSocket.on("message_received", onMessageReceived);
         ioSocket.on("friend_quit", onFriendQuit);
@@ -193,23 +209,26 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     private void setupUI(){
         actionBar.setTitle(friendUser.getUsername());
         messageInput.setHint(getResources().getString(R.string.chat_input_composer) + " " + friendUser.getUsername());
-        messageInput.setEnabled(true);
-        takePictureButton.setEnabled(true);
-        selectPictureButton.setEnabled(true);
-        sendMessageButton.setEnabled(true);
+        setChatUiMode(true);
+        chatArrayAdapter = new ChatArrayAdapter(this, R.layout.message_right, currentUser, friendUser);
+        messageListView.setAdapter(chatArrayAdapter);
     }
 
-    private void disableChatUi(){
-        messageInput.setEnabled(false);
-        takePictureButton.setEnabled(false);
-        selectPictureButton.setEnabled(false);
-        sendMessageButton.setEnabled(false);
+    private void setChatUiMode(boolean mod){
+        messageInput.setEnabled(mod);
+        takePictureButton.setEnabled(mod);
+        selectPictureButton.setEnabled(mod);
+        sendMessageButton.setEnabled(mod);
     }
 
     @Override
     public void onImageClicked(Bitmap image) {
         if(!fullSizeImageOpen){
+            actionBar.hide();
             fullSizeImageOpen = true;
+            fullSizeImageView.setImageBitmap(image);
+            overlayImageLayout.setVisibility(View.VISIBLE);
+            setChatUiMode(false);
         }
     }
 
@@ -217,7 +236,9 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     public void usersLoaded(User[] users) {
         currentUser = users[0]!= null ? users[0] : null;
         friendUser = users[1]!= null ? users[1] : null;
-        if(currentUser!=null && friendUser!=null)setupUI();
+        if(currentUser!=null && friendUser!=null){
+            setupUI();
+        }
     }
 
     private void sendMessage() {
@@ -302,7 +323,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
                                 chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, response.getJSONObject("message_image").getJSONObject("data")));
                         }
                         if (isAway) {
-                            myNotificationManager.displayMessageNotifiaction(receivedMessage, currentUser, friendUser);
+                            myNotificationManager.displayMessageNotifiaction(receivedMessage);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -322,7 +343,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
                     try {
                         if (friendUser != null && response.getInt("friend_id") == friendUser.getId()) {
                             closeKeybord();
-                            disableChatUi();
+                            setChatUiMode(false);
                             friendLeaveTextView.setText(friendUser.getUsername() + " " + getResources().getString(R.string.friend_leave_content));
                             friendLeaveLayout.setVisibility(View.VISIBLE);
                         }
@@ -345,7 +366,6 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     @Override
     public void nextUserFounded(User[] users) {
         messageInput.setText("");
-        chatArrayAdapter = new ChatArrayAdapter(this, R.layout.message_right);
         messageListView.setAdapter(chatArrayAdapter);
         currentUser = users[0];
         friendUser = users[1];
@@ -355,7 +375,14 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
 
     @Override
     public void onBackPressed() {
-        closeAlert();
+        if(fullSizeImageOpen){
+            overlayImageLayout.setVisibility(View.GONE);
+            actionBar.show();
+            fullSizeImageOpen = false;
+            setChatUiMode(true);
+        }else{
+            closeAlert();
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -381,7 +408,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     @Override
     protected void onResume(){
         super.onResume();
-        if(!firstRun && haveFriendFoundNotif)notificationManager.cancel(222);
+        if(firstRun && haveFriendFoundNotif)notificationManager.cancel(222);
         firstRun = false;
         notificationManager.cancel(111);
         isAway = false;

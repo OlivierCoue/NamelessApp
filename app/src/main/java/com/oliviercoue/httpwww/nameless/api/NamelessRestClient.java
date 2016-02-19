@@ -1,7 +1,5 @@
 package com.oliviercoue.httpwww.nameless.api;
 
-import android.content.Context;
-
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
@@ -15,19 +13,15 @@ public class NamelessRestClient {
     private static AsyncHttpClient client = new AsyncHttpClient();
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.get(getAbsoluteUrl(url), params, responseHandler);
+        client.get(Url.API_BASE_URL + url, params, responseHandler);
     }
 
     public static void get(String url, FileAsyncHttpResponseHandler fileAsyncHttpResponseHandler ){
-        client.get(url, fileAsyncHttpResponseHandler);
+        client.get(Url.DOWNLOAD_BASE_URL + url, fileAsyncHttpResponseHandler);
     }
 
     public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.post(getAbsoluteUrl(url), params, responseHandler);
-    }
-
-    private static String getAbsoluteUrl(String relativeUrl) {
-        return Url.API_BASE_URL + relativeUrl;
+        client.post(Url.API_BASE_URL + url, params, responseHandler);
     }
 
 }

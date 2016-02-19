@@ -149,7 +149,7 @@
 
     <LinearLayout
         android:id="@+id/overlay_image_layout"
-        android:background="@color/black85"
+        android:background="@color/black"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -157,9 +157,9 @@
         android:visibility="gone">
 
         <ImageView
+            android:id="@+id/full_size_image_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@mipmap/raccoon"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

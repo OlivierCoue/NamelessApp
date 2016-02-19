@@ -39,7 +39,6 @@ public class ChatManager {
 
     public void loadUsers(int currentUserId, int friendUserId) {
         final User[] users = new User[2];
-        int process = 0;
         NamelessRestClient.get("users/" + currentUserId, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -74,11 +73,11 @@ public class ChatManager {
 
     public void sendImage(String filePath){
 
-        Bitmap thumbnailBM = chatImageHelper.getBitmap(filePath, 200, 200);
+        Bitmap thumbnailBM = chatImageHelper.getBitmap(filePath, 700);
         chatAsyncResponse.onImageHandled(thumbnailBM);
         ByteArrayInputStream thumbnailIS = chatImageHelper.toByteArray(thumbnailBM);
 
-        Bitmap fullBM = chatImageHelper.getBitmap(filePath, 500, 500);
+        Bitmap fullBM = chatImageHelper.getBitmap(filePath, 1440);
         ByteArrayInputStream fullIS = chatImageHelper.toByteArray(fullBM);
 
         RequestParams params = new RequestParams();

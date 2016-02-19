@@ -1,5 +1,7 @@
 package com.oliviercoue.httpwww.nameless.models;
 
+import android.text.Html;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,7 +85,7 @@ public class User {
         User u = new User();
         try {
             u.id = jsonObject.getInt("id");
-            u.username = jsonObject.getString("username");
+            u.username = Html.fromHtml(jsonObject.getString("username")).toString();
             u.socketId = jsonObject.getString("socketId");
             u.state = jsonObject.getInt("state");
             u.createdDate = u.getDateFromString(jsonObject.getString("createdDate"));

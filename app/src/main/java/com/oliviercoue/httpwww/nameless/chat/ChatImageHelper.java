@@ -3,11 +3,13 @@ package com.oliviercoue.httpwww.nameless.chat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,14 +23,21 @@ public class ChatImageHelper {
 
     }
 
-    public Bitmap getBitmap(String filePath, int width, int heigth){
+    public Bitmap getBitmap(String filePath, float width){
+        int newWidth = 0;
+        int newHeight = 0;
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, bmOptions);
         bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = Math.min(bmOptions.outWidth/width, bmOptions.outHeight/heigth);;
-        bmOptions.inPurgeable = true;
-        return BitmapFactory.decodeFile(filePath, bmOptions);
+
+        newWidth = bmOptions.outWidth > width ? (int) width : bmOptions.outWidth;
+        newHeight = bmOptions.outWidth > width ? ((int) (bmOptions.outHeight * (width / bmOptions.outWidth))) : bmOptions.outHeight;
+
+        Matrix m = new Matrix();
+        m.setRectToRect(new RectF(0, 0, bmOptions.outWidth, bmOptions.outHeight), new RectF(0, 0, newWidth, newHeight), Matrix.ScaleToFit.CENTER);
+        Bitmap b = BitmapFactory.decodeFile(filePath);
+        return Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, true);
     }
 
     public ByteArrayInputStream toByteArray(Bitmap in){

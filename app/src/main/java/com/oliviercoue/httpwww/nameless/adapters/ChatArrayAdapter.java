@@ -18,6 +18,7 @@ import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
 import com.oliviercoue.httpwww.nameless.chat.ChatFullSizeImage;
 import com.oliviercoue.httpwww.nameless.models.Message;
 import com.oliviercoue.httpwww.nameless.models.MessageImage;
+import com.oliviercoue.httpwww.nameless.models.User;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -36,6 +37,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
     private TextView topUsername;
     private TextView chatText;
     private ImageView chatImage;
+    private User currentUser, friendUser;
     private List<Message> chatMessageList = new ArrayList<Message>();
     private Context context;
     private ChatFullSizeImage chatFullSizeImage;
@@ -46,9 +48,12 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
         super.add(object);
     }
 
-    public ChatArrayAdapter(Context context, int textViewResourceId) {
+    public ChatArrayAdapter(Context context, int textViewResourceId, User currentUser, User friendUser) {
         super(context, textViewResourceId);
         this.context = context;
+        this.currentUser = currentUser;
+        this.friendUser = friendUser;
+        add(null);
         chatFullSizeImage = (ChatActivity)context;
     }
 
@@ -67,55 +72,65 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
         View row = convertView;
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (message.getFromUs()) {
-            if(message instanceof MessageImage){
-                row = inflater.inflate(R.layout.message_image_right, parent, false);
-                chatImage = (ImageView) row.findViewById(R.id.message_image);
-                chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
-                chatImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openFullImage(BitmapFactory.decodeFile(((MessageImage) message).getLocalPath()));
-                    }
-                });
-            }
-            else{
-                row = inflater.inflate(R.layout.message_right, parent, false);
-                chatText = (TextView) row.findViewById(R.id.message_text_view);
-                chatText.setText(message.getMessageText());
-            }
+        if(position == 0){
+            row = inflater.inflate(R.layout.message_header, parent, false);
+            TextView headerTitle = (TextView) row.findViewById(R.id.message_header_title);
+            TextView headerContent = (TextView) row.findViewById(R.id.message_header_content);
+            String strTitle = context.getResources().getString(R.string.chat_welcome_title);
+            String strContent = context.getResources().getString(R.string.chat_welcome_content);
+            headerTitle.setText(String.format(strTitle, currentUser.getUsername()));
+            headerContent.setText(String.format(strContent, currentUser.getUsername(), friendUser.getUsername()));
+        }else {
 
-            if((lastMessage != null && !lastMessage.getFromUs()) || position == 0) {
-                setMessageTop(row, message);
-            }
-        }else{
-            if(message instanceof MessageImage){
-                row = inflater.inflate(R.layout.message_image_left, parent, false);
-                chatImage = (ImageView) row.findViewById(R.id.message_image);
-                chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
-                chatImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        NamelessRestClient.get("http://prestapic.com:8080/uploads/" + ((MessageImage) message).getFullName(), new FileAsyncHttpResponseHandler(context) {
-                            @Override
-                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
-                            }
+            if (message.getFromUs()) {
+                if (message instanceof MessageImage) {
+                    row = inflater.inflate(R.layout.message_image_right, parent, false);
+                    chatImage = (ImageView) row.findViewById(R.id.message_image);
+                    chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
+                    chatImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openFullImage(BitmapFactory.decodeFile(((MessageImage) message).getLocalPath()));
+                        }
+                    });
+                } else {
+                    row = inflater.inflate(R.layout.message_right, parent, false);
+                    chatText = (TextView) row.findViewById(R.id.message_text_view);
+                    chatText.setText(message.getMessageText());
+                }
 
-                            @Override
-                            public void onSuccess(int statusCode, Header[] headers, File file) {
-                                openFullImage(BitmapFactory.decodeFile(file.getAbsolutePath()));
-                            }
-                        });
-                    }
-                });
-            }else{
-                row = inflater.inflate(R.layout.message_left, parent, false);
-                chatText = (TextView) row.findViewById(R.id.message_text_view);
-                chatText.setText(message.getMessageText());
-            }
+                if ((lastMessage != null && !lastMessage.getFromUs()) || position == 0) {
+                    setMessageTop(row, message);
+                }
+            } else {
+                if (message instanceof MessageImage) {
+                    row = inflater.inflate(R.layout.message_image_left, parent, false);
+                    chatImage = (ImageView) row.findViewById(R.id.message_image);
+                    chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
+                    chatImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            NamelessRestClient.get(((MessageImage) message).getFullName(), new FileAsyncHttpResponseHandler(context) {
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+                                }
 
-            if((lastMessage != null && lastMessage.getFromUs()) || position == 0) {
-                setMessageTop(row, message);
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, File file) {
+                                    openFullImage(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    row = inflater.inflate(R.layout.message_left, parent, false);
+                    chatText = (TextView) row.findViewById(R.id.message_text_view);
+                    chatText.setText(message.getMessageText());
+                }
+
+                if ((lastMessage != null && lastMessage.getFromUs()) || position == 0) {
+                    setMessageTop(row, message);
+                }
             }
         }
         return row;
