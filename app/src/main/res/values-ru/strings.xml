@@ -1,0 +1,35 @@
+<resources>
+
+    <string name="chat_button_cancel">Отмена</string>
+    <string name="confirm_leave_message">Вы действительно хотите покинуть переписку?</string>
+    <string name="confirm_leave_btn2">Отмена</string>
+    <string name="search_cancel">Отмена</string>
+    <string name="chat_button_next">Следующее</string>
+    <string name="icon_next_button">Следующее</string>
+    <string name="chat_input_composer">Введите сообщение для</string>
+    <string name="chat_welcome_content_1">Добро пожаловать на ваш персональный беседы с</string>
+    <string name="chat_welcome_content_2">. Все сообщения остаются между вами и</string>
+    <string name="chat_welcome_content_3">. После того как вы вышли из чата вы больше не имеете доступа. Пользуйтесь этой возможность чтобы познакомиться с кем-то.</string>
+    <string name="chat_welcome_title">Знакомьтесь с</string>
+    <string name="confirm_leave_btn1">Ок</string>
+    <string name="confirm_leave_title">Покинуть?</string>
+    <string name="friend_leave_content">покинул переписку</string>
+    <string name="icon_photo_camera_icon">камера</string>
+    <string name="icon_photo_icon">фото</string>
+    <string name="image_message">фото</string>
+    <string name="image_overlay">фото</string>
+    <string name="friend_leave_choice">Что вы хотите делать сейчас?</string>
+    <string name="friend_leave_head">Оо, нет!</string>
+    <string name="login_button_start">Начать чат</string>
+    <string name="login_input_username">Введите секретную имю</string>
+    <string name="login_range_2">люди онлайн</string>
+    <string name="login_range_title">Радиус поиска</string>
+    <string name="login_range_unity_km"> км</string>
+    <string name="login_range_unity_miles">миль</string>
+    <string name="search_content">Поиск…</string>
+    <string name="login_title">Настроить чат</string>
+    <string name="login_range_1">примерно</string>
+    <string name="friend_leave_next">Следующее</string>
+    <string name="friend_leave_quit">Покинуть</string>
+
+</resources>

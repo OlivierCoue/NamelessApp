@@ -2,41 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    style="@style/message_container.right">
 
     <LinearLayout
-        android:orientation="vertical"
-        style="@style/message_container.right">
-
-        <LinearLayout
-            android:id="@+id/message_top_layout"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/message_container_top"
-            android:gravity="right"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/message_top_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Date"
-                style="@style/message_container_top_date"/>
-
-            <TextView
-                android:id="@+id/message_top_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                style="@style/message_container_top_username.right" />
-
-        </LinearLayout>
+        android:id="@+id/message_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        style="@style/message_container_top">
 
         <TextView
-            android:id="@+id/message_text_view"
-            style="@style/message_content.right"/>
+            android:id="@+id/message_top_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/message_container_top_date"/>
+
+        <TextView
+            android:id="@+id/message_top_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/message_container_top_username.right" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/message_text_view"
+        style="@style/message_content.right"/>
 
 </LinearLayout>

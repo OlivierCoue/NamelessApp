@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".activies.StartActivity">
+    tools:context=".activities.StartActivity">
 
     <!-- Setup container -->
     <LinearLayout
@@ -54,7 +54,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:paddingBottom="8dp"
-            android:inputType="textVisiblePassword|textNoSuggestions"
+            android:inputType="textVisiblePassword"
             android:textColorHighlight="@color/colorPrimaryDark"
             android:cursorVisible="true"
             android:textCursorDrawable="@null"

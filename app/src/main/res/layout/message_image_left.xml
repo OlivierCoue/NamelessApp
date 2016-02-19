@@ -1,39 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    style="@style/message_container.left">
 
     <LinearLayout
-        android:orientation="vertical"
-        style="@style/message_container.left">
+        android:id="@+id/message_top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        style="@style/message_container_top">
 
-        <LinearLayout
-            android:id="@+id/message_top_layout"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/message_top_username"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/message_container_top"
-            android:layout_gravity="left"
-            android:visibility="gone">
+            style="@style/message_container_top_username.left"/>
 
-            <TextView
-                android:id="@+id/message_top_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                style="@style/message_container_top_username.left"/>
+        <TextView
+            android:id="@+id/message_top_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/message_container_top_date"/>
 
-            <TextView
-                android:id="@+id/message_top_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Date"
-                style="@style/message_container_top_date"/>
-
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/message_image"
-            style="@style/message_content.imageleft"/>
     </LinearLayout>
-</RelativeLayout>
+
+    <ImageView
+        android:id="@+id/message_image"
+        android:contentDescription="@string/image_message"
+        style="@style/message_content.imageLeft"/>
+</LinearLayout>

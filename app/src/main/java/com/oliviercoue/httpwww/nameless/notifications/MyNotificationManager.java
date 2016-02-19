@@ -60,7 +60,7 @@ public class MyNotificationManager {
         PendingIntent pIntent = PendingIntent.getActivity(context, (int)System.currentTimeMillis(), resultIntent, 0);
 
         Notification myNotification =  new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.logo_nameless)
                 .setContentTitle("FRIEND FOUNDED")
                 .setContentText("Speak with " + friendUser.getUsername())
                 .setContentIntent(pIntent)

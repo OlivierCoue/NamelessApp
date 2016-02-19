@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".activies.StartActivity">
+    tools:context=".activities.StartActivity">
 
     <!-- Chat container-->
     <RelativeLayout
@@ -22,6 +22,8 @@
             android:layout_alignParentTop="true"
             android:layout_above="@+id/composer_container"
             android:divider="@null"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:stackFromBottom="true"
             android:transcriptMode="alwaysScroll">
         </ListView>
@@ -149,7 +151,7 @@
 
     <LinearLayout
         android:id="@+id/overlay_image_layout"
-        android:background="@color/black85"
+        android:background="@color/black"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -157,6 +159,7 @@
         android:visibility="gone">
 
         <ImageView
+            android:contentDescription="@string/image_overlay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@mipmap/raccoon"/>

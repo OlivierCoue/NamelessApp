@@ -1,20 +1,20 @@
 <resources>
-    <string name="app_name">Nameless</string>
-    <string name="default_value">0</string>
+    <string name="app_name" translatable="false">Nameless</string>
+    <string name="default_value" translatable="false">0</string>
 
     <!-- Strings related to login -->
     <string name="login_title">Setup your chat</string>
     <string name="login_input_username">Your secret identity</string>
-    <string name="login_range_title">Select a range</string>
+    <string name="login_range_title">Search range</string>
     <string name="login_range_1">about</string>
     <string name="login_range_2">people online</string>
     <string name="login_range_unity_km">km -</string>
     <string name="login_range_unity_miles">miles -</string>
     <string name="login_button_start">Start chat</string>
-    <string name="login_copy">Nameless &#169; 2016</string>
+    <string name="login_copy" translatable="false">Nameless &#169; 2016</string>
 
     <!-- Strings related to search -->
-    <string name="search_content">Searching...</string>
+    <string name="search_content">Searching…</string>
     <string name="search_cancel">Cancel</string>
 
     <!-- Strings related to chat -->
@@ -22,32 +22,37 @@
     <string name="chat_button_cancel">Cancel</string>
 
     <string name="chat_input_composer">Send a message to </string>
-    <string name="chat_welcome_title">You’re gonna chat with {friend}</string>
+    <string name="chat_welcome_title">You’re gonna chat with</string>
     <string name="chat_welcome_content_1">Welcome to your personal chat box {you}</string>
     <string name="chat_welcome_content_2">. All messages you write will remain private between you and {friend}</string>
-    <string name="chat_welcome_content_3">. Once you leave the cat there you\'ll never have access again. Take this opportunity to make new acquaintances and pleasant discoveries.</string>
+    <string name="chat_welcome_content_3">. Once you leave the chat there you\'ll never have access again. Take this opportunity to make new acquaintances and pleasant discoveries.</string>
 
     <!-- Strings related to icons -->
     <string name="icon_next_button">Next</string>
-    <string name="icon_photo_icon">Picture</string>
+    <string name="icon_photo_icon">Image</string>
     <string name="icon_photo_camera_icon">Camera</string>
-    <string name="icon_send_message">&#xe900;</string>
-    <string name="icon_take_photo">&#xe903;</string>
-    <string name="icon_choose_photo">&#xe904;</string>
-    <string name="sb_icon_sofa">&#xe906;</string>
-    <string name="sb_icon_walk">&#xe907;</string>
-    <string name="sb_icon_car">&#xe905;</string>
-    <string name="sb_icon_world">&#xe908;</string>
+    <string name="icon_send_message" translatable="false">&#xe900;</string>
+    <string name="icon_take_photo" translatable="false">&#xe903;</string>
+    <string name="icon_choose_photo" translatable="false">&#xe904;</string>
+    <string name="sb_icon_sofa" translatable="false">&#xe906;</string>
+    <string name="sb_icon_walk" translatable="false">&#xe907;</string>
+    <string name="sb_icon_car" translatable="false">&#xe905;</string>
+    <string name="sb_icon_world" translatable="false">&#xe908;</string>
 
     <!-- Strings related to message/confirmations -->
     <string name="confirm_leave_title">Leave?</string>
-    <string name="confirm_leave_message">Do you really want to leave conversation ?</string>
-    <string name="confirm_leave_btn1">Ok</string>
+    <string name="confirm_leave_message">Do you really want to leave conversation?</string>
+    <string name="confirm_leave_btn1">OK</string>
     <string name="confirm_leave_btn2">Cancel</string>
 
     <!-- Strings related to friend leave -->
     <string name="friend_leave_head">Ooh no!</string>
     <string name="friend_leave_content">left the conversation</string>
     <string name="friend_leave_choice">What to do now?</string>
+    <string name="friend_leave_next">Next</string>
+    <string name="friend_leave_quit">Quit</string>
+
+    <string name="image_overlay">Image overlay</string>
+    <string name="image_message">Image message</string>
 
 </resources>
