@@ -7,9 +7,9 @@ import android.graphics.Bitmap;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.oliviercoue.httpwww.nameless.activies.ChatActivity;
-import com.oliviercoue.httpwww.nameless.activies.SearchActivity;
-import com.oliviercoue.httpwww.nameless.activies.StartActivity;
+import com.oliviercoue.httpwww.nameless.activities.ChatActivity;
+import com.oliviercoue.httpwww.nameless.activities.SearchActivity;
+import com.oliviercoue.httpwww.nameless.activities.StartActivity;
 import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
 import com.oliviercoue.httpwww.nameless.models.User;
 

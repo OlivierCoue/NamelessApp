@@ -1,4 +1,4 @@
-package com.oliviercoue.httpwww.nameless.activies;
+package com.oliviercoue.httpwww.nameless.activities;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -16,7 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;

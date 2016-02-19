@@ -1,11 +1,9 @@
-package com.oliviercoue.httpwww.nameless.activies;
+package com.oliviercoue.httpwww.nameless.activities;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -13,18 +11,14 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
 import com.oliviercoue.httpwww.nameless.api.Url;
 import com.oliviercoue.httpwww.nameless.handlers.FriendFoundHandler;
-import com.oliviercoue.httpwww.nameless.models.States;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 

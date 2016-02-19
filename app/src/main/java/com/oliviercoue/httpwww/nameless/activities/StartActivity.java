@@ -1,4 +1,4 @@
-package com.oliviercoue.httpwww.nameless.activies;
+package com.oliviercoue.httpwww.nameless.activities;
 
 import android.app.Activity;
 import android.content.DialogInterface;

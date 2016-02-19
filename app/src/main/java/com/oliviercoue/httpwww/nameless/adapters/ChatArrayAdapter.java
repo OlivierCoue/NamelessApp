@@ -1,12 +1,8 @@
 package com.oliviercoue.httpwww.nameless.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +13,9 @@ import android.widget.TextView;
 
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.oliviercoue.httpwww.nameless.R;
-import com.oliviercoue.httpwww.nameless.activies.ChatActivity;
+import com.oliviercoue.httpwww.nameless.activities.ChatActivity;
 import com.oliviercoue.httpwww.nameless.api.NamelessRestClient;
 import com.oliviercoue.httpwww.nameless.chat.ChatFullSizeImage;
-import com.oliviercoue.httpwww.nameless.chat.ChatImageHelper;
 import com.oliviercoue.httpwww.nameless.models.Message;
 import com.oliviercoue.httpwww.nameless.models.MessageImage;
 

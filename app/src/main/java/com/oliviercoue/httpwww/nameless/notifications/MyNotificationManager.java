@@ -5,13 +5,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.NotificationCompat;
 
 import com.oliviercoue.httpwww.nameless.R;
-import com.oliviercoue.httpwww.nameless.activies.ChatActivity;
+import com.oliviercoue.httpwww.nameless.activities.ChatActivity;
 import com.oliviercoue.httpwww.nameless.models.Message;
 import com.oliviercoue.httpwww.nameless.models.User;
 

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import com.oliviercoue.httpwww.nameless.activies.ChatActivity;
+import com.oliviercoue.httpwww.nameless.activities.ChatActivity;
 import com.oliviercoue.httpwww.nameless.models.User;
 import com.oliviercoue.httpwww.nameless.notifications.MyNotificationManager;
 
