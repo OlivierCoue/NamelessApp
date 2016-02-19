@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Nameless</string>
     <string name="default_value" translatable="false">0</string>
+    <string name="language_title">Language</string>
 
     <!-- Strings related to login -->
     <string name="login_title">Setup your chat</string>

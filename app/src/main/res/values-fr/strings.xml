@@ -20,7 +20,6 @@
 
     <string name="chat_input_composer">Envoyer un message à</string>
     <string name="chat_welcome_title">Vous allez chatter avec %1$s</string>
-    <string name="chat_welcome_content_1">Bienvenue dans votre chat personnel %1$s. Tous les messages que vous écrivez resterons entre vous et %1$s. Une fois que vous quittez le chat, vous n\'y aurez plus jamais accès. Saisissez cette occasion pour faire de nouvelles connaissances et des découvertes agréables.</string>
 
     <!-- Strings related to icons -->
     <string name="icon_next_button">Suivant</string>
@@ -42,5 +41,7 @@
     <string name="image_message">Image message</string>
     <string name="friend_leave_next">Suivant</string>
     <string name="friend_leave_quit">Quitter</string>
+    <string name="chat_welcome_content">Bienvenue dans votre chat personnel %1$s. Tous les messages que vous écrivez resterons entre vous et %1$s. Une fois que vous quittez le chat, vous n\'y aurez plus jamais accès. Saisissez cette occasion pour faire de nouvelles connaissances et des découvertes agréables.</string>
+    <string name="language_title">Langue</string>
 
 </resources>

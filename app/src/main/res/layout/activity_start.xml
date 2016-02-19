@@ -54,7 +54,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:paddingBottom="8dp"
-            android:inputType="textVisiblePassword"
+            android:inputType="textCapSentences"
             android:textColorHighlight="@color/colorPrimaryDark"
             android:cursorVisible="true"
             android:textCursorDrawable="@null"

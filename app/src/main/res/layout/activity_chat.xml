@@ -22,8 +22,6 @@
             android:layout_alignParentTop="true"
             android:layout_above="@+id/composer_container"
             android:divider="@null"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
             android:stackFromBottom="true"
             android:transcriptMode="alwaysScroll">
         </ListView>
@@ -139,12 +137,12 @@
 
         <Button
             android:id="@+id/next_button"
-            android:text="@string/chat_button_next"
+            android:text="@string/friend_leave_next"
             style="@style/button.next"/>
 
         <Button
             android:id="@+id/cancel_button"
-            android:text="@string/chat_button_cancel"
+            android:text="@string/friend_leave_quit"
             style="@style/button.transparent"/>
 
     </LinearLayout>
