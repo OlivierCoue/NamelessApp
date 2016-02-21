@@ -19,8 +19,8 @@ public class KillNotificationsService extends Service{
         }
 
     }
-    public static int NOTIFICATION_MESSAGE_ID = 111;
-    public static int NOTIFICATION_FRIEND_FIND_ID = 222;
+    public static int NOTIFICATION_MESSAGE_ID = NotificationTypes.MESSAGE_RECEIVED;
+    public static int NOTIFICATION_FRIEND_FIND_ID = NotificationTypes.FRIEND_FOUNDED;
     private NotificationManager mNM;
     private final IBinder mBinder = new KillBinder(this);
     @Override

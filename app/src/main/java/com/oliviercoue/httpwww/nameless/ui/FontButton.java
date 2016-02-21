@@ -1,14 +1,13 @@
 package com.oliviercoue.httpwww.nameless.ui;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.Button;
 
 /**
  * Created by Olivier on 12/02/2016.
+ *
  */
 public class FontButton extends Button {
 

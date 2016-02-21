@@ -24,11 +24,9 @@ import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Olivier on 06/02/2016.
+ *
  */
 public class SearchActivity extends AppCompatActivity {
-
-    // UI references.
-    private Button cancelSearchButton;
 
     private Activity activity;
     private boolean cancelClicked = false;
@@ -47,7 +45,7 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seach);
-        cancelSearchButton = (Button) findViewById(R.id.cancel_search_button);
+        Button cancelSearchButton = (Button) findViewById(R.id.cancel_search_button);
 
         activity = this;
 
@@ -55,7 +53,7 @@ public class SearchActivity extends AppCompatActivity {
 
         cancelSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 cancel();
             }
         });
@@ -102,6 +100,8 @@ public class SearchActivity extends AppCompatActivity {
         super.onPause();
         if(!isFinishing()) {
             isAway = true;
+        }else{
+            ioSocket.off("friend_founded", onFriendFounded);
         }
     }
 }

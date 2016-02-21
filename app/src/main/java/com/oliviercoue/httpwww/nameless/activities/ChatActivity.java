@@ -52,6 +52,7 @@ import com.oliviercoue.httpwww.nameless.models.States;
 import com.oliviercoue.httpwww.nameless.models.User;
 import com.oliviercoue.httpwww.nameless.notifications.KillNotificationsService;
 import com.oliviercoue.httpwww.nameless.notifications.MyNotificationManager;
+import com.oliviercoue.httpwww.nameless.notifications.NotificationTypes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,11 +63,13 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Olivier on 06/02/2016.
+ *
  */
 public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse, ChatFullSizeImage {
 
@@ -88,15 +91,15 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     private MyNotificationManager myNotificationManager;
     private NotificationManager notificationManager;
     private ChatManager chatManager;
-    private String mCurrentPhotoPath;;
+    private String mCurrentPhotoPath;
     private ChatArrayAdapter chatArrayAdapter;
     private User currentUser, friendUser;
-    private Intent serviceIntent;
+    private ServiceConnection killNotificationsCon;
     private int lastMessageId = 0;
     private Socket ioSocket;
     {
         try {
-            ioSocket = IO.socket(Url.SOCKET_URL);
+             ioSocket = IO.socket(Url.SOCKET_URL);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -107,19 +110,22 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        ServiceConnection mConnection = new ServiceConnection() {
+        /* instantiate managers */
+        chatManager = new ChatManager(this);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        myNotificationManager = new MyNotificationManager(this);
+
+        /* set up service to kill notification on app close */
+        killNotificationsCon = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder binder) {
                 ((KillNotificationsService.KillBinder) binder).service.startService(new Intent(ChatActivity.this, KillNotificationsService.class));
             }
             public void onServiceDisconnected(ComponentName className) {
             }
         };
-        serviceIntent = new Intent(ChatActivity.this, KillNotificationsService.class);
-        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(ChatActivity.this, KillNotificationsService.class), killNotificationsCon, Context.BIND_AUTO_CREATE);
 
-        chatManager = new ChatManager(this);
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+        /* instantiate ui objects */
         Button nextButton   = (Button) findViewById(R.id.next_button);
         Button cancelButton = (Button) findViewById(R.id.cancel_button);
         messageInput        = (EditText) findViewById(R.id.message_input);
@@ -133,21 +139,27 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
         fullSizeImageView   = (ImageView) findViewById(R.id.full_size_image_view);
         actionBar = getSupportActionBar();
 
+        /* add back button to action bar */
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setShowHideAnimationEnabled(false);
         }
+        /* check if there is a notifiaction to cancel it later */
         haveFriendFoundNotif = getIntent().getExtras().getBoolean("HAVE_NOTIFICATION");
+        /* load conversation members */
         chatManager.loadUsers(getIntent().getExtras().getInt("CURRENT_USER_ID"), getIntent().getExtras().getInt("FRIEND_USER_ID"));
 
+        /* add emit listener to the socket */
         ioSocket.on("message_received", onMessageReceived);
         ioSocket.on("friend_quit", onFriendQuit);
 
+        /* add onChange listener to chat input to change the color of send message button */
         messageInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count > 0) {
@@ -156,10 +168,13 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
                     sendMessageButton.setTextColor(getResources().getColor(R.color.colorSecondary));
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+
+        /* add listeners to buttons */
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -172,7 +187,6 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
                 dispatchTakePictureIntent();
             }
         });
-
         selectPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -191,7 +205,6 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
                 chatManager.close();
             }
         });
-        myNotificationManager = new MyNotificationManager(this);
     }
 
     private void closeAlert() {
@@ -255,7 +268,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     }
 
     private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
@@ -289,15 +302,19 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_IMAGE_CAPTURE) {
-
-            } else if (requestCode == REQUEST_SELECT_PHOTO) {
-                Uri selectedImageUri = data.getData();
-                String[] projection = { MediaStore.MediaColumns.DATA };
-                CursorLoader cursorLoader = new CursorLoader(this,selectedImageUri, projection, null, null, null);
-                Cursor cursor = cursorLoader.loadInBackground();
-                cursor.moveToFirst();
-                mCurrentPhotoPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA));
+            switch (requestCode){
+                case REQUEST_IMAGE_CAPTURE:
+                    break;
+                case REQUEST_SELECT_PHOTO:
+                    Uri selectedImageUri = data.getData();
+                    String[] projection = { MediaStore.MediaColumns.DATA };
+                    CursorLoader cursorLoader = new CursorLoader(this,selectedImageUri, projection, null, null, null);
+                    Cursor cursor = cursorLoader.loadInBackground();
+                    cursor.moveToFirst();
+                    mCurrentPhotoPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA));
+                    break;
+                default:
+                    Log.d(this.getClass().getName(), "Unknow request code");
             }
             chatManager.sendImage(mCurrentPhotoPath);
         }
@@ -315,7 +332,6 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(this.getClass().getName(), String.valueOf(isAway));
                     try {
                         Message receivedMessage = null;
                         switch (response.getInt("type")) {
@@ -327,7 +343,7 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
                                 receivedMessage = Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data"));
                                 chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, response.getJSONObject("message_image").getJSONObject("data")));
                         }
-                        if (isAway) {
+                        if (isAway && receivedMessage != null) {
                             if (lastMessageId != receivedMessage.getId()) {
                                 myNotificationManager.displayMessageNotifiaction(receivedMessage);
                             }
@@ -416,14 +432,14 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     @Override
     protected void onResume(){
         super.onResume();
-        if(firstRun && haveFriendFoundNotif)notificationManager.cancel(222);
+        if(firstRun && haveFriendFoundNotif)notificationManager.cancel(NotificationTypes.FRIEND_FOUNDED);
         firstRun = false;
-        notificationManager.cancel(111);
+        notificationManager.cancel(NotificationTypes.MESSAGE_RECEIVED);
         isAway = false;
         Log.d(this.getClass().getName(), "resume");
         if(!changingStateChatting) {
             changingStateChatting = true;
-            HashMap<String, String> paramMap = new HashMap<String, String>();
+            HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("state", States.CHATTING.toString());
             RequestParams params = new RequestParams(paramMap);
             NamelessRestClient.post("users/states", params, new JsonHttpResponseHandler() {
@@ -442,13 +458,12 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
     @Override
     protected void onPause(){
         super.onPause();
-        notificationManager.cancel(123);
         if(!isFinishing()){
             if(!changingStateAway) {
                 isAway = true;
                 Log.d(this.getClass().getName(), "pause");
                 changingStateAway = true;
-                HashMap<String, String> paramMap = new HashMap<String, String>();
+                HashMap<String, String> paramMap = new HashMap<>();
                 paramMap.put("state", States.AWAY.toString());
                 RequestParams params = new RequestParams(paramMap);
                 NamelessRestClient.post("users/states", params, new JsonHttpResponseHandler() {
@@ -462,6 +477,10 @@ public class ChatActivity extends AppCompatActivity implements ChatAsyncResponse
                     }
                 });
             }
+        }else{
+            ioSocket.off("message_received", onMessageReceived);
+            ioSocket.off("friend_quit", onFriendQuit);
+            unbindService(killNotificationsCon);
         }
     }
 }

@@ -1,30 +1,18 @@
 package com.oliviercoue.httpwww.nameless.activities;
 
-import android.app.ListActivity;
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-
-import android.support.v7.internal.widget.AdapterViewCompat;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 
 import com.oliviercoue.httpwww.nameless.R;
 
-import java.util.List;
 import java.util.Locale;
 
 /**

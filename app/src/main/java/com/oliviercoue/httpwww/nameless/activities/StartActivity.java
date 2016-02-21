@@ -47,6 +47,7 @@ import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Olivier on 06/02/2016.
+ *
  */
 public class StartActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -64,7 +65,6 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Activity activity;
-    private static boolean firstLoad = true;
     private static String socketId;
     private Socket ioSocket;
     {
@@ -81,7 +81,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         setContentView(R.layout.activity_start);
 
         LocationManager mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) 500, (float) 200, (android.location.LocationListener) mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) 500, (float) 200, mLocationListener);
         try {
             gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch(Exception ex) {
@@ -134,7 +134,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         gradientBackgroundLayout = (LinearLayout) findViewById(R.id.gradient_background_layout);
 
         /* init seek bar */
-        actionBar.setTitle("");
+        if(actionBar != null)actionBar.setTitle("");
         rangeSeekBar.setProgress((int) seekBakProcess);
         rangeValueView.setText(String.valueOf((int) Math.pow(2, seekBakProcess / 10)));
 
@@ -152,8 +152,8 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onGlobalLayout() {
                 LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)(seekBakProcess*(gradientBackgroundLayout.getWidth()/100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-                seekbarGradientLayout.setLayoutParams(param);;
-                gradientBackgroundLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                seekbarGradientLayout.setLayoutParams(param);
+                gradientBackgroundLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
 
@@ -165,7 +165,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
                 if (!startClicked && mLastLocation != null && !usernameTxt.isEmpty() && usernameTxt.length() < 30 && socketId != null && !socketId.isEmpty()) {
                     startClicked = true;
-                    HashMap<String, String> paramMap = new HashMap<String, String>();
+                    HashMap<String, String> paramMap = new HashMap<>();
                     paramMap.put("username", usernameTxt);
                     paramMap.put("socketId", socketId);
                     paramMap.put("lat", String.valueOf(mLastLocation.getLatitude()));

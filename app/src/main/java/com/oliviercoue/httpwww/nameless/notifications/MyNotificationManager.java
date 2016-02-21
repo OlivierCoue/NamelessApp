@@ -29,8 +29,6 @@ public class MyNotificationManager {
     public void displayMessageNotifiaction(Message message) {
         Intent resultIntent = new Intent(context, ChatActivity.class);
 
-        resultIntent.putExtra("NOTIFICATION_ID", 123);
-
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent pIntent = PendingIntent.getActivity(context, (int)System.currentTimeMillis(), resultIntent, 0);
@@ -39,7 +37,7 @@ public class MyNotificationManager {
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(111, myNotification);
+        notificationManager.notify(NotificationTypes.MESSAGE_RECEIVED, myNotification);
         vibrator.vibrate(250);
     }
 
@@ -47,7 +45,6 @@ public class MyNotificationManager {
 
         Intent resultIntent = new Intent(context, ChatActivity.class);
 
-        resultIntent.putExtra("NOTIFICATION_ID", 123);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent pIntent = PendingIntent.getActivity(context, (int)System.currentTimeMillis(), resultIntent, 0);
@@ -56,7 +53,7 @@ public class MyNotificationManager {
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(222, myNotification);
+        notificationManager.notify(NotificationTypes.FRIEND_FOUNDED, myNotification);
         vibrator.vibrate(250);
     }
 
