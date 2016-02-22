@@ -146,7 +146,7 @@
                         android:layout_toStartOf="@+id/icon_sofa"/>
 
                     <!-- Range selection: sofa icon -->
-                    <com.oliviercoue.httpwww.nameless.ui.FontButton
+                    <com.oliviercoue.nameless.ui.FontButton
                         android:id="@+id/icon_sofa"
                         android:layout_centerInParent="true"
                         android:text="@string/sb_icon_sofa"
@@ -180,7 +180,7 @@
                         android:layout_toStartOf="@+id/icon_walk"/>
 
                     <!-- Range selection: walk icon -->
-                    <com.oliviercoue.httpwww.nameless.ui.FontButton
+                    <com.oliviercoue.nameless.ui.FontButton
                         android:id="@+id/icon_walk"
                         android:layout_centerInParent="true"
                         android:text="@string/sb_icon_walk"
@@ -214,7 +214,7 @@
                         android:layout_toStartOf="@+id/icon_car"/>
 
                     <!-- Range selection: car icon -->
-                    <com.oliviercoue.httpwww.nameless.ui.FontButton
+                    <com.oliviercoue.nameless.ui.FontButton
                         android:id="@+id/icon_car"
                         android:layout_centerInParent="true"
                         android:text="@string/sb_icon_car"
@@ -248,7 +248,7 @@
                         android:layout_toStartOf="@+id/icon_world"/>
 
                     <!-- Range selection: world icon -->
-                    <com.oliviercoue.httpwww.nameless.ui.FontButton
+                    <com.oliviercoue.nameless.ui.FontButton
                         android:id="@+id/icon_world"
                         android:layout_centerInParent="true"
                         android:text="@string/sb_icon_world"

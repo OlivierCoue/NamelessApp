@@ -58,13 +58,13 @@
                 android:orientation="horizontal">
 
                 <!-- Take photo -->
-                <com.oliviercoue.httpwww.nameless.ui.FontButton
+                <com.oliviercoue.nameless.ui.FontButton
                     android:id="@+id/take_picture_button"
                     android:text="@string/icon_take_photo"
                     style="@style/message_button.take" />
 
                 <!-- Choose photo -->
-                <com.oliviercoue.httpwww.nameless.ui.FontButton
+                <com.oliviercoue.nameless.ui.FontButton
                     android:id="@+id/select_picture_button"
                     android:text="@string/icon_choose_photo"
                     style="@style/message_button.choose" />
@@ -74,7 +74,7 @@
                     android:layout_height="match_parent">
 
                     <!-- Send button -->
-                    <com.oliviercoue.httpwww.nameless.ui.FontButton
+                    <com.oliviercoue.nameless.ui.FontButton
                         android:id="@+id/message_send_button"
                         android:text="@string/icon_send_message"
                         android:layout_gravity="end"
