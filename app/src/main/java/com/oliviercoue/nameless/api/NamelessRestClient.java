@@ -12,8 +12,16 @@ public class NamelessRestClient {
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
+    public static void addHeader(String key, String value){
+        client.addHeader(key, value);
+    }
+
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(Url.API_BASE_URL + url, params, responseHandler);
+    }
+
+    public static void getAuthentificationKey(AsyncHttpResponseHandler responseHandler) {
+        client.get(Url.API_AUTH_URL, null, responseHandler);
     }
 
     public static void get(String url, FileAsyncHttpResponseHandler fileAsyncHttpResponseHandler ){

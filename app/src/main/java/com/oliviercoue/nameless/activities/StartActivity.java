@@ -33,6 +33,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.nameless.api.NamelessRestClient;
+import com.oliviercoue.nameless.api.Security;
+import com.oliviercoue.nameless.api.SecurityImp;
 import com.oliviercoue.nameless.api.Url;
 import com.oliviercoue.nameless.handlers.FriendFoundHandler;
 
@@ -49,13 +51,14 @@ import cz.msebera.android.httpclient.Header;
  * Created by Olivier on 06/02/2016.
  *
  */
-public class StartActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class StartActivity extends AppCompatActivity implements SecurityImp, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // UI references.
     private EditText usernameView;
     private TextView rangeValueView, closeFiendNbView;
-    private LinearLayout seekbarGradientLayout, gradientBackgroundLayout;
+    private LinearLayout seekBarGradientLayout, gradientBackgroundLayout;
 
+    private static boolean isAuthenticated = false;
     private boolean gps_enabled = false;
     private boolean network_enabled = false;
     private static String usernameTxt;
@@ -79,6 +82,11 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        if(!isAuthenticated) {
+            Security security = new Security(this);
+            security.authentication();
+        }
 
         LocationManager mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) 500, (float) 200, mLocationListener);
@@ -112,7 +120,6 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             dialog.show();
         }
 
-
         ioSocket.connect();
         ioSocket.on("connect_success", onConnectSuccess);
 
@@ -128,7 +135,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         Button startChatButton   = (Button) findViewById(R.id.start_chat_button);
         SeekBar rangeSeekBar     = (SeekBar) findViewById(R.id.sb_range);
         usernameView             = (EditText) findViewById(R.id.username);
-        seekbarGradientLayout    = (LinearLayout) findViewById(R.id.sb_gradient_layout);
+        seekBarGradientLayout = (LinearLayout) findViewById(R.id.sb_gradient_layout);
         rangeValueView           = (TextView) findViewById(R.id.range_value);
         closeFiendNbView         = (TextView) findViewById(R.id.close_friend_nb);
         gradientBackgroundLayout = (LinearLayout) findViewById(R.id.gradient_background_layout);
@@ -141,8 +148,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         activity = this;
 
         searchRange = (int) Math.pow(2, seekBakProcess / 10);
-        if (mLastLocation != null)
-            setCloseFriendNb();
+        setCloseFriendNb();
 
         if (usernameTxt != null && !usernameTxt.isEmpty())
             usernameView.setText(usernameTxt);
@@ -152,7 +158,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             public void onGlobalLayout() {
                 LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)(seekBakProcess*(gradientBackgroundLayout.getWidth()/100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-                seekbarGradientLayout.setLayoutParams(param);
+                seekBarGradientLayout.setLayoutParams(param);
                 gradientBackgroundLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -163,7 +169,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
                 usernameTxt = usernameView.getText().toString();
 
-                if (!startClicked && mLastLocation != null && !usernameTxt.isEmpty() && usernameTxt.length() < 30 && socketId != null && !socketId.isEmpty()) {
+                if (isAuthenticated && !startClicked && mLastLocation != null && !usernameTxt.isEmpty() && usernameTxt.length() < 30 && socketId != null && !socketId.isEmpty()) {
                     startClicked = true;
                     HashMap<String, String> paramMap = new HashMap<>();
                     paramMap.put("username", usernameTxt);
@@ -195,12 +201,11 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         });
 
         rangeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 seekBakProcess = progresValue;
                 LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int) (seekBakProcess * (gradientBackgroundLayout.getWidth() / 100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-                seekbarGradientLayout.setLayoutParams(param);
+                seekBarGradientLayout.setLayoutParams(param);
                 rangeValueView.setText(String.valueOf((int) (Math.pow(2, seekBakProcess / 10))));
                 searchRange = (int) Math.pow(2, seekBakProcess / 10);
             }
@@ -217,7 +222,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     private void setCloseFriendNb() {
-        if(mLastLocation != null) {
+        if(mLastLocation != null && isAuthenticated) {
             NamelessRestClient.get("chat/count?lat=" + String.valueOf(mLastLocation.getLatitude()) + "&long=" + String.valueOf(mLastLocation.getLongitude()) + "&range=" + searchRange, null, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
@@ -247,6 +252,12 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             }
         }
     };
+
+    @Override
+    public void onAuthenticationSuccess() {
+        isAuthenticated = true;
+        setCloseFriendNb();
+    }
 
     @Override
     public void onBackPressed() {
@@ -331,5 +342,6 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
+
 }
 
