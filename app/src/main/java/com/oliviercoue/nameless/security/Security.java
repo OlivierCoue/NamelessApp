@@ -1,10 +1,11 @@
-package com.oliviercoue.nameless.api;
+package com.oliviercoue.nameless.security;
 
 import android.util.Base64;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.oliviercoue.nameless.activities.StartActivity;
+import com.oliviercoue.nameless.api.NamelessRestClient;
 
 import org.json.JSONObject;
 

@@ -33,8 +33,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.nameless.api.NamelessRestClient;
-import com.oliviercoue.nameless.api.Security;
-import com.oliviercoue.nameless.api.SecurityImp;
+import com.oliviercoue.nameless.security.Security;
+import com.oliviercoue.nameless.security.SecurityImp;
 import com.oliviercoue.nameless.api.Url;
 import com.oliviercoue.nameless.handlers.FriendFoundHandler;
 

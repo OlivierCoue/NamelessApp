@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.api;
+package com.oliviercoue.nameless.security;
 
 /**
  * Created by Olivier on 23/02/2016.
