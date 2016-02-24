@@ -8,7 +8,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -33,10 +32,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.nameless.api.NamelessRestClient;
-import com.oliviercoue.nameless.security.Security;
-import com.oliviercoue.nameless.security.SecurityImp;
 import com.oliviercoue.nameless.api.Url;
 import com.oliviercoue.nameless.handlers.FriendFoundHandler;
+import com.oliviercoue.nameless.security.Security;
+import com.oliviercoue.nameless.security.SecurityImp;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,10 +56,10 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
     private EditText usernameView;
     private TextView rangeValueView, closeFiendNbView;
     private LinearLayout seekBarGradientLayout, gradientBackgroundLayout;
+    private SeekBar rangeSeekBar;
+    private Button startChatButton;
 
     private static boolean isAuthenticated = false;
-    private boolean gps_enabled = false;
-    private boolean network_enabled = false;
     private static String usernameTxt;
     private boolean startClicked = false;
     private int searchRange = 10;
@@ -83,75 +82,26 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        if(!isAuthenticated) {
-            Security security = new Security(this);
-            security.authentication();
-        }
+        activity = this;
 
-        LocationManager mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) 500, (float) 200, mLocationListener);
-        try {
-            gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
+        if(!isAuthenticated)
+            authenticate();
 
-        try {
-            network_enabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
+        if(!isGpsAndNetworkEnabled())
+            showLocationDisabledAlert();
 
-        if(!gps_enabled && !network_enabled) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setMessage("location disabled");
-            dialog.setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(myIntent);
-                }
-            });
-            dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                }
-            });
-            dialog.show();
-        }
+        if (mGoogleApiClient == null)
+            instantiateGoogleApi();
 
         ioSocket.connect();
         ioSocket.on("connect_success", onConnectSuccess);
 
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
+        instantiateUIReferences();
 
-        ActionBar actionBar = getSupportActionBar();
-        Button startChatButton   = (Button) findViewById(R.id.start_chat_button);
-        SeekBar rangeSeekBar     = (SeekBar) findViewById(R.id.sb_range);
-        usernameView             = (EditText) findViewById(R.id.username);
-        seekBarGradientLayout = (LinearLayout) findViewById(R.id.sb_gradient_layout);
-        rangeValueView           = (TextView) findViewById(R.id.range_value);
-        closeFiendNbView         = (TextView) findViewById(R.id.close_friend_nb);
-        gradientBackgroundLayout = (LinearLayout) findViewById(R.id.gradient_background_layout);
+        initRangeSeekBar();
+        initUsernameTextView();
 
-        /* init seek bar */
-        if(actionBar != null)actionBar.setTitle("");
-        rangeSeekBar.setProgress((int) seekBakProcess);
-        rangeValueView.setText(String.valueOf((int) Math.pow(2, seekBakProcess / 10)));
-
-        activity = this;
-
-        searchRange = (int) Math.pow(2, seekBakProcess / 10);
         setCloseFriendNb();
-
-        if (usernameTxt != null && !usernameTxt.isEmpty())
-            usernameView.setText(usernameTxt);
 
         ViewTreeObserver observer = gradientBackgroundLayout.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -166,10 +116,9 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
         startChatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                usernameTxt = usernameView.getText().toString();
-
-                if (isAuthenticated && !startClicked && mLastLocation != null && !usernameTxt.isEmpty() && usernameTxt.length() < 30 && socketId != null && !socketId.isEmpty()) {
+                String usernameFromInput = usernameView.getText().toString();
+                usernameTxt  = (usernameFromInput.isEmpty() || usernameFromInput.length() > 30) ? "Nameless" : usernameFromInput;
+                if (isAuthenticated && !startClicked && mLastLocation != null && socketId != null && !socketId.isEmpty()) {
                     startClicked = true;
                     HashMap<String, String> paramMap = new HashMap<>();
                     paramMap.put("username", usernameTxt);
@@ -177,8 +126,7 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
                     paramMap.put("lat", String.valueOf(mLastLocation.getLatitude()));
                     paramMap.put("long", String.valueOf(mLastLocation.getLongitude()));
                     paramMap.put("range", String.valueOf(searchRange));
-                    RequestParams params = new RequestParams(paramMap);
-                    NamelessRestClient.post("chat/start", params, new JsonHttpResponseHandler() {
+                    NamelessRestClient.post("chat/start", new RequestParams(paramMap), new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             try {
@@ -221,6 +169,54 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
         });
     }
 
+    private void authenticate(){
+        Security security = new Security(this);
+        security.authentication();
+    }
+
+    private boolean isGpsAndNetworkEnabled(){
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        LocationManager mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) 500, (float) 200, mLocationListener);
+        try {
+            gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            network_enabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return gps_enabled && network_enabled;
+    }
+
+    private void instantiateGoogleApi(){
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    private void instantiateUIReferences(){
+        startChatButton          = (Button) findViewById(R.id.start_chat_button);
+        rangeSeekBar             = (SeekBar) findViewById(R.id.sb_range);
+        usernameView             = (EditText) findViewById(R.id.username);
+        seekBarGradientLayout    = (LinearLayout) findViewById(R.id.sb_gradient_layout);
+        rangeValueView           = (TextView) findViewById(R.id.range_value);
+        closeFiendNbView         = (TextView) findViewById(R.id.close_friend_nb);
+        gradientBackgroundLayout = (LinearLayout) findViewById(R.id.gradient_background_layout);
+    }
+
+    private void initRangeSeekBar(){
+        rangeSeekBar.setProgress((int) seekBakProcess);
+        rangeValueView.setText(String.valueOf((int) Math.pow(2, seekBakProcess / 10)));
+        searchRange = (int) Math.pow(2, seekBakProcess / 10);
+    }
+
+    public void initUsernameTextView(){
+        if (usernameTxt != null && !usernameTxt.isEmpty())
+            usernameView.setText(usernameTxt);
+    }
+
     private void setCloseFriendNb() {
         if(mLastLocation != null && isAuthenticated) {
             NamelessRestClient.get("chat/count?lat=" + String.valueOf(mLastLocation.getLatitude()) + "&long=" + String.valueOf(mLastLocation.getLongitude()) + "&range=" + searchRange, null, new JsonHttpResponseHandler() {
@@ -239,6 +235,24 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
                 }
             });
         }
+    }
+
+    private void showLocationDisabledAlert(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("location disabled");
+        dialog.setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(myIntent);
+            }
+        });
+        dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+            }
+        });
+        dialog.show();
     }
 
     private Emitter.Listener onConnectSuccess = new Emitter.Listener() {
