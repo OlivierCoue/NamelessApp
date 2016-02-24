@@ -44,7 +44,6 @@
         <!-- Input username -->
         <EditText
             android:id="@+id/username"
-            android:background="@drawable/start_username_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/login_input_username"
@@ -111,7 +110,7 @@
                     <!-- Range selection: gradient -->
                     <View
                         android:gravity="start"
-                        android:layout_width="20dp"
+                        android:layout_width="34dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/sb_range_gradient"/>
 
@@ -143,7 +142,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/icon_sofa"/>
+                        android:layout_alignParentLeft="true"
+                        android:layout_toStartOf="@+id/icon_sofa"
+                        android:layout_toLeftOf="@+id/icon_sofa"/>
 
                     <!-- Range selection: sofa icon -->
                     <com.oliviercoue.httpwww.nameless.ui.FontButton
@@ -159,7 +160,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@+id/icon_sofa"/>
+                        android:layout_alignParentRight="true"
+                        android:layout_toEndOf="@+id/icon_sofa"
+                        android:layout_toRightOf="@+id/icon_sofa"/>
 
                 </RelativeLayout>
 
@@ -177,7 +180,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/icon_walk"/>
+                        android:layout_alignParentLeft="true"
+                        android:layout_toStartOf="@+id/icon_walk"
+                        android:layout_toLeftOf="@+id/icon_walk"/>
 
                     <!-- Range selection: walk icon -->
                     <com.oliviercoue.httpwww.nameless.ui.FontButton
@@ -193,7 +198,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@+id/icon_walk"/>
+                        android:layout_alignParentRight="true"
+                        android:layout_toEndOf="@+id/icon_walk"
+                        android:layout_toRightOf="@+id/icon_walk"/>
 
                 </RelativeLayout>
 
@@ -211,7 +218,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/icon_car"/>
+                        android:layout_alignParentLeft="true"
+                        android:layout_toStartOf="@+id/icon_car"
+                        android:layout_toLeftOf="@+id/icon_car"/>
 
                     <!-- Range selection: car icon -->
                     <com.oliviercoue.httpwww.nameless.ui.FontButton
@@ -227,7 +236,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@+id/icon_car"/>
+                        android:layout_alignParentRight="true"
+                        android:layout_toEndOf="@+id/icon_car"
+                        android:layout_toRightOf="@+id/icon_car"/>
 
                 </RelativeLayout>
 
@@ -245,7 +256,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/icon_world"/>
+                        android:layout_alignParentLeft="true"
+                        android:layout_toStartOf="@+id/icon_world"
+                        android:layout_toLeftOf="@+id/icon_world"/>
 
                     <!-- Range selection: world icon -->
                     <com.oliviercoue.httpwww.nameless.ui.FontButton
@@ -261,7 +274,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@+id/icon_world"/>
+                        android:layout_alignParentRight="true"
+                        android:layout_toEndOf="@+id/icon_world"
+                        android:layout_toRightOf="@+id/icon_world"/>
 
                 </RelativeLayout>
 
@@ -292,6 +307,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
+                android:layout_marginRight="3dp"
                 android:text="@string/login_range_1"
                 style="@style/range_text_bottom"/>
 
@@ -301,6 +317,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
+                android:layout_marginRight="3dp"
                 android:text="@string/default_value"
                 style="@style/range_text_bottom"/>
 
@@ -308,6 +325,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
+                android:layout_marginRight="3dp"
                 android:text="@string/login_range_unity_km"
                 style="@style/range_text_bottom"/>
 
@@ -317,6 +335,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
+                android:layout_marginRight="3dp"
                 android:text="@string/default_value"
                 style="@style/range_text_bottom"/>
 
