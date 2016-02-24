@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -72,9 +72,8 @@
     </style>
 
     <style name="button">
-        <item name="android:background">@drawable/button</item>
-        <item name="android:shape">rectangle</item>
-        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:background" tools:targetApi="21">@drawable/button</item>
+        <item name="android:backgroundTint" tools:targetApi="21">@color/colorPrimary</item>
         <item name="android:tint">@color/colorPrimary</item>
         <item name="android:layout_width">270dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -82,26 +81,30 @@
     </style>
 
     <style name="button.start">
-        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:backgroundTint" tools:targetApi="21">@color/white</item>
+        <item name="android:background" tools:targetApi="16">@color/white</item>
         <item name="android:tint">@color/white</item>
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="button.search">
-        <item name="android:backgroundTint">@color/lightGrey</item>
+        <item name="android:backgroundTint" tools:targetApi="21">@color/lightGrey</item>
+        <item name="android:background" tools:targetApi="16">@color/lightGrey</item>
         <item name="android:tint">@color/lightGrey</item>
         <item name="android:textColor">@color/grey</item>
     </style>
 
     <style name="button.next">
-        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:backgroundTint" tools:targetApi="21">@color/colorPrimary</item>
+        <item name="android:background" tools:targetApi="16">@color/colorPrimary</item>
         <item name="android:tint">@color/colorPrimary</item>
         <item name="android:layout_width">185dp</item>
         <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="button.transparent">
-        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:backgroundTint" tools:targetApi="21">@android:color/transparent</item>
+        <item name="android:background" tools:targetApi="16">@android:color/transparent</item>
         <item name="android:tint">@android:color/transparent</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">@color/white</item>

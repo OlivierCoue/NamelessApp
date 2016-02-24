@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingStart="16dp"
+    android:paddingLeft="16dp"
     android:paddingEnd="16dp"
+    android:paddingRight="16dp"
     style="@style/message_container.left">
 
     <LinearLayout
@@ -12,7 +14,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
+        android:gravity="start"
         android:visibility="gone"
         style="@style/message_container_top">
 
