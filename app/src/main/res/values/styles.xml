@@ -25,35 +25,32 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="username_input" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/white75</item>
+        <item name="colorControlActivated">@color/white</item>
+    </style>
+
     <style name="range_text_bottom">
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="message_button">
-        <item name="android:layout_width">53dp</item>
-        <item name="android:layout_height">53dp</item>
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
         <item name="android:gravity">right</item>
-        <item name="android:textSize">21sp</item>
-        <item name="android:background">@null</item>
-        <item name="android:shadowRadius">0</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
     </style>
 
     <style name="message_button.send">
-        <item name="android:layout_width">40dp</item>
-        <item name="android:textColor">@color/colorSecondary</item>
-        <item name="android:paddingRight">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
     </style>
 
     <style name="message_button.take">
-        <item name="android:layout_width">40dp</item>
-        <item name="android:textColor">#54000000</item>
-        <item name="android:paddingLeft">0dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
     </style>
 
     <style name="message_button.choose">

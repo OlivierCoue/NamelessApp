@@ -52,7 +52,7 @@
             android:textColorHighlight="@color/colorPrimaryDark"
             android:cursorVisible="true"
             android:textCursorDrawable="@null"
-            />
+            android:theme="@style/username_input"/>
 
         <!-- Range selection -->
         <TextView

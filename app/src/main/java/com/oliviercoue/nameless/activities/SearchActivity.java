@@ -44,7 +44,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_seach);
+        setContentView(R.layout.activity_search);
         Button cancelSearchButton = (Button) findViewById(R.id.cancel_search_button);
 
         activity = this;

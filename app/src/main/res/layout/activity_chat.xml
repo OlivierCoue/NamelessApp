@@ -61,13 +61,13 @@
                 <!-- Take photo -->
                 <ImageButton
                     android:id="@+id/take_picture_button"
-                    android:background="@mipmap/ic_launcher"
+                    android:background="@mipmap/icon_picture"
                     style="@style/message_button.take" />
 
                 <!-- Choose photo -->
                 <ImageButton
                     android:id="@+id/select_picture_button"
-                    android:background="@mipmap/ic_launcher"
+                    android:background="@mipmap/icon_gallery"
                     style="@style/message_button.choose" />
 
                 <GridLayout
@@ -77,7 +77,7 @@
                     <!-- Send button -->
                         <ImageButton
                         android:id="@+id/message_send_button"
-                        android:background="@mipmap/ic_launcher"
+                        android:background="@mipmap/icon_send"
                         android:layout_gravity="end"
                         style="@style/message_button.send" />
 
