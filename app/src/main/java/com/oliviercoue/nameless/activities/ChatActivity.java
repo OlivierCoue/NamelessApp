@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -71,7 +72,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
     // UI references.
     private ListView messageListView;
     private EditText messageInput;
-    private Button sendMessageButton, takePictureButton, selectPictureButton;
+    private ImageButton sendMessageButton, takePictureButton, selectPictureButton;
     private TextView friendLeaveTextView;
     private LinearLayout overlayImageLayout;
     private LinearLayout friendLeaveLayout;
@@ -121,9 +122,9 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
         Button cancelButton = (Button) findViewById(R.id.cancel_button);
         messageInput        = (EditText) findViewById(R.id.message_input);
         messageListView     = (ListView) findViewById(R.id.message_list_view);
-        sendMessageButton   = (Button) findViewById(R.id.message_send_button);
-        takePictureButton   = (Button) findViewById(R.id.take_picture_button);
-        selectPictureButton = (Button) findViewById(R.id.select_picture_button);
+        sendMessageButton   = (ImageButton) findViewById(R.id.message_send_button);
+        takePictureButton   = (ImageButton) findViewById(R.id.take_picture_button);
+        selectPictureButton = (ImageButton) findViewById(R.id.select_picture_button);
         friendLeaveTextView = (TextView) findViewById(R.id.friend_leave_text);
         overlayImageLayout  = (LinearLayout) findViewById(R.id.overlay_image_layout);
         friendLeaveLayout   = (LinearLayout) findViewById(R.id.friend_leave_layout);
@@ -154,9 +155,9 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count > 0) {
-                    sendMessageButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    //sendMessageButton.setTextColor(getResources().getColor(R.color.colorPrimary));
                 } else {
-                    sendMessageButton.setTextColor(getResources().getColor(R.color.colorSecondary));
+                    //sendMessageButton.setTextColor(getResources().getColor(R.color.colorSecondary));
                 }
             }
 
