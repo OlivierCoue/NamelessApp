@@ -5,18 +5,14 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal|center_vertical"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activities.StartActivity">
 
     <!-- Setup container -->
     <LinearLayout
-        android:id="@+id/email_login_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="32dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
         android:orientation="vertical">
 
         <!-- Logo -->
@@ -52,7 +48,6 @@
             android:textSize="@dimen/start_text"
             android:maxLines="1"
             android:singleLine="true"
-            android:paddingBottom="8dp"
             android:inputType="textCapSentences"
             android:textColorHighlight="@color/colorPrimaryDark"
             android:cursorVisible="true"
@@ -67,6 +62,13 @@
             android:text="@string/login_range_title"
             android:textSize="@dimen/start_text"
             android:textColor="@color/white75"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <!-- Range selection: icons -->
         <LinearLayout
@@ -147,11 +149,14 @@
                         android:layout_toLeftOf="@+id/icon_sofa"/>
 
                     <!-- Range selection: sofa icon -->
-                    <com.oliviercoue.nameless.ui.FontButton
+                    <ImageView
                         android:id="@+id/icon_sofa"
+                        android:background="@mipmap/icon_sofa"
                         android:layout_centerInParent="true"
-                        android:text="@string/sb_icon_sofa"
-                        style="@style/start_gradient_button"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:contentDescription="@string/app_name"/>
 
                     <View
                         android:background="@color/colorPrimary"
@@ -185,11 +190,14 @@
                         android:layout_toLeftOf="@+id/icon_walk"/>
 
                     <!-- Range selection: walk icon -->
-                    <com.oliviercoue.nameless.ui.FontButton
+                    <ImageView
                         android:id="@+id/icon_walk"
+                        android:background="@mipmap/icon_walk"
                         android:layout_centerInParent="true"
-                        android:text="@string/sb_icon_walk"
-                        style="@style/start_gradient_button"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:contentDescription="@string/app_name"/>
 
                     <View
                         android:background="@color/colorPrimary"
@@ -223,11 +231,14 @@
                         android:layout_toLeftOf="@+id/icon_car"/>
 
                     <!-- Range selection: car icon -->
-                    <com.oliviercoue.nameless.ui.FontButton
+                    <ImageView
                         android:id="@+id/icon_car"
+                        android:background="@mipmap/icon_car"
                         android:layout_centerInParent="true"
-                        android:text="@string/sb_icon_car"
-                        style="@style/start_gradient_button"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:contentDescription="@string/app_name"/>
 
                     <View
                         android:background="@color/colorPrimary"
@@ -261,11 +272,14 @@
                         android:layout_toLeftOf="@+id/icon_world"/>
 
                     <!-- Range selection: world icon -->
-                    <com.oliviercoue.nameless.ui.FontButton
+                    <ImageView
                         android:id="@+id/icon_world"
+                        android:background="@mipmap/icon_world"
                         android:layout_centerInParent="true"
-                        android:text="@string/sb_icon_world"
-                        style="@style/start_gradient_button"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:contentDescription="@string/app_name"/>
 
                     <View
                         android:background="@color/colorPrimary"
@@ -361,8 +375,11 @@
         <!-- Button start chat -->
         <Button
             android:id="@+id/start_chat_button"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/login_button_start"
-            style="@style/button.start"/>
+            android:theme="@style/button.start"/>
 
         <LinearLayout
             android:layout_width="match_parent"

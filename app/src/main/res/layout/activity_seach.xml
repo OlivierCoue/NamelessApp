@@ -20,7 +20,9 @@
 
     <Button
         android:id="@+id/cancel_search_button"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
         android:text="@string/search_cancel"
-        style="@style/button.search"/>
+        android:theme="@style/button.search"/>
 
 </LinearLayout>

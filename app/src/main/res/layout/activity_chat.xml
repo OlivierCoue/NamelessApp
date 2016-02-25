@@ -138,13 +138,20 @@
 
         <Button
             android:id="@+id/next_button"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/friend_leave_next"
-            style="@style/button.next"/>
+            android:theme="@style/button.next"/>
 
         <Button
             android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/friend_leave_quit"
-            style="@style/button.transparent"/>
+            android:theme="@style/button.transparent"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
 
     </LinearLayout>
 
