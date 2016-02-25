@@ -59,15 +59,15 @@
                 android:orientation="horizontal">
 
                 <!-- Take photo -->
-                <com.oliviercoue.nameless.ui.FontButton
+                <ImageButton
                     android:id="@+id/take_picture_button"
-                    android:text="@string/icon_take_photo"
+                    android:background="@mipmap/ic_launcher"
                     style="@style/message_button.take" />
 
                 <!-- Choose photo -->
-                <com.oliviercoue.nameless.ui.FontButton
+                <ImageButton
                     android:id="@+id/select_picture_button"
-                    android:text="@string/icon_choose_photo"
+                    android:background="@mipmap/ic_launcher"
                     style="@style/message_button.choose" />
 
                 <GridLayout
@@ -75,9 +75,9 @@
                     android:layout_height="match_parent">
 
                     <!-- Send button -->
-                    <com.oliviercoue.nameless.ui.FontButton
+                        <ImageButton
                         android:id="@+id/message_send_button"
-                        android:text="@string/icon_send_message"
+                        android:background="@mipmap/ic_launcher"
                         android:layout_gravity="end"
                         style="@style/message_button.send" />
 

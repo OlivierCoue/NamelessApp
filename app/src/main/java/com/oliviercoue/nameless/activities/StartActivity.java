@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,46 +27,40 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.oliviercoue.httpwww.nameless.R;
-import com.oliviercoue.nameless.api.NamelessRestClient;
 import com.oliviercoue.nameless.api.Url;
 import com.oliviercoue.nameless.handlers.FriendFoundHandler;
-import com.oliviercoue.nameless.security.Security;
-import com.oliviercoue.nameless.security.SecurityImp;
+import com.oliviercoue.nameless.models.States;
+import com.oliviercoue.nameless.start.StartManager;
+import com.oliviercoue.nameless.start.StartManagerImp;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
-
-import cz.msebera.android.httpclient.Header;
 
 
 /**
  * Created by Olivier on 06/02/2016.
  *
  */
-public class StartActivity extends AppCompatActivity implements SecurityImp, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class StartActivity extends AppCompatActivity implements StartManagerImp, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    // UI references.
     private EditText usernameView;
     private TextView rangeValueView, closeFiendNbView;
     private LinearLayout seekBarGradientLayout, gradientBackgroundLayout;
     private SeekBar rangeSeekBar;
     private Button startChatButton;
 
-    private static boolean isAuthenticated = false;
+    private static float seekBakProcess = 34;
     private static String usernameTxt;
+    private static String socketId;
+
     private boolean startClicked = false;
     private int searchRange = 10;
-    private static float seekBakProcess = 34;
+    private StartManager startNetwork;
     private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
     private Activity activity;
-    private static String socketId;
     private Socket ioSocket;
     {
         try {
@@ -83,9 +76,7 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
         setContentView(R.layout.activity_start);
 
         activity = this;
-
-        if(!isAuthenticated)
-            authenticate();
+        startNetwork = new StartManager(this);
 
         if(!isGpsAndNetworkEnabled())
             showLocationDisabledAlert();
@@ -97,17 +88,14 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
         ioSocket.on("connect_success", onConnectSuccess);
 
         instantiateUIReferences();
-
         initRangeSeekBar();
         initUsernameTextView();
-
-        setCloseFriendNb();
 
         ViewTreeObserver observer = gradientBackgroundLayout.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)(seekBakProcess*(gradientBackgroundLayout.getWidth()/100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int) (seekBakProcess * (gradientBackgroundLayout.getWidth() / 100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
                 seekBarGradientLayout.setLayoutParams(param);
                 gradientBackgroundLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
@@ -117,33 +105,10 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
             @Override
             public void onClick(View v) {
                 String usernameFromInput = usernameView.getText().toString();
-                usernameTxt  = (usernameFromInput.isEmpty() || usernameFromInput.length() > 30) ? "Nameless" : usernameFromInput;
-                if (isAuthenticated && !startClicked && mLastLocation != null && socketId != null && !socketId.isEmpty()) {
+                usernameTxt = (usernameFromInput.isEmpty() || usernameFromInput.length() > 30) ? "Nameless" : usernameFromInput;
+                if (!startClicked) {
                     startClicked = true;
-                    HashMap<String, String> paramMap = new HashMap<>();
-                    paramMap.put("username", usernameTxt);
-                    paramMap.put("socketId", socketId);
-                    paramMap.put("lat", String.valueOf(mLastLocation.getLatitude()));
-                    paramMap.put("long", String.valueOf(mLastLocation.getLongitude()));
-                    paramMap.put("range", String.valueOf(searchRange));
-                    NamelessRestClient.post("chat/start", new RequestParams(paramMap), new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            try {
-                                if (response.getBoolean("found")) {
-                                    new FriendFoundHandler(activity, response, false);
-                                } else {
-                                    Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
-                                    startActivity(intentSearchAct);
-                                    finish();
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                } else {
-                    Log.d(this.getClass().getName(), "bad params");
+                    startNetwork.startChat(usernameTxt, socketId, searchRange);
                 }
             }
         });
@@ -169,9 +134,22 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
         });
     }
 
-    private void authenticate(){
-        Security security = new Security(this);
-        security.authentication();
+    private void showLocationDisabledAlert(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("location disabled");
+        dialog.setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(myIntent);
+            }
+        });
+        dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+            }
+        });
+        dialog.show();
     }
 
     private boolean isGpsAndNetworkEnabled(){
@@ -218,41 +196,23 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
     }
 
     private void setCloseFriendNb() {
-        if(mLastLocation != null && isAuthenticated) {
-            NamelessRestClient.get("chat/count?lat=" + String.valueOf(mLastLocation.getLatitude()) + "&long=" + String.valueOf(mLastLocation.getLongitude()) + "&range=" + searchRange, null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                closeFiendNbView.setText(response.getString("friendNb"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-            });
+        startNetwork.getUsersInRangeNumber(searchRange);
+    }
+
+    @Override
+    public void onStartChatResult(Boolean friendUserFounded, JSONObject serverResponse) {
+        if (friendUserFounded) {
+            new FriendFoundHandler(activity, serverResponse, false);
+        } else {
+            Intent intentSearchAct = new Intent(getApplicationContext(), SearchActivity.class);
+            startActivity(intentSearchAct);
+            finish();
         }
     }
 
-    private void showLocationDisabledAlert(){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("location disabled");
-        dialog.setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(myIntent);
-            }
-        });
-        dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-            }
-        });
-        dialog.show();
+    @Override
+    public void onUsersInRangeNumberResult(int usersInRangeNumber) {
+        closeFiendNbView.setText(String.valueOf(usersInRangeNumber));
     }
 
     private Emitter.Listener onConnectSuccess = new Emitter.Listener() {
@@ -268,14 +228,10 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
     };
 
     @Override
-    public void onAuthenticationSuccess() {
-        isAuthenticated = true;
-        setCloseFriendNb();
-    }
-
-    @Override
     public void onBackPressed() {
-
+        Intent homePageIntent = new Intent(Intent.ACTION_MAIN);
+        homePageIntent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(homePageIntent);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -299,8 +255,7 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
 
     protected void onResume(){
         super.onResume();
-        if(mLastLocation!=null)
-            setCloseFriendNb();
+        setCloseFriendNb();
     }
 
     protected void onStart() {
@@ -313,24 +268,24 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
         if(mGoogleApiClient!=null)
             mGoogleApiClient.disconnect();
         super.onStop();
+        if(isFinishing()){
+            ioSocket.off("connect_success", onConnectSuccess);
+        }
     }
 
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
-            mLastLocation = location;
+            startNetwork.setUserLocation(location);
         }
-
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
 
         }
-
         @Override
         public void onProviderEnabled(String provider) {
 
         }
-
         @Override
         public void onProviderDisabled(String provider) {
 
@@ -339,17 +294,15 @@ public class StartActivity extends AppCompatActivity implements SecurityImp, Goo
 
     @Override
     public void onConnected(Bundle bundle) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            Log.d(this.getClass().getName(), String.valueOf(mLastLocation.getLatitude()));
-            Log.d(this.getClass().getName(), String.valueOf(mLastLocation.getLongitude()));
+        Location userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (userLocation != null){
+            startNetwork.setUserLocation(userLocation);
             setCloseFriendNb();
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
