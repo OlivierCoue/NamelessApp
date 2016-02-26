@@ -9,12 +9,13 @@ import android.os.Vibrator;
 import android.support.v7.app.NotificationCompat;
 
 import com.oliviercoue.httpwww.nameless.R;
-import com.oliviercoue.nameless.activities.ChatActivity;
+import com.oliviercoue.nameless.components.chat.ChatActivity;
 import com.oliviercoue.nameless.models.Message;
 import com.oliviercoue.nameless.models.User;
 
 /**
  * Created by Olivier on 17/02/2016.
+ *
  */
 public class MyNotificationManager {
 
@@ -41,11 +42,14 @@ public class MyNotificationManager {
         vibrator.vibrate(250);
     }
 
-    public void displayFriendFoundNotifiaction(User friendUser) {
+    public void displayFriendFoundNotifiaction(User currentUser, User friendUser) {
 
         Intent resultIntent = new Intent(context, ChatActivity.class);
 
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        resultIntent.putExtra("CURRENT_USER_ID", currentUser.getId());
+        resultIntent.putExtra("FRIEND_USER_ID", friendUser.getId());
 
         PendingIntent pIntent = PendingIntent.getActivity(context, (int)System.currentTimeMillis(), resultIntent, 0);
 

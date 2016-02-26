@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.activities;
+package com.oliviercoue.nameless.components.chat;
 
 import android.app.NotificationManager;
 import android.content.ComponentName;
@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -32,16 +33,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.oliviercoue.httpwww.nameless.R;
-import com.oliviercoue.nameless.api.Url;
-import com.oliviercoue.nameless.chat.ChatArrayAdapter;
-import com.oliviercoue.nameless.chat.ChatImageHelper;
-import com.oliviercoue.nameless.chat.ChatListViewImp;
-import com.oliviercoue.nameless.chat.ChatManager;
-import com.oliviercoue.nameless.chat.ChatManagerImp;
+import com.oliviercoue.nameless.components.chat.views.ChatArrayAdapter;
 import com.oliviercoue.nameless.models.Message;
 import com.oliviercoue.nameless.models.MessageImage;
 import com.oliviercoue.nameless.models.MessageTypes;
@@ -56,7 +49,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Date;
 
 /**
@@ -69,7 +61,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int REQUEST_SELECT_PHOTO = 2;
 
-    // UI references.
     private ListView messageListView;
     private EditText messageInput;
     private ImageButton sendMessageButton, takePictureButton, selectPictureButton;
@@ -77,96 +68,54 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
     private LinearLayout overlayImageLayout;
     private LinearLayout friendLeaveLayout;
     private ImageView fullSizeImageView;
+    private Button nextButton, cancelButton;
     private ActionBar actionBar;
 
-    private boolean changingStateAway = false, changingStateChatting = false, isAway = false, firstRun = true, fullSizeImageOpen = false, haveFriendFoundNotif;
+    private boolean changingStateAway = false, changingStateChatting = false, isAway = false, fullSizeImageOpen = false;
+    private int lastMessageId = 0;
+    private String mCurrentPhotoPath;
     private MyNotificationManager myNotificationManager;
     private NotificationManager notificationManager;
     private ChatManager chatManager;
-    private String mCurrentPhotoPath;
     private ChatArrayAdapter chatArrayAdapter;
     private User currentUser, friendUser;
     private ServiceConnection killNotificationsCon;
-    private int lastMessageId = 0;
-    private Socket ioSocket;
-    {
-        try {
-             ioSocket = IO.socket(Url.SOCKET_URL);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        /* instantiate managers */
         chatManager = new ChatManager(this);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         myNotificationManager = new MyNotificationManager(this);
 
-        /* set up service to kill notification on app close */
-        killNotificationsCon = new ServiceConnection() {
-            public void onServiceConnected(ComponentName className, IBinder binder) {
-                ((KillNotificationsService.KillBinder) binder).service.startService(new Intent(ChatActivity.this, KillNotificationsService.class));
-            }
-            public void onServiceDisconnected(ComponentName className) {
-            }
-        };
-        bindService(new Intent(ChatActivity.this, KillNotificationsService.class), killNotificationsCon, Context.BIND_AUTO_CREATE);
+        initKillNotificationsService();
 
-        /* instantiate ui objects */
-        Button nextButton   = (Button) findViewById(R.id.next_button);
-        Button cancelButton = (Button) findViewById(R.id.cancel_button);
-        messageInput        = (EditText) findViewById(R.id.message_input);
-        messageListView     = (ListView) findViewById(R.id.message_list_view);
-        sendMessageButton   = (ImageButton) findViewById(R.id.message_send_button);
-        takePictureButton   = (ImageButton) findViewById(R.id.take_picture_button);
-        selectPictureButton = (ImageButton) findViewById(R.id.select_picture_button);
-        friendLeaveTextView = (TextView) findViewById(R.id.friend_leave_text);
-        overlayImageLayout  = (LinearLayout) findViewById(R.id.overlay_image_layout);
-        friendLeaveLayout   = (LinearLayout) findViewById(R.id.friend_leave_layout);
-        fullSizeImageView   = (ImageView) findViewById(R.id.full_size_image_view);
-        actionBar = getSupportActionBar();
+        instantiateUIReferences();
 
-        /* add back button to action bar */
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setShowHideAnimationEnabled(false);
-        }
-        /* check if there is a notification to cancel it later */
-        haveFriendFoundNotif = getIntent().getExtras().getBoolean("HAVE_NOTIFICATION");
-        /* load conversation members */
-        chatManager.loadUsers(getIntent().getExtras().getInt("CURRENT_USER_ID"), getIntent().getExtras().getInt("FRIEND_USER_ID"));
+        addBackButtonToActionBar();
 
-        /* add emit listener to the socket */
-        ioSocket.on("message_received", onMessageReceived);
-        ioSocket.on("friend_quit", onFriendQuit);
+        initUsers();
 
-        /* add onChange listener to chat input to change the color of send message button */
         messageInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count > 0) {
-                    //sendMessageButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    sendMessageButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.icon_send_hover));
                 } else {
-                    //sendMessageButton.setTextColor(getResources().getColor(R.color.colorSecondary));
+                    sendMessageButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.icon_send));
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
 
-        /* add listeners to buttons */
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -176,27 +125,74 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                allowTakingPicture(false);
                 dispatchTakePictureIntent();
             }
         });
         selectPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                allowTakingPicture(false);
                 dispatchSelectPictureIntent();
             }
         });
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                nextButton.setClickable(false);
                 chatManager.next();
             }
         });
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                cancelButton.setClickable(false);
                 chatManager.close();
             }
         });
+    }
+
+    private void initKillNotificationsService(){
+        killNotificationsCon = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className, IBinder binder) {
+                ((KillNotificationsService.KillBinder) binder).service.startService(new Intent(ChatActivity.this, KillNotificationsService.class));
+            }
+            public void onServiceDisconnected(ComponentName className) {
+            }
+        };
+        bindService(new Intent(ChatActivity.this, KillNotificationsService.class), killNotificationsCon, Context.BIND_AUTO_CREATE);
+    }
+
+    private void instantiateUIReferences(){
+        nextButton          = (Button) findViewById(R.id.next_button);
+        cancelButton        = (Button) findViewById(R.id.cancel_button);
+        messageInput        = (EditText) findViewById(R.id.message_input);
+        messageListView     = (ListView) findViewById(R.id.message_list_view);
+        sendMessageButton   = (ImageButton) findViewById(R.id.message_send_button);
+        takePictureButton   = (ImageButton) findViewById(R.id.take_picture_button);
+        selectPictureButton = (ImageButton) findViewById(R.id.select_picture_button);
+        friendLeaveTextView = (TextView) findViewById(R.id.friend_leave_text);
+        overlayImageLayout  = (LinearLayout) findViewById(R.id.overlay_image_layout);
+        friendLeaveLayout   = (LinearLayout) findViewById(R.id.friend_leave_layout);
+        fullSizeImageView   = (ImageView) findViewById(R.id.full_size_image_view);
+        actionBar           = getSupportActionBar();
+    }
+
+    private void addBackButtonToActionBar(){
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initUsers(){
+        Bundle extras = getIntent().getExtras();
+        if(isExtrasValid(extras))
+            chatManager.loadUsers(extras.getInt("CURRENT_USER_ID"), extras.getInt("FRIEND_USER_ID"));
+        else
+            finish();
+    }
+
+    private boolean isExtrasValid(Bundle extras){
+        return extras != null && extras.containsKey("CURRENT_USER_ID") && extras.containsKey("FRIEND_USER_ID");
     }
 
     private void closeAlert() {
@@ -213,6 +209,11 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
             }
         });
         alert.show();
+    }
+
+    private void allowTakingPicture(boolean allow){
+        selectPictureButton.setEnabled(allow);
+        takePictureButton.setEnabled(allow);
     }
 
     private void setupUI(){
@@ -300,6 +301,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
                     Log.d(this.getClass().getName(), "Unknow request code");
             }
             chatManager.sendImage(mCurrentPhotoPath);
+            allowTakingPicture(true);
         }
     }
 
@@ -308,58 +310,52 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
         chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), currentUser, ChatImageHelper.getRoundedCornerBitmap(image, 16), mCurrentPhotoPath));
     }
 
-    private Emitter.Listener onMessageReceived = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            final JSONObject response = (JSONObject) args[0];
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Message receivedMessage = null;
-                        switch (response.getInt("type")) {
-                            case MessageTypes.TEXT:
-                                receivedMessage = Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data"));
-                                chatArrayAdapter.add(receivedMessage);
-                                break;
-                            case MessageTypes.IMAGE:
-                                receivedMessage = Message.fromJson(friendUser, response.getJSONObject("message").getJSONObject("data"));
-                                chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, response.getJSONObject("message_image").getJSONObject("data")));
-                        }
-                        if (isAway && receivedMessage != null) {
-                            if (lastMessageId != receivedMessage.getId())
-                                myNotificationManager.displayMessageNotifiaction(receivedMessage);
-                            lastMessageId = receivedMessage.getId();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+    @Override
+    public void onMessageReceived(final JSONObject serverResponse){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Message receivedMessage = null;
+                    switch (serverResponse.getInt("type")) {
+                        case MessageTypes.TEXT:
+                            receivedMessage = Message.fromJson(friendUser, serverResponse.getJSONObject("message").getJSONObject("data"));
+                            chatArrayAdapter.add(receivedMessage);
+                            break;
+                        case MessageTypes.IMAGE:
+                            receivedMessage = Message.fromJson(friendUser, serverResponse.getJSONObject("message").getJSONObject("data"));
+                            chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, serverResponse.getJSONObject("message_image").getJSONObject("data")));
                     }
+                    if (isAway && receivedMessage != null) {
+                        if (lastMessageId != receivedMessage.getId())
+                            myNotificationManager.displayMessageNotifiaction(receivedMessage);
+                        lastMessageId = receivedMessage.getId();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            });
-        }
-    };
+            }
+        });
+    }
 
-    private Emitter.Listener onFriendQuit = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            final JSONObject response = (JSONObject) args[0];
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (friendUser != null && response.getInt("friend_id") == friendUser.getId()) {
-                            closeKeybord();
-                            setChatUiMode(false);
-                            friendLeaveTextView.setText(friendUser.getUsername() + " " + getResources().getString(R.string.friend_leave_content));
-                            friendLeaveLayout.setVisibility(View.VISIBLE);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+    @Override
+    public void onFriendQuit(final JSONObject serverResponse){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (friendUser != null && serverResponse.getInt("friend_id") == friendUser.getId()) {
+                        closeKeybord();
+                        setChatUiMode(false);
+                        friendLeaveTextView.setText(friendUser.getUsername() + " " + getResources().getString(R.string.friend_leave_content));
+                        friendLeaveLayout.setVisibility(View.VISIBLE);
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            });
-        }
-    };
+            }
+        });
+    }
 
     private void closeKeybord(){
         View view = this.getCurrentFocus();
@@ -376,6 +372,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
         currentUser = users[0];
         friendUser = users[1];
         friendLeaveLayout.setVisibility(View.GONE);
+        nextButton.setClickable(true);
         setupUI();
     }
 
@@ -421,10 +418,10 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
     @Override
     protected void onResume(){
         super.onResume();
-        if(firstRun && haveFriendFoundNotif)
-            notificationManager.cancel(NotificationTypes.FRIEND_FOUNDED);
-        firstRun = false;
+        chatManager.activityResume();
+        notificationManager.cancel(NotificationTypes.FRIEND_FOUNDED);
         notificationManager.cancel(NotificationTypes.MESSAGE_RECEIVED);
+        allowTakingPicture(true);
         isAway = false;
         if(!changingStateChatting) {
             changingStateChatting = true;
@@ -435,6 +432,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
     @Override
     protected void onPause(){
         super.onPause();
+        chatManager.activityPaused(isFinishing());
         if(!isFinishing()){
             isAway = true;
             if(!changingStateAway) {
@@ -442,8 +440,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
                 chatManager.changeUserState(States.AWAY);
             }
         }else{
-            ioSocket.off("message_received", onMessageReceived);
-            ioSocket.off("friend_quit", onFriendQuit);
             unbindService(killNotificationsCon);
         }
     }

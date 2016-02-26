@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.activities;
+package com.oliviercoue.nameless.components.start;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -21,23 +22,15 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.oliviercoue.httpwww.nameless.R;
-import com.oliviercoue.nameless.api.Url;
+import com.oliviercoue.nameless.components.search.SearchActivity;
+import com.oliviercoue.nameless.components.settings.SettingsActivity;
 import com.oliviercoue.nameless.handlers.FriendFoundHandler;
-import com.oliviercoue.nameless.models.States;
-import com.oliviercoue.nameless.start.StartManager;
-import com.oliviercoue.nameless.start.StartManagerImp;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.net.URISyntaxException;
 
 
 /**
@@ -54,21 +47,12 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
 
     private static float seekBakProcess = 34;
     private static String usernameTxt;
-    private static String socketId;
 
     private boolean startClicked = false;
-    private int searchRange = 10;
-    private StartManager startNetwork;
+    private int searchRangeKm = 10;
+    private StartManager startManager;
     private GoogleApiClient mGoogleApiClient;
     private Activity activity;
-    private Socket ioSocket;
-    {
-        try {
-            ioSocket = IO.socket(Url.SOCKET_URL);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +60,7 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         setContentView(R.layout.activity_start);
 
         activity = this;
-        startNetwork = new StartManager(this);
+        startManager = new StartManager(this);
 
         if(!isGpsAndNetworkEnabled())
             showLocationDisabledAlert();
@@ -84,10 +68,8 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         if (mGoogleApiClient == null)
             instantiateGoogleApi();
 
-        ioSocket.connect();
-        ioSocket.on("connect_success", onConnectSuccess);
-
         instantiateUIReferences();
+        setupActionBar();
         initRangeSeekBar();
         initUsernameTextView();
 
@@ -95,8 +77,7 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int) (seekBakProcess * (gradientBackgroundLayout.getWidth() / 100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-                seekBarGradientLayout.setLayoutParams(param);
+                setSeekBarGradientWidth();
                 gradientBackgroundLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -105,10 +86,12 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
             @Override
             public void onClick(View v) {
                 String usernameFromInput = usernameView.getText().toString();
-                usernameTxt = (usernameFromInput.isEmpty() || usernameFromInput.length() > 30) ? "Nameless" : usernameFromInput;
+                usernameTxt = (usernameFromInput.isEmpty() || usernameFromInput.length() > 30) ? getResources().getString(R.string.app_name) : usernameFromInput;
                 if (!startClicked) {
-                    startClicked = true;
-                    startNetwork.startChat(usernameTxt, socketId, searchRange);
+                    if (startManager.startChat(usernameTxt, searchRangeKm)) {
+                        startClicked = true;
+                        startChatButton.setClickable(false);
+                    }
                 }
             }
         });
@@ -117,10 +100,11 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
                 seekBakProcess = progresValue;
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int) (seekBakProcess * (gradientBackgroundLayout.getWidth() / 100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
-                seekBarGradientLayout.setLayoutParams(param);
-                rangeValueView.setText(String.valueOf((int) (Math.pow(2, seekBakProcess / 10))));
-                searchRange = (int) Math.pow(2, seekBakProcess / 10);
+                if (seekBakProcess % 10 == 0)
+                    setCloseFriendNb();
+                setSeekBarGradientWidth();
+                updateSearchRangeKm();
+                updateRangeValueView();
             }
 
             @Override
@@ -140,7 +124,7 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         dialog.setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                Intent myIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(myIntent);
             }
         });
@@ -174,6 +158,12 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
                 .build();
     }
 
+    private void setupActionBar(){
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null)
+            actionBar.setTitle("");
+    }
+
     private void instantiateUIReferences(){
         startChatButton          = (Button) findViewById(R.id.start_chat_button);
         rangeSeekBar             = (SeekBar) findViewById(R.id.sb_range);
@@ -186,8 +176,16 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
 
     private void initRangeSeekBar(){
         rangeSeekBar.setProgress((int) seekBakProcess);
-        rangeValueView.setText(String.valueOf((int) Math.pow(2, seekBakProcess / 10)));
-        searchRange = (int) Math.pow(2, seekBakProcess / 10);
+        updateSearchRangeKm();
+        updateRangeValueView();
+    }
+
+    private void updateSearchRangeKm(){
+        searchRangeKm =  (int) Math.pow(2, seekBakProcess / 10);
+    }
+
+    private void updateRangeValueView(){
+        rangeValueView.setText(String.valueOf(searchRangeKm));
     }
 
     public void initUsernameTextView(){
@@ -195,8 +193,13 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
             usernameView.setText(usernameTxt);
     }
 
+    private void setSeekBarGradientWidth(){
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int) (seekBakProcess * (gradientBackgroundLayout.getWidth() / 100)), LinearLayout.LayoutParams.MATCH_PARENT, 1.0f);
+        seekBarGradientLayout.setLayoutParams(param);
+    }
+
     private void setCloseFriendNb() {
-        startNetwork.getUsersInRangeNumber(searchRange);
+        startManager.getUsersInRangeNumber(searchRangeKm);
     }
 
     @Override
@@ -214,18 +217,6 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     public void onUsersInRangeNumberResult(int usersInRangeNumber) {
         closeFiendNbView.setText(String.valueOf(usersInRangeNumber));
     }
-
-    private Emitter.Listener onConnectSuccess = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            JSONObject data = (JSONObject) args[0];
-            try {
-                socketId = data.getString("socketId");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
     @Override
     public void onBackPressed() {
@@ -253,9 +244,19 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(startManager!=null)
+            startManager.activityPaused(isFinishing());
+    }
+
+    @Override
     protected void onResume(){
         super.onResume();
         setCloseFriendNb();
+        if(startManager!=null)
+            startManager.activityResume();
     }
 
     protected void onStart() {
@@ -268,15 +269,12 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         if(mGoogleApiClient!=null)
             mGoogleApiClient.disconnect();
         super.onStop();
-        if(isFinishing()){
-            ioSocket.off("connect_success", onConnectSuccess);
-        }
     }
 
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
-            startNetwork.setUserLocation(location);
+            startManager.setUserLocation(location);
         }
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -296,7 +294,7 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     public void onConnected(Bundle bundle) {
         Location userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (userLocation != null){
-            startNetwork.setUserLocation(userLocation);
+            startManager.setUserLocation(userLocation);
             setCloseFriendNb();
         }
     }

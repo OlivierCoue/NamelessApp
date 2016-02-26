@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.chat;
+package com.oliviercoue.nameless.components.chat;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

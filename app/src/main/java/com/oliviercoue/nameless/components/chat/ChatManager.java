@@ -1,17 +1,19 @@
-package com.oliviercoue.nameless.chat;
+package com.oliviercoue.nameless.components.chat;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
+import com.github.nkzawa.emitter.Emitter;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.oliviercoue.nameless.activities.ChatActivity;
-import com.oliviercoue.nameless.activities.SearchActivity;
-import com.oliviercoue.nameless.activities.StartActivity;
-import com.oliviercoue.nameless.api.NamelessRestClient;
+import com.oliviercoue.nameless.components.ActivityManager;
+import com.oliviercoue.nameless.components.ActivityManagerImp;
+import com.oliviercoue.nameless.components.search.SearchActivity;
+import com.oliviercoue.nameless.components.start.StartActivity;
 import com.oliviercoue.nameless.models.User;
+import com.oliviercoue.nameless.network.NamelessRestClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +27,7 @@ import cz.msebera.android.httpclient.Header;
  * Created by Olivier on 18/02/2016.
  *
  */
-public class ChatManager {
+public class ChatManager extends ActivityManager implements ActivityManagerImp{
 
     private ChatManagerImp chatManagerImp;
     private ChatImageHelper chatImageHelper;
@@ -33,9 +35,30 @@ public class ChatManager {
     private boolean canceling = false;
 
     public ChatManager(ChatActivity chatActivity){
+        super(chatActivity);
         context = chatActivity;
         chatManagerImp = chatActivity;
         chatImageHelper = new ChatImageHelper();
+        getSessionManager().addSocketListener("message_received", getOnMessageReceivedListener());
+        getSessionManager().addSocketListener("friend_quit", getOnFriendQuitListener());
+    }
+
+    private Emitter.Listener getOnMessageReceivedListener(){
+        return new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                chatManagerImp.onMessageReceived((JSONObject) args[0]);
+            }
+        };
+    }
+
+    private Emitter.Listener getOnFriendQuitListener(){
+        return new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                chatManagerImp.onFriendQuit((JSONObject) args[0]);
+            }
+        };
     }
 
     public void loadUsers(int currentUserId, int friendUserId) {
@@ -68,6 +91,10 @@ public class ChatManager {
         HashMap<String, String> paramMap = new HashMap<>();
         paramMap.put("messageText", messageText);
         NamelessRestClient.post("message", new RequestParams(paramMap), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+            }
         });
     }
 
@@ -86,6 +113,10 @@ public class ChatManager {
             params.put("full", fullIS, "thumbnail.jpeg");
 
             NamelessRestClient.post("message/image", params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                }
             });
         }
     }
@@ -157,4 +188,13 @@ public class ChatManager {
         }
     }
 
+    @Override
+    public void onConnectionLost() {
+
+    }
+
+    @Override
+    public void onConnectionBack() {
+
+    }
 }

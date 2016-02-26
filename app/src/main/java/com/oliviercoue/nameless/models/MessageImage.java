@@ -5,9 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
-import com.oliviercoue.nameless.chat.ChatArrayAdapter;
-import com.oliviercoue.nameless.api.NamelessRestClient;
-import com.oliviercoue.nameless.chat.ChatImageHelper;
+import com.oliviercoue.nameless.components.chat.views.ChatArrayAdapter;
+import com.oliviercoue.nameless.network.NamelessRestClient;
+import com.oliviercoue.nameless.components.chat.ChatImageHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;

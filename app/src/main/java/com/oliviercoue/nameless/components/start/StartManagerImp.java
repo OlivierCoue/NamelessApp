@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.start;
+package com.oliviercoue.nameless.components.start;
 
 import org.json.JSONObject;
 
