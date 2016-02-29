@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.activities;
+package com.oliviercoue.nameless.components.settings;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -12,36 +12,40 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.components.start.StartActivity;
 
 import java.util.Locale;
 
 /**
  * Created by Olivier on 06/02/2016.
+ *
  */
 public class SettingsActivity extends AppCompatActivity {
 
-    // UI references.
-    private ListView languagesListView;
     private ActionBar actionBar;
+    private SettingsManager settingsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        settingsManager = new SettingsManager(this);
 
-        languagesListView = (ListView) findViewById(R.id.languages_listview);
+        actionBar = getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+        ListView languagesListView = (ListView) findViewById(R.id.languages_listview);
         String[] languages = getResources().getStringArray(R.array.languages_array);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, languages);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, languages);
         languagesListView.setAdapter(adapter);
 
         languagesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Locale locale = null;
+                Locale locale;
                 switch ((int) id) {
                     case 0:
                         locale = Locale.ENGLISH;
@@ -56,6 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
                         actionBar.setTitle("Язык");
                         break;
                     default:
+                        locale = Locale.ENGLISH;
                 }
 
                 Locale.setDefault(locale);
@@ -84,6 +89,18 @@ public class SettingsActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        settingsManager.activityPaused(isFinishing());
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        settingsManager.activityResume();
     }
 
 }

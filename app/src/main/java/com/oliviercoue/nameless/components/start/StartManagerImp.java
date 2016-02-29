@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.start;
+package com.oliviercoue.nameless.components.start;
 
 import org.json.JSONObject;
 
@@ -10,4 +10,5 @@ public interface StartManagerImp {
     void onStartChatResult(Boolean friendUserFounded, JSONObject serverResponse);
 
     void onUsersInRangeNumberResult(int usersInRangeNumber);
+
 }

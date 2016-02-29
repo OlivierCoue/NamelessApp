@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.chat;
+package com.oliviercoue.nameless.components.chat.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,8 +13,9 @@ import android.widget.TextView;
 
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.oliviercoue.httpwww.nameless.R;
-import com.oliviercoue.nameless.activities.ChatActivity;
-import com.oliviercoue.nameless.api.NamelessRestClient;
+import com.oliviercoue.nameless.components.chat.ChatActivity;
+import com.oliviercoue.nameless.components.chat.ChatListViewImp;
+import com.oliviercoue.nameless.network.NamelessRestClient;
 import com.oliviercoue.nameless.models.Message;
 import com.oliviercoue.nameless.models.MessageImage;
 import com.oliviercoue.nameless.models.User;
@@ -72,19 +73,15 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
             row = inflater.inflate(R.layout.message_header, parent, false);
             TextView headerTitle = (TextView) row.findViewById(R.id.message_header_title);
             TextView headerContent = (TextView) row.findViewById(R.id.message_header_content);
-            String strTitle = context.getResources().getString(R.string.chat_welcome_title);
-            String strContent = context.getResources().getString(R.string.chat_welcome_content);
-            headerTitle.setText(String.format(strTitle, friendUser.getUsername()));
-            headerContent.setText(String.format(strContent, currentUser.getUsername(), friendUser.getUsername()));
+            headerTitle.setText(String.format(context.getResources().getString(R.string.chat_welcome_title), friendUser.getUsername()));
+            headerContent.setText(String.format(context.getResources().getString(R.string.chat_welcome_content), currentUser.getUsername(), friendUser.getUsername()));
         }else {
 
-            TextView chatText;
             ImageView chatImage;
             if (message.getFromUs()) {
                 if (message instanceof MessageImage) {
                     row = inflater.inflate(R.layout.message_image_right, parent, false);
-                    chatImage = (ImageView) row.findViewById(R.id.message_image);
-                    chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
+                    chatImage = getImageViewWithImage(row, (MessageImage) message);
                     chatImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -93,8 +90,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                     });
                 } else {
                     row = inflater.inflate(R.layout.message_right, parent, false);
-                    chatText = (TextView) row.findViewById(R.id.message_text_view);
-                    chatText.setText(message.getMessageText());
+                    renderMessageTextView(row, message);
                 }
 
                 if ((lastMessage != null && !lastMessage.getFromUs()) || position == 1) {
@@ -103,8 +99,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
             } else {
                 if (message instanceof MessageImage) {
                     row = inflater.inflate(R.layout.message_image_left, parent, false);
-                    chatImage = (ImageView) row.findViewById(R.id.message_image);
-                    chatImage.setImageBitmap(((MessageImage) message).getImageBitmap());
+                    chatImage = getImageViewWithImage(row, (MessageImage) message);
                     chatImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -112,7 +107,6 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                                 @Override
                                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
                                 }
-
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, File file) {
                                     openFullImage(BitmapFactory.decodeFile(file.getAbsolutePath()));
@@ -122,8 +116,7 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
                     });
                 } else {
                     row = inflater.inflate(R.layout.message_left, parent, false);
-                    chatText = (TextView) row.findViewById(R.id.message_text_view);
-                    chatText.setText(message.getMessageText());
+                    renderMessageTextView(row, message);
                 }
 
                 if ((lastMessage != null && lastMessage.getFromUs()) || position == 1) {
@@ -132,6 +125,17 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
             }
         }
         return row;
+    }
+
+    private ImageView getImageViewWithImage(View v, MessageImage messageImage){
+        ImageView chatImage = (ImageView) v.findViewById(R.id.message_image);
+        chatImage.setImageBitmap(messageImage.getImageBitmap());
+        return chatImage;
+    }
+
+    private void renderMessageTextView(View v, Message message){
+        TextView chatText = (TextView) v.findViewById(R.id.message_text_view);
+        chatText.setText(message.getMessageText());
     }
 
     private void openFullImage(Bitmap image){

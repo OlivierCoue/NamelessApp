@@ -1,4 +1,4 @@
-package com.oliviercoue.nameless.api;
+package com.oliviercoue.nameless.network;
 
 /**
  * Created by Olivier on 06/02/2016.

@@ -1,16 +1,26 @@
-package com.oliviercoue.nameless.notifications;
+package com.oliviercoue.nameless.services;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.oliviercoue.nameless.components.start.StartActivity;
+import com.oliviercoue.nameless.network.NamelessRestClient;
+import com.oliviercoue.nameless.notifications.NotificationTypes;
+
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
+
 /**
  * Created by Olivier on 19/02/2016.
  *
  */
-public class KillNotificationsService extends Service{
+public class CloseAppService extends Service{
 
     public static int NOTIFICATION_MESSAGE_ID = NotificationTypes.MESSAGE_RECEIVED;
     public static int NOTIFICATION_FRIEND_FIND_ID = NotificationTypes.FRIEND_FOUNDED;
@@ -41,6 +51,14 @@ public class KillNotificationsService extends Service{
         NotificationManager mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNM.cancel(NOTIFICATION_MESSAGE_ID);
         mNM.cancel(NOTIFICATION_FRIEND_FIND_ID);
+        NamelessRestClient.post("chat/stop", null, new JsonHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String s, Throwable t) {
+            }
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            }
+        });
     }
 
 }
