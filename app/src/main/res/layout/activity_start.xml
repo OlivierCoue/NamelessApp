@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal|center_vertical"
     android:orientation="vertical"
-    tools:context=".activities.StartActivity">
+    tools:context=".activities.StartActivity"
+    android:transcriptMode="alwaysScroll">
 
     <!-- Setup container -->
     <LinearLayout
@@ -52,6 +53,7 @@
             android:textColorHighlight="@color/colorPrimaryDark"
             android:cursorVisible="true"
             android:textCursorDrawable="@null"
+            android:padding="@null"
             android:theme="@style/username_input"/>
 
         <!-- Range selection -->
@@ -301,7 +303,7 @@
         <!-- Range selection: seek bar -->
         <SeekBar
             android:id="@+id/sb_range"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="100"
