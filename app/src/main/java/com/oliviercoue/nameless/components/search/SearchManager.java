@@ -5,7 +5,6 @@ import android.content.Context;
 import com.github.nkzawa.emitter.Emitter;
 import com.oliviercoue.nameless.components.ActivityManager;
 import com.oliviercoue.nameless.components.ActivityManagerImp;
-import com.oliviercoue.nameless.components.start.StartActivity;
 import com.oliviercoue.nameless.handlers.FriendFoundHandler;
 
 import org.json.JSONObject;
@@ -18,12 +17,11 @@ public class SearchManager extends ActivityManager implements ActivityManagerImp
     private Context context;
     private JSONObject serverResponse;
     private boolean friendFound = false;
-    private boolean isConnected = true;
 
     public SearchManager(SearchActivity searchActivity){
         super(searchActivity);
         this.context = searchActivity;
-        getSessionManager().addSocketListener("friend_founded", onFriendFounded);
+        getSocketManager().addSocketListener("friend_founded", onFriendFounded);
     }
 
     private Emitter.Listener onFriendFounded = new Emitter.Listener() {
@@ -44,17 +42,4 @@ public class SearchManager extends ActivityManager implements ActivityManagerImp
             new FriendFoundHandler(context, serverResponse, false);
     }
 
-    @Override
-    public void onConnectionLost() {
-        isConnected = false;
-    }
-
-    @Override
-    public void onConnectionBack() {
-        isConnected = true;
-    }
-
-    public boolean isConnected() {
-        return isConnected;
-    }
 }

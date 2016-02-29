@@ -1,7 +1,9 @@
-package com.oliviercoue.nameless.network.session;
+package com.oliviercoue.nameless.network.socket;
 
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Looper;
 import android.util.Log;
 
@@ -14,8 +16,6 @@ import com.oliviercoue.nameless.network.NamelessRestClient;
 import com.oliviercoue.nameless.network.NetworkStateImp;
 import com.oliviercoue.nameless.network.NetworkStateReceiver;
 import com.oliviercoue.nameless.network.Url;
-import com.oliviercoue.nameless.network.security.Security;
-import com.oliviercoue.nameless.network.security.SecurityImp;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,14 +29,14 @@ import cz.msebera.android.httpclient.Header;
  * Created by Olivier on 26/02/2016.
  *
  */
-public class SessionManager implements SecurityImp, NetworkStateImp {
+public class SocketManager implements NetworkStateImp {
 
-    private SessionManagerImp sessionManagerImp;
+    private SocketManagerImp sessionManagerImp;
     private NetworkStateReceiver networkStateReceiver;
     private IntentFilter filter;
     private Context context;
     private static String socketId;
-    private static boolean isAuthenticated = false;
+    private static boolean isSocketConnected = false;
 
     private Socket ioSocket;
     {
@@ -47,26 +47,12 @@ public class SessionManager implements SecurityImp, NetworkStateImp {
         }
     }
 
-    public SessionManager(Context context, SessionManagerImp sessionManagerImp){
+    public SocketManager(Context context, SocketManagerImp sessionManagerImp){
         this.sessionManagerImp = sessionManagerImp;
         this.context = context;
 
-        if(!isAuthenticated)
-            authenticate();
-
         initNetworkStateReceiver();
-        addSocketListener("connect_success", onConnectSuccess);
-    }
-
-    private void authenticate(){
-        Security security = new Security(this);
-        security.authentication();
-    }
-
-    @Override
-    public void onAuthenticationSuccess() {
-        isAuthenticated = true;
-        connectSocket();
+        addSocketListener("connect_success", getOnSocketConnectSuccess());
     }
 
     public void connectSocket(){
@@ -82,22 +68,23 @@ public class SessionManager implements SecurityImp, NetworkStateImp {
         ioSocket.on(name, listener);
     }
 
-    private Emitter.Listener onConnectSuccess = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            JSONObject data = (JSONObject) args[0];
-            try {
-                String newSocketId = data.getString("socketId");
-                if(socketId != null)
-                    updateServerSocketId(newSocketId);
-                else
-                    setServerSocketId(newSocketId);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+    private Emitter.Listener getOnSocketConnectSuccess() {
+        return new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data = (JSONObject) args[0];
+                try {
+                    String newSocketId = data.getString("socketId");
+                    if (socketId != null)
+                        updateServerSocketId(newSocketId);
+                    else
+                        setServerSocketId(newSocketId);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-    };
+        };
+    }
 
     private void updateServerSocketId(final String newSocketId){
         Thread thread = new Thread() {
@@ -141,6 +128,12 @@ public class SessionManager implements SecurityImp, NetworkStateImp {
         thread.start();
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     private void removeSocketListeners(){
         ioSocket.off();
     }
@@ -155,15 +148,16 @@ public class SessionManager implements SecurityImp, NetworkStateImp {
 
     @Override
     public void onConnectionLost() {
-        isAuthenticated = false;
-        sessionManagerImp.onDisconnected();
+        if(!isNetworkAvailable()) {
+            isSocketConnected = false;
+            sessionManagerImp.onDisconnected();
+        }
     }
 
     @Override
     public void onConnectionFound() {
-        if(!isAuthenticated) {
-            authenticate();
-        }
+        if(!isSocketConnected)
+            connectSocket();
     }
 
     public void activityPaused(boolean isFinishing){

@@ -40,7 +40,7 @@ import com.oliviercoue.nameless.models.MessageImage;
 import com.oliviercoue.nameless.models.MessageTypes;
 import com.oliviercoue.nameless.models.States;
 import com.oliviercoue.nameless.models.User;
-import com.oliviercoue.nameless.notifications.KillNotificationsService;
+import com.oliviercoue.nameless.services.CloseAppService;
 import com.oliviercoue.nameless.notifications.MyNotificationManager;
 import com.oliviercoue.nameless.notifications.NotificationTypes;
 
@@ -79,7 +79,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
     private ChatManager chatManager;
     private ChatArrayAdapter chatArrayAdapter;
     private User currentUser, friendUser;
-    private ServiceConnection killNotificationsCon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +88,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
         chatManager = new ChatManager(this);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         myNotificationManager = new MyNotificationManager(this);
-
-        initKillNotificationsService();
 
         instantiateUIReferences();
 
@@ -150,17 +147,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
                 chatManager.close();
             }
         });
-    }
-
-    private void initKillNotificationsService(){
-        killNotificationsCon = new ServiceConnection() {
-            public void onServiceConnected(ComponentName className, IBinder binder) {
-                ((KillNotificationsService.KillBinder) binder).service.startService(new Intent(ChatActivity.this, KillNotificationsService.class));
-            }
-            public void onServiceDisconnected(ComponentName className) {
-            }
-        };
-        bindService(new Intent(ChatActivity.this, KillNotificationsService.class), killNotificationsCon, Context.BIND_AUTO_CREATE);
     }
 
     private void instantiateUIReferences(){
@@ -439,8 +425,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
                 changingStateAway = true;
                 chatManager.changeUserState(States.AWAY);
             }
-        }else{
-            unbindService(killNotificationsCon);
         }
     }
 }

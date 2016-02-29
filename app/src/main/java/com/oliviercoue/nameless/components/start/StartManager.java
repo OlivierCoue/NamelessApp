@@ -1,7 +1,6 @@
 package com.oliviercoue.nameless.components.start;
 
 import android.location.Location;
-import android.util.Log;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -82,7 +81,11 @@ public class StartManager extends ActivityManager implements ActivityManagerImp{
     public void getUsersInRangeNumber(int searchRange){
         if(super.isAuthenticated() && userLocation != null && !isWaitingForUserInRange) {
             isWaitingForUserInRange = true;
-            NamelessRestClient.get("chat/count?lat=" + String.valueOf(userLocation.getLatitude()) + "&long=" + String.valueOf(userLocation.getLongitude()) + "&range=" + searchRange, null, new JsonHttpResponseHandler() {
+            HashMap<String, String> paramMap = new HashMap<>();
+            paramMap.put("lat", String.valueOf(userLocation.getLatitude()));
+            paramMap.put("long", String.valueOf(userLocation.getLongitude()));
+            paramMap.put("range", String.valueOf(searchRange));
+            NamelessRestClient.get("chat/count", new RequestParams(paramMap), new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, final JSONObject response) {
                     isWaitingForUserInRange = false;
@@ -98,16 +101,6 @@ public class StartManager extends ActivityManager implements ActivityManagerImp{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onConnectionLost() {
-        Log.d("hello", "connection lost");
-    }
-
-    @Override
-    public void onConnectionBack() {
-
     }
 
 }

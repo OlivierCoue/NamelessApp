@@ -27,7 +27,6 @@ public class SearchActivity extends AppCompatActivity {
     private SearchManager searchManager;
     private boolean cancelClicked = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +46,7 @@ public class SearchActivity extends AppCompatActivity {
 
 
     private void cancel(){
-        if(searchManager.isConnected()) {
+        if(searchManager.isAuthenticated()) {
             if (!cancelClicked) {
                 cancelClicked = true;
                 cancelSearchButton.setClickable(false);
@@ -60,10 +59,9 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 });
             }
-        }else{
-            Toast.makeText(this, "Waiting for connection", Toast.LENGTH_LONG).show();
         }
     }
+
 
     @Override
     public void onBackPressed() {

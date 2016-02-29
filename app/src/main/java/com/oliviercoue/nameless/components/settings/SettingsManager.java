@@ -12,13 +12,4 @@ public class SettingsManager extends ActivityManager implements ActivityManagerI
         super(settingsActivity);
     }
 
-    @Override
-    public void onConnectionLost() {
-
-    }
-
-    @Override
-    public void onConnectionBack() {
-
-    }
 }

@@ -1,57 +1,96 @@
 package com.oliviercoue.nameless.components;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.support.design.widget.Snackbar;
+import android.view.View;
 
-import com.oliviercoue.nameless.network.session.SessionManager;
-import com.oliviercoue.nameless.network.session.SessionManagerImp;
+import com.oliviercoue.nameless.network.socket.SocketManager;
+import com.oliviercoue.nameless.network.socket.SocketManagerImp;
+import com.oliviercoue.nameless.services.CloseAppService;
 
 /**
  * Created by Olivier on 26/02/2016.
  *
  */
-public class ActivityManager implements SessionManagerImp{
+public class ActivityManager implements SocketManagerImp {
 
-    private ActivityManagerImp activityManagerImp;
-    private SessionManager sessionManager;
+    private ServiceConnection closeAppServiceConnection;
+    private SocketManager socketManager;
+    private Snackbar networkInfoSnackBar;
+    private Context context;
     private static boolean isAuthenticated = false;
     private boolean activityPaused = false;
 
     public ActivityManager(Context context){
-        this.activityManagerImp = (ActivityManagerImp) this;
-        this.sessionManager = new SessionManager(context, this);
+        this.socketManager = new SocketManager(context, this);
+        this.context = context;
+        initCloseAppService();
+    }
+
+    private void initCloseAppService(){
+        closeAppServiceConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className, IBinder binder) {
+                ((CloseAppService.KillBinder) binder).service.startService(new Intent(context, CloseAppService.class));
+            }
+            public void onServiceDisconnected(ComponentName className) {
+            }
+        };
+        context.bindService(new Intent(context, CloseAppService.class), closeAppServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void unBindCloseAppService(){
+        try {
+            context.unbindService(closeAppServiceConnection);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showNetworkInfoSnackBar(){
+        View rootView = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
+        networkInfoSnackBar = Snackbar.make(rootView, "No network connection.", Snackbar.LENGTH_INDEFINITE);
+        networkInfoSnackBar.show();
     }
 
     @Override
     public void onConnectSuccess() {
         isAuthenticated = true;
-        activityManagerImp.onConnectionBack();
+        if(networkInfoSnackBar!=null)
+            networkInfoSnackBar.dismiss();
     }
 
     @Override
     public void onDisconnected() {
         isAuthenticated = false;
-        activityManagerImp.onConnectionLost();
+        showNetworkInfoSnackBar();
     }
 
     public void activityPaused(boolean isFinishing){
+        if(isFinishing)
+            unBindCloseAppService();
         activityPaused = true;
-        sessionManager.activityPaused(isFinishing);
+        socketManager.activityPaused(isFinishing);
     }
 
     public void activityResume(){
         activityPaused = false;
-        sessionManager.activityResume();
+        socketManager.activityResume();
     }
 
-    protected boolean isAuthenticated() {
+    public SocketManager getSocketManager(){
+        return socketManager;
+    }
+
+    public boolean isAuthenticated() {
         return isAuthenticated;
     }
 
-    protected SessionManager getSessionManager(){
-        return sessionManager;
-    }
-
-    protected boolean isActivityPauses(){
+    public boolean isActivityPauses(){
         return activityPaused;
     }
 }

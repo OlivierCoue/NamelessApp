@@ -39,8 +39,8 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
         context = chatActivity;
         chatManagerImp = chatActivity;
         chatImageHelper = new ChatImageHelper();
-        getSessionManager().addSocketListener("message_received", getOnMessageReceivedListener());
-        getSessionManager().addSocketListener("friend_quit", getOnFriendQuitListener());
+        getSocketManager().addSocketListener("message_received", getOnMessageReceivedListener());
+        getSocketManager().addSocketListener("friend_quit", getOnFriendQuitListener());
     }
 
     private Emitter.Listener getOnMessageReceivedListener(){
@@ -188,13 +188,4 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
         }
     }
 
-    @Override
-    public void onConnectionLost() {
-
-    }
-
-    @Override
-    public void onConnectionBack() {
-
-    }
 }

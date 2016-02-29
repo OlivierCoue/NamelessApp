@@ -10,4 +10,5 @@ public interface StartManagerImp {
     void onStartChatResult(Boolean friendUserFounded, JSONObject serverResponse);
 
     void onUsersInRangeNumberResult(int usersInRangeNumber);
+
 }

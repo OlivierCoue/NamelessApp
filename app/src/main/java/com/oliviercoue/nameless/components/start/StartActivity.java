@@ -8,7 +8,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -69,7 +68,6 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
             instantiateGoogleApi();
 
         instantiateUIReferences();
-        setupActionBar();
         initRangeSeekBar();
         initUsernameTextView();
 
@@ -156,12 +154,6 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-    }
-
-    private void setupActionBar(){
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar!=null)
-            actionBar.setTitle("");
     }
 
     private void instantiateUIReferences(){
