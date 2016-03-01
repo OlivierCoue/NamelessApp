@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.components.chat.ChatActivity;
 import com.oliviercoue.nameless.components.chat.ChatListViewImp;
 import com.oliviercoue.nameless.network.NamelessRestClient;
@@ -43,6 +43,11 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
     public void add(Message object) {
         chatMessageList.add(object);
         super.add(object);
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
     }
 
     public ChatArrayAdapter(Context context, int textViewResourceId, User currentUser, User friendUser) {

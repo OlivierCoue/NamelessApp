@@ -107,7 +107,7 @@
             android:layout_gravity="center_horizontal"
             android:contentDescription="@string/app_name"/>
 
-        <TextView
+        <com.oliviercoue.nameless.ui.MediumTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -117,7 +117,7 @@
             android:textStyle="bold"
             android:textSize="@dimen/overlay_size_title"/>
 
-        <TextView
+        <com.oliviercoue.nameless.ui.RegularTextView
             android:id="@+id/friend_leave_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -126,7 +126,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/overlay_size_content"/>
 
-        <TextView
+        <com.oliviercoue.nameless.ui.RegularTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"

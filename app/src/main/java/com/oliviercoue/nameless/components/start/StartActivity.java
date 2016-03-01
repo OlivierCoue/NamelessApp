@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.components.search.SearchActivity;
 import com.oliviercoue.nameless.components.settings.SettingsActivity;
 import com.oliviercoue.nameless.handlers.FriendFoundHandler;
@@ -57,7 +57,6 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
         activity = this;
         startManager = new StartManager(this);
 
