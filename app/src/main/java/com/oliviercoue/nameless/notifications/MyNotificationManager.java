@@ -53,7 +53,7 @@ public class MyNotificationManager {
 
         PendingIntent pIntent = PendingIntent.getActivity(context, (int)System.currentTimeMillis(), resultIntent, 0);
 
-        Notification myNotification =  createNotificion("FRIEND FOUNDED", "Speak with " + friendUser.getUsername(), pIntent);
+        Notification myNotification =  createNotificion(context.getResources().getString(R.string.notification_friend_founded), context.getResources().getString(R.string.notification_friend_speak) + " " + friendUser.getUsername(), pIntent);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 

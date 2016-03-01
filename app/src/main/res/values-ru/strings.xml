@@ -34,5 +34,7 @@
     <string name="local_cancel">Запретить  </string>
     <string name="local_disabled">Nameless запрашивает данные о вашем местоположении, чтобы отображать только актуальную для вас информацию. </string>
     <string name="local_open_param">Настройки</string>
+    <string name="notification_friend_speak">Общаться с</string>
+    <string name="notification_friend_founded">Нашли вам чат !</string>
 
 </resources>

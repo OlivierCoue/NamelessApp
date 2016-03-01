@@ -47,5 +47,7 @@
     <string name="local_cancel">Ne pas autoriser</string>
     <string name="local_disabled">Le service de localisation de l\'appareil est désactivée. Activer le service de localisation dans les paramètres.</string>
     <string name="local_open_param">Paramètres</string>
+    <string name="notification_friend_founded">Ami trouvé !</string>
+    <string name="notification_friend_speak">Discutez avec</string>
 
 </resources>

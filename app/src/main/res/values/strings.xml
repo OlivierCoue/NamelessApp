@@ -64,4 +64,7 @@
     <string name="local_disabled">Your device location services are disabled. Enable location services in settings.</string>
     <string name="local_open_param">Settings</string>
     <string name="local_cancel">Don\'t allow</string>
+
+    <string name="notification_friend_founded">Friend found!</string>
+    <string name="notification_friend_speak">Speak with </string>
 </resources>
