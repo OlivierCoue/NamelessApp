@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -8,6 +8,10 @@
         <item name="android:actionBarStyle">@style/NamelessActionBar</item>
         <item name="actionBarStyle">@style/NamelessActionBar</item>
         <item name="android:homeAsUpIndicator">@mipmap/close</item>
+    </style>
+
+    <style name="AppThemeMultiTask" parent="Theme.AppCompat.Light">
+
     </style>
 
     <style name="NamelessActionBar" parent="@style/Widget.AppCompat.ActionBar">

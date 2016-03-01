@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
+import com.oliviercoue.httpwww.nameless.R;
 import com.oliviercoue.nameless.network.socket.SocketManager;
 import com.oliviercoue.nameless.network.socket.SocketManagerImp;
 import com.oliviercoue.nameless.services.CloseAppService;
@@ -53,7 +54,7 @@ public class ActivityManager implements SocketManagerImp {
 
     private void showNetworkInfoSnackBar(){
         View rootView = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
-        networkInfoSnackBar = Snackbar.make(rootView, "No network connection.", Snackbar.LENGTH_INDEFINITE);
+        networkInfoSnackBar = Snackbar.make(rootView, context.getResources().getString(R.string.no_network), Snackbar.LENGTH_INDEFINITE);
         networkInfoSnackBar.show();
     }
 

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Strings related to login -->
-    <string name="login_title">Profil de recherche</string>
+    <string name="login_title">Recherchez</string>
     <string name="login_input_username">Votre identité secrète</string>
     <string name="login_range_title">Rayon de recherche</string>
     <string name="login_range_1">environ</string>
@@ -43,5 +43,9 @@
     <string name="friend_leave_quit">Quitter</string>
     <string name="chat_welcome_content">Bienvenue dans votre chat personnel %1$s. Tous les messages que vous écrivez resterons entre vous et %2$s. Une fois que vous quittez le chat, vous n\'y aurez plus jamais accès. Saisissez cette occasion pour faire de nouvelles connaissances et des découvertes agréables.</string>
     <string name="language_title">Langue</string>
+    <string name="no_network">Pas de connexion.</string>
+    <string name="local_cancel">Ne pas autoriser</string>
+    <string name="local_disabled">Le service de localisation de l\'appareil est désactivée. Activer le service de localisation dans les paramètres.</string>
+    <string name="local_open_param">Paramètres</string>
 
 </resources>

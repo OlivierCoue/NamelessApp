@@ -60,4 +60,8 @@
         <item>Pусский</item>
     </string-array>
 
+    <string name="no_network">No network connection.</string>
+    <string name="local_disabled">Your device location services are disabled. Enable location services in settings.</string>
+    <string name="local_open_param">Settings</string>
+    <string name="local_cancel">Don\'t allow</string>
 </resources>

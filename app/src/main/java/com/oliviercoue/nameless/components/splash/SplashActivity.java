@@ -26,7 +26,7 @@ public class SplashActivity extends AppCompatActivity implements SecurityImp{
 
         ActionBar actionBar = getSupportActionBar();
         if(actionBar!=null)
-            actionBar.setTitle("");
+            actionBar.hide();
 
     }
 

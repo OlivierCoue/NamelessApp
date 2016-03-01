@@ -284,7 +284,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
                     mCurrentPhotoPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA));
                     break;
                 default:
-                    Log.d(this.getClass().getName(), "Unknow request code");
+                    Log.d(this.getClass().getName(), "Unknown request code");
             }
             chatManager.sendImage(mCurrentPhotoPath);
             allowTakingPicture(true);

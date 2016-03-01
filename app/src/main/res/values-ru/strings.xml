@@ -30,5 +30,9 @@
     <string name="friend_leave_next">Следующее</string>
     <string name="friend_leave_quit">Покинуть</string>
     <string name="language_title">Язык</string>
+    <string name="no_network">Нет подключения к сети.</string>
+    <string name="local_cancel">Запретить  </string>
+    <string name="local_disabled">Nameless запрашивает данные о вашем местоположении, чтобы отображать только актуальную для вас информацию. </string>
+    <string name="local_open_param">Настройки</string>
 
 </resources>

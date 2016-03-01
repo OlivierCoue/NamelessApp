@@ -118,15 +118,15 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
 
     private void showLocationDisabledAlert(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("location disabled");
-        dialog.setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
+        dialog.setMessage(getResources().getString(R.string.local_disabled));
+        dialog.setPositiveButton(getResources().getString(R.string.local_open_param), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                 Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(myIntent);
             }
         });
-        dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton(getResources().getString(R.string.local_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
             }
