@@ -1,13 +1,11 @@
 package com.oliviercoue.nameless.components.start;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +24,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.components.search.SearchActivity;
 import com.oliviercoue.nameless.components.settings.SettingsActivity;
 import com.oliviercoue.nameless.handlers.FriendFoundHandler;

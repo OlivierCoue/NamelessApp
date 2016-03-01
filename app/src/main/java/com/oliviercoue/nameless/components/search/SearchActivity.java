@@ -5,10 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.components.start.StartActivity;
 import com.oliviercoue.nameless.network.NamelessRestClient;
 

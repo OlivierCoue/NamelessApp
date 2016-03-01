@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.components.start.StartActivity;
 import com.oliviercoue.nameless.network.security.Security;
 import com.oliviercoue.nameless.network.security.SecurityImp;

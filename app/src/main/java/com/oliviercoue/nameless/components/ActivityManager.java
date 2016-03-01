@@ -10,7 +10,7 @@ import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.network.socket.SocketManager;
 import com.oliviercoue.nameless.network.socket.SocketManagerImp;
 import com.oliviercoue.nameless.services.CloseAppService;

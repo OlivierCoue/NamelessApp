@@ -1,16 +1,13 @@
 package com.oliviercoue.nameless.components.chat;
 
 import android.app.NotificationManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
@@ -33,14 +30,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.components.chat.views.ChatArrayAdapter;
 import com.oliviercoue.nameless.models.Message;
 import com.oliviercoue.nameless.models.MessageImage;
 import com.oliviercoue.nameless.models.MessageTypes;
 import com.oliviercoue.nameless.models.States;
 import com.oliviercoue.nameless.models.User;
-import com.oliviercoue.nameless.services.CloseAppService;
 import com.oliviercoue.nameless.notifications.MyNotificationManager;
 import com.oliviercoue.nameless.notifications.NotificationTypes;
 

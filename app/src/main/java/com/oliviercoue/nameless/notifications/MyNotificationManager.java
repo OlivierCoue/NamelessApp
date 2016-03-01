@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.os.Vibrator;
 import android.support.v7.app.NotificationCompat;
 
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.components.chat.ChatActivity;
 import com.oliviercoue.nameless.models.Message;
 import com.oliviercoue.nameless.models.User;

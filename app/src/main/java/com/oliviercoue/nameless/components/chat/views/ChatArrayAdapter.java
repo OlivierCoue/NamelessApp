@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
-import com.oliviercoue.httpwww.nameless.R;
+import com.oliviercoue.nameless.R;
 import com.oliviercoue.nameless.components.chat.ChatActivity;
 import com.oliviercoue.nameless.components.chat.ChatListViewImp;
 import com.oliviercoue.nameless.network.NamelessRestClient;
