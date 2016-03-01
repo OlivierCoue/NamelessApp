@@ -45,6 +45,11 @@ public class ChatArrayAdapter extends ArrayAdapter<Message> {
         super.add(object);
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
+    }
+
     public ChatArrayAdapter(Context context, int textViewResourceId, User currentUser, User friendUser) {
         super(context, textViewResourceId);
         this.context = context;

@@ -1,11 +1,13 @@
 package com.oliviercoue.nameless.components.start;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
@@ -57,7 +59,6 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
         activity = this;
         startManager = new StartManager(this);
 

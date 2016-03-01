@@ -18,13 +18,13 @@
         android:orientation="horizontal"
         style="@style/message_container_top">
 
-        <TextView
+        <com.oliviercoue.nameless.ui.RegularTextView
             android:id="@+id/message_top_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/message_container_top_date"/>
 
-        <TextView
+        <com.oliviercoue.nameless.ui.RegularTextView
             android:id="@+id/message_top_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
 
     </LinearLayout>
 
-    <TextView
+    <com.oliviercoue.nameless.ui.RegularTextView
         android:id="@+id/message_text_view"
         style="@style/message_content.right"/>
 

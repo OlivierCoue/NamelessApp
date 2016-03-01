@@ -26,7 +26,7 @@
             android:layout_gravity="center_horizontal"/>
 
         <!-- Setup your chat -->
-        <TextView
+        <com.oliviercoue.nameless.ui.MediumTextView
             android:id="@+id/textStartNameless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -319,7 +319,7 @@
             android:orientation="horizontal"
             android:gravity="center_horizontal">
 
-            <TextView
+            <com.oliviercoue.nameless.ui.RegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
@@ -328,7 +328,7 @@
                 style="@style/range_text_bottom"/>
 
             <!-- Range selection: distance nb -->
-            <TextView
+            <com.oliviercoue.nameless.ui.RegularTextView
                 android:id="@+id/range_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -337,7 +337,7 @@
                 android:text="@string/default_value"
                 style="@style/range_text_bottom"/>
 
-            <TextView
+            <com.oliviercoue.nameless.ui.RegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
@@ -346,7 +346,7 @@
                 style="@style/range_text_bottom"/>
 
             <!-- Range selection: people nb -->
-            <TextView
+            <com.oliviercoue.nameless.ui.RegularTextView
                 android:id="@+id/close_friend_nb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -355,7 +355,7 @@
                 android:text="@string/default_value"
                 style="@style/range_text_bottom"/>
 
-            <TextView
+            <com.oliviercoue.nameless.ui.RegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/login_range_2"
@@ -391,7 +391,7 @@
             android:orientation="vertical">
 
             <!-- Copyright -->
-            <TextView
+            <com.oliviercoue.nameless.ui.RegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/login_copy"
