@@ -1,6 +1,7 @@
 package com.oliviercoue.nameless.components.start;
 
 import android.location.Location;
+import android.util.Log;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -40,10 +41,13 @@ public class StartManager extends ActivityManager implements ActivityManagerImp{
     public boolean startChat(String username, int searchRange){
         this.username = username;
         this.searchRange = searchRange;
-
         if(startChatParamsValid() && super.isAuthenticated()) {
+            Log.d(this.getClass().getName(), "hello");
             postStartChatInformation();
             return true;
+        }else if(!super.isAuthenticated()) {
+            getSocketManager().connectSocket();
+            return false;
         }else
             return false;
     }
@@ -79,7 +83,7 @@ public class StartManager extends ActivityManager implements ActivityManagerImp{
     }
 
     public void getUsersInRangeNumber(int searchRange){
-        if(super.isAuthenticated() && userLocation != null && !isWaitingForUserInRange) {
+        if(userLocation != null && !isWaitingForUserInRange) {
             isWaitingForUserInRange = true;
             HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("lat", String.valueOf(userLocation.getLatitude()));
