@@ -58,6 +58,7 @@
         <item>English</item>
         <item>Français</item>
         <item>Pусский</item>
+        <item>العربية</item>
     </string-array>
 
     <string name="no_network">No network connection.</string>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_button_cancel">إلغاء</string>
+    <string name="chat_button_next">التالي</string>
+    <string name="chat_input_composer">إرسال رسالة إلى</string>
+    <string name="chat_welcome_content">أهلا بك في صندوق الدردشة الخاص بك %1$s . كل الرسائل التي سوف تكتبها ستبقى خاصة بينك و %2$s .بمجرد مغادرتك للدردشة لن ترى المحادثة التي قمت بها مرة ثانية . أغتنم هذه الفرصة ل إكتشاف  معارف جديدة و اكتشافات ممتعة</string>
+    <string name="chat_welcome_title">سوف تدخل الدردشة مع %1$s</string>
+    <string name="confirm_leave_btn1">موافق</string>
+    <string name="confirm_leave_btn2">إلغاء</string>
+    <string name="confirm_leave_message">هل تريد  حقا مغادرة المحادثة؟</string>
+    <string name="confirm_leave_title">مغادرة؟</string>
+    <string name="friend_leave_choice">ماذا تريد أن تفعل الآن ؟</string>
+    <string name="friend_leave_content">مغادرة المحادثة </string>
+    <string name="friend_leave_head">أوه لا !</string>
+    <string name="friend_leave_next">التالي</string>
+    <string name="friend_leave_quit">خروج</string>
+    <string name="icon_next_button">التالي</string>
+    <string name="icon_photo_camera_icon">كاميرا</string>
+    <string name="icon_photo_icon">صورة</string>
+    <string name="image_message">إرسال صورة</string>
+    <string name="image_overlay">تركيب صورة</string>
+    <string name="language_title">اللغة</string>
+    <string name="local_cancel">عدم سماح</string>
+    <string name="local_disabled">خدمة تحديد الموقع في جهازك معطلة .قم بتمكين خدمات تحديد الموقع في إعدادات جهازك</string>
+    <string name="local_open_param">الإعدادات</string>
+    <string name="login_button_start">بدء دردشة</string>
+    <string name="login_input_username">إسمك</string>
+    <string name="login_range_1">حول</string>
+    <string name="login_range_2">الناس على الانترنت</string>
+    <string name="login_range_title">مدى البحث</string>
+    <string name="login_range_unity_km">- كيلومتر</string>
+    <string name="login_range_unity_miles">- أميال</string>
+    <string name="login_title">قم بإعداد الدردشة الخاصة بك </string>
+    <string name="no_network">لا يوجد إتصال بالأنترنت</string>
+    <string name="notification_friend_founded">تم إيجاد صديق !</string>
+    <string name="notification_friend_speak">تكلم مع</string>
+    <string name="search_cancel">إلغاء</string>
+    <string name="search_content">جاري البحث</string>
+</resources>

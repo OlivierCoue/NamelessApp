@@ -7,7 +7,7 @@
     <string name="chat_button_next">Следующее</string>
     <string name="icon_next_button">Следующее</string>
     <string name="chat_input_composer">Введите сообщение для</string>
-    <string name="chat_welcome_content">Добро пожаловать на вашу персональную беседу с %1$s. Все сообщения остаются между вами и %2$s. После того как вы вышли из чата, вы больше не имеете доступа к сообщениям. Они уничтожаются. Пользуйтесь этой возможностью, чтобы познакомиться с кем-</string>
+    <string name="chat_welcome_content">Добро пожаловать на вашу персональную беседу с %1$s. Все сообщения остаются между вами и %2$s. После того как вы вышли из чата, вы больше не имеете доступа к сообщениям. Они уничтожаются. Пользуйтесь этой возможностью, чтобы познакомиться с кем-нибудь.</string>
     <string name="chat_welcome_title">Знакомьтесь с %1$s</string>
     <string name="confirm_leave_btn1">Ок</string>
     <string name="confirm_leave_title">Покинуть?</string>

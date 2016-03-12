@@ -59,6 +59,10 @@ public class SettingsActivity extends AppCompatActivity {
                         locale = new Locale("ru", "RU");
                         actionBar.setTitle("Язык");
                         break;
+                    case 3:
+                        locale = new Locale("ar", "AR");
+                        actionBar.setTitle("اللغة");
+                        break;
                     default:
                         locale = Locale.ENGLISH;
                 }
