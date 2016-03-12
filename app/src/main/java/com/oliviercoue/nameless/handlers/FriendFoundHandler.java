@@ -3,6 +3,7 @@ package com.oliviercoue.nameless.handlers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.oliviercoue.nameless.components.chat.ChatActivity;
 import com.oliviercoue.nameless.models.User;
@@ -29,15 +30,15 @@ public class FriendFoundHandler {
             User currentUser = User.fromJson( data.getJSONObject("currentUser").getJSONObject("data"));
 
             User friendUser = User.fromJson(data.getJSONObject("friend").getJSONObject("data"));
-
             if(currentUser!=null && friendUser !=null) {
                 Intent intentChatAct = new Intent(context, ChatActivity.class);
                 if (displayNotif) {
                     MyNotificationManager myNotificationManager = new MyNotificationManager(context);
                     myNotificationManager.displayFriendFoundNotifiaction(currentUser, friendUser);
-                } else {
+                }else{
                     intentChatAct.putExtra("CURRENT_USER_ID", currentUser.getId());
                     intentChatAct.putExtra("FRIEND_USER_ID", friendUser.getId());
+                    intentChatAct.putExtra("COMMING_FROM_CLASS_NAME", context.getClass().getName());
                     context.startActivity(intentChatAct);
                     ((Activity) context).finish();
                 }

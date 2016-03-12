@@ -21,7 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -37,6 +39,7 @@ public class SocketManager implements NetworkStateImp {
     private Context context;
     private static String socketId;
     private static boolean isSocketConnected = false;
+    private List<String> socketListenersNames = new ArrayList<>();
 
     private Socket ioSocket;
     {
@@ -65,6 +68,7 @@ public class SocketManager implements NetworkStateImp {
     }
 
     public void addSocketListener(String name, Emitter.Listener listener){
+        socketListenersNames.add(name);
         ioSocket.on(name, listener);
     }
 
@@ -135,7 +139,8 @@ public class SocketManager implements NetworkStateImp {
     }
 
     private void removeSocketListeners(){
-        ioSocket.off();
+        for(String name : socketListenersNames)
+            ioSocket.off(name);
     }
 
     public void registerReceiver(){

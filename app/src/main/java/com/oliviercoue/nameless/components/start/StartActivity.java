@@ -38,6 +38,8 @@ import org.json.JSONObject;
  */
 public class StartActivity extends AppCompatActivity implements StartManagerImp, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private final int MAX_RANGE = 999999;
+
     private EditText usernameView;
     private TextView rangeValueView, closeFiendNbView;
     private LinearLayout seekBarGradientLayout, gradientBackgroundLayout;
@@ -62,6 +64,8 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
 
         if(!isGpsAndNetworkEnabled())
             showLocationDisabledAlert();
+        else if(haveMissedToMuchFriend())
+            showToMuchFriendMissedAlert();
 
         if (mGoogleApiClient == null)
             instantiateGoogleApi();
@@ -137,7 +141,7 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         boolean gps_enabled = false;
         boolean network_enabled = false;
         LocationManager mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) 500, (float) 200, mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) 600000, (float) 200, mLocationListener);
         try {
             gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             network_enabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -153,6 +157,22 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+    }
+
+    private boolean haveMissedToMuchFriend(){
+        Bundle extras = getIntent().getExtras();
+        return extras != null && extras.containsKey("HAVE_MISSED_TO_MUSH_FRIEND");
+    }
+
+    private void showToMuchFriendMissedAlert(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("You have missed to much people");
+        dialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+            }
+        });
+        dialog.show();
     }
 
     private void instantiateUIReferences(){
@@ -172,11 +192,13 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     }
 
     private void updateSearchRangeKm(){
-        searchRangeKm =  (int) Math.pow(2, seekBakProcess / 10);
+        int range = (int) Math.pow(2, seekBakProcess / 10);
+        searchRangeKm =  range >= 900 ? MAX_RANGE : range;
     }
 
     private void updateRangeValueView(){
-        rangeValueView.setText(String.valueOf(searchRangeKm));
+        String rangeValueStr = searchRangeKm == MAX_RANGE ? "∞" : String.valueOf(searchRangeKm);
+        rangeValueView.setText(rangeValueStr);
     }
 
     public void initUsernameTextView(){

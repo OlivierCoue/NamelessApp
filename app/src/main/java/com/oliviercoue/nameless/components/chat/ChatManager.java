@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -32,15 +33,60 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
     private ChatManagerImp chatManagerImp;
     private ChatImageHelper chatImageHelper;
     private Context context;
-    private boolean canceling = false;
+    private boolean canceling = false, friendUserHere = false;
+    private Bundle extras;
 
     public ChatManager(ChatActivity chatActivity){
         super(chatActivity);
         context = chatActivity;
         chatManagerImp = chatActivity;
         chatImageHelper = new ChatImageHelper();
+        if(initExtrasOk())
+            initFriendUserHere();
+        getSocketManager().addSocketListener("friend_enter", getOnFriendEnterListener());
         getSocketManager().addSocketListener("message_received", getOnMessageReceivedListener());
         getSocketManager().addSocketListener("friend_quit", getOnFriendQuitListener());
+    }
+
+    private boolean initExtrasOk(){
+        extras = ((Activity)context).getIntent().getExtras();
+        if(!isExtrasValid(extras)) {
+            ((Activity) context).finish();
+            return false;
+        }else
+            return true;
+    }
+
+    private boolean isExtrasValid(Bundle extras){
+        return extras != null && extras.containsKey("CURRENT_USER_ID") && extras.containsKey("FRIEND_USER_ID") && extras.containsKey("COMMING_FROM_CLASS_NAME");
+    }
+
+    private void initFriendUserHere(){
+        if(extras.getString("COMMING_FROM_CLASS_NAME").equals(SearchActivity.class.getName())) {
+            friendUserHere = true;
+            postFriendEnterConversation();
+        }else
+            friendUserHere = false;
+    }
+
+    private void postFriendEnterConversation(){
+        HashMap<String, String> paramMap = new HashMap<>();
+        NamelessRestClient.post("chat/enter", new RequestParams(paramMap), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+            }
+        });
+    }
+
+    private Emitter.Listener getOnFriendEnterListener(){
+        return new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                friendUserHere = true;
+                chatManagerImp.onFriendEnter((JSONObject) args[0]);
+            }
+        };
     }
 
     private Emitter.Listener getOnMessageReceivedListener(){
@@ -61,9 +107,9 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
         };
     }
 
-    public void loadUsers(int currentUserId, int friendUserId) {
+    public void loadUsers() {
         final User[] users = new User[2];
-        NamelessRestClient.get("users/" + currentUserId, null, new JsonHttpResponseHandler() {
+        NamelessRestClient.get("users/" + extras.getInt("CURRENT_USER_ID"), null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
@@ -74,7 +120,7 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
                 }
             }
         });
-        NamelessRestClient.get("users/" + friendUserId, null, new JsonHttpResponseHandler() {
+        NamelessRestClient.get("users/" + extras.getInt("FRIEND_USER_ID"), null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
@@ -138,6 +184,7 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
     }
 
     public void next(){
+        friendUserHere = false;
         NamelessRestClient.get("chat/next", null, new JsonHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String s, Throwable t ){
@@ -188,4 +235,7 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
         }
     }
 
+    public boolean isFriendUserHere() {
+        return friendUserHere;
+    }
 }

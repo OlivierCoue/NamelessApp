@@ -89,7 +89,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
 
         addBackButtonToActionBar();
 
-        initUsers();
+        chatManager.loadUsers();
 
         messageInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -165,18 +165,6 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
             actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void initUsers(){
-        Bundle extras = getIntent().getExtras();
-        if(isExtrasValid(extras))
-            chatManager.loadUsers(extras.getInt("CURRENT_USER_ID"), extras.getInt("FRIEND_USER_ID"));
-        else
-            finish();
-    }
-
-    private boolean isExtrasValid(Bundle extras){
-        return extras != null && extras.containsKey("CURRENT_USER_ID") && extras.containsKey("FRIEND_USER_ID");
-    }
-
     private void closeAlert() {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(getResources().getString(R.string.confirm_leave_title));
@@ -201,6 +189,13 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
     private void setupUI(){
         actionBar.setTitle(friendUser.getUsername());
         messageInput.setHint(getResources().getString(R.string.chat_input_composer) + " " + friendUser.getUsername());
+        // TODO uncomment in next update and remove the line upper
+        /*
+        if(chatManager.isFriendUserHere())
+            messageInput.setHint(getResources().getString(R.string.chat_input_composer) + " " + friendUser.getUsername());
+        else
+            messageInput.setHint("Waiting for" + " " + friendUser.getUsername() + "...");
+        */
         setChatUiMode(true);
         chatArrayAdapter = new ChatArrayAdapter(this, R.layout.message_right, currentUser, friendUser);
         messageListView.setAdapter(chatArrayAdapter);
@@ -230,6 +225,18 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
         friendUser = users[1];
         if(currentUser!=null && friendUser!=null)
             setupUI();
+    }
+
+    @Override
+    public void onFriendEnter(JSONObject serverResponse) {
+        // TODO uncomment in next update
+        /*runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(messageInput!=null && friendUser != null)
+                    messageInput.setHint(getResources().getString(R.string.chat_input_composer) + " " + friendUser.getUsername());
+            }
+        });*/
     }
 
     private void sendMessage() {
@@ -289,7 +296,8 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
 
     @Override
     public void onImageHandled(Bitmap image) {
-        chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), currentUser, ChatImageHelper.getRoundedCornerBitmap(image, 16), mCurrentPhotoPath));
+        if(chatArrayAdapter!=null)
+            chatArrayAdapter.add(new MessageImage(1, "", true, new Date(), currentUser, ChatImageHelper.getRoundedCornerBitmap(image, 16), mCurrentPhotoPath));
     }
 
     @Override
@@ -299,19 +307,21 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
             public void run() {
                 try {
                     Message receivedMessage = null;
-                    switch (serverResponse.getInt("type")) {
-                        case MessageTypes.TEXT:
-                            receivedMessage = Message.fromJson(friendUser, serverResponse.getJSONObject("message").getJSONObject("data"));
-                            chatArrayAdapter.add(receivedMessage);
-                            break;
-                        case MessageTypes.IMAGE:
-                            receivedMessage = Message.fromJson(friendUser, serverResponse.getJSONObject("message").getJSONObject("data"));
-                            chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, serverResponse.getJSONObject("message_image").getJSONObject("data")));
-                    }
-                    if (isAway && receivedMessage != null) {
-                        if (lastMessageId != receivedMessage.getId())
-                            myNotificationManager.displayMessageNotifiaction(receivedMessage);
-                        lastMessageId = receivedMessage.getId();
+                    if(chatArrayAdapter!=null) {
+                        switch (serverResponse.getInt("type")) {
+                            case MessageTypes.TEXT:
+                                receivedMessage = Message.fromJson(friendUser, serverResponse.getJSONObject("message").getJSONObject("data"));
+                                chatArrayAdapter.add(receivedMessage);
+                                break;
+                            case MessageTypes.IMAGE:
+                                receivedMessage = Message.fromJson(friendUser, serverResponse.getJSONObject("message").getJSONObject("data"));
+                                chatArrayAdapter.add(MessageImage.fromJson(chatArrayAdapter, getApplicationContext(), receivedMessage, serverResponse.getJSONObject("message_image").getJSONObject("data")));
+                        }
+                        if (isAway && receivedMessage != null) {
+                            if (lastMessageId != receivedMessage.getId())
+                                myNotificationManager.displayMessageNotifiaction(receivedMessage);
+                            lastMessageId = receivedMessage.getId();
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
