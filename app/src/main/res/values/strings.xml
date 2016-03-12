@@ -24,7 +24,7 @@
 
     <string name="chat_input_composer">Send a message to </string>
     <string name="chat_welcome_title">You’re gonna chat with %1$s</string>
-    <string name="chat_welcome_content">Welcome to your personal chat box %1$s. All messages you write will remain private between you and %2$s. Once you leave the cat there you\'ll never have access again. Take this opportunity to make new acquaintances and pleasant discoveries.</string>
+    <string name="chat_welcome_content">Welcome to your personal chat box %1$s. All messages you write will remain private between you and %2$s. Once you leave the chat, you\'ll never have access again. Take this opportunity to make new acquaintances and pleasant discoveries.</string>
 
     <!-- Strings related to icons -->
     <string name="icon_next_button">Next</string>
