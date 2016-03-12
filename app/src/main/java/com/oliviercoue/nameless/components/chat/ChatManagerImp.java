@@ -14,6 +14,8 @@ public interface ChatManagerImp {
 
     void onUsersLoaded(User[] users);
 
+    void onFriendEnter(JSONObject serverResponse);
+
     void onNextUserFounded(User[] users);
 
     void onImageHandled(Bitmap image);

@@ -30,6 +30,13 @@
         </activity>
 
         <activity
+            android:name="com.oliviercoue.nameless.components.update.UpdateActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
+
+        <activity
             android:name="com.oliviercoue.nameless.components.start.StartActivity"
             android:label=""
             android:screenOrientation="portrait"
