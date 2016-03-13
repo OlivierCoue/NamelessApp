@@ -166,8 +166,8 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
 
     private void showToMuchFriendMissedAlert(){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("You have missed to much people");
-        dialog.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+        dialog.setMessage(getResources().getString(R.string.missed_conversation));
+        dialog.setNegativeButton(getResources().getString(R.string.missed_button), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface paramDialogInterface, int paramInt) {
             }

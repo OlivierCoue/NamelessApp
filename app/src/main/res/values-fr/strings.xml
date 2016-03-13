@@ -49,5 +49,11 @@
     <string name="local_open_param">Paramètres</string>
     <string name="notification_friend_founded">Ami trouvé !</string>
     <string name="notification_friend_speak">Discutez avec</string>
+    <string name="update_button">Mettre à jour</string>
+    <string name="update_content">Cette mise à jour est requise pour continuer à utiliser cette application.</string>
+    <string name="update_subtitle">Une mise à jour est disponible sur le PlayStore.</string>
+    <string name="update_title">Mise à jour nécessaire</string>
+    <string name="missed_button">Ok</string>
+    <string name="missed_conversation">Vous avez raté trop de conversation.</string>
 
 </resources>

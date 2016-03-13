@@ -14,6 +14,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layoutDirection="ltr"
         style="@style/message_container_top"
         android:gravity="end"
         android:visibility="gone">

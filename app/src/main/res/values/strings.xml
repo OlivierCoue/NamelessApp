@@ -54,6 +54,12 @@
     <string name="image_overlay">Image overlay</string>
     <string name="image_message">Image message</string>
 
+    <!-- Strings related to updates -->
+    <string name="update_title">Required update</string>
+    <string name="update_subtitle">An update is available on PlayStore.</string>
+    <string name="update_content">This update is required to continue using this app.</string>
+    <string name="update_button">Update</string>
+
     <string-array name="languages_array" translatable="false">
         <item>English</item>
         <item>Français</item>
@@ -65,6 +71,9 @@
     <string name="local_disabled">Your device location services are disabled. Enable location services in settings.</string>
     <string name="local_open_param">Settings</string>
     <string name="local_cancel">Don\'t allow</string>
+
+    <string name="missed_conversation">You have missed too much conversation.</string>
+    <string name="missed_button">Ok</string>
 
     <string name="notification_friend_founded">Friend found!</string>
     <string name="notification_friend_speak">Speak with </string>

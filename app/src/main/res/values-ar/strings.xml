@@ -28,12 +28,18 @@
     <string name="login_range_1">حول</string>
     <string name="login_range_2">الناس على الانترنت</string>
     <string name="login_range_title">مدى البحث</string>
-    <string name="login_range_unity_km">- كيلومتر</string>
-    <string name="login_range_unity_miles">- أميال</string>
+    <string name="login_range_unity_km">كيلومتر -</string>
+    <string name="login_range_unity_miles">أميال -</string>
     <string name="login_title">قم بإعداد الدردشة الخاصة بك </string>
     <string name="no_network">لا يوجد إتصال بالأنترنت</string>
     <string name="notification_friend_founded">تم إيجاد صديق !</string>
     <string name="notification_friend_speak">تكلم مع</string>
     <string name="search_cancel">إلغاء</string>
     <string name="search_content">جاري البحث</string>
+    <string name="missed_button">موافق</string>
+    <string name="missed_conversation">فاتك الكثير من المحادثات.</string>
+    <string name="update_title">التحديث مطلوب</string>
+    <string name="update_subtitle">هناك تحديث متوفر على متجر غوغل </string>
+    <string name="update_content">هذا التحديث مطلوب لإستعمال هذا التطبيق</string>
+    <string name="update_button">تحديث</string>
 </resources>

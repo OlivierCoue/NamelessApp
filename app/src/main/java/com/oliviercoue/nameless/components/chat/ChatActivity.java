@@ -268,7 +268,7 @@ public class ChatActivity extends AppCompatActivity implements ChatManagerImp, C
     private void dispatchSelectPictureIntent(){
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_SELECT_PHOTO);
+        startActivityForResult(intent, REQUEST_SELECT_PHOTO);
     }
 
     @Override

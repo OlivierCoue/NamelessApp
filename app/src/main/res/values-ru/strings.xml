@@ -36,5 +36,11 @@
     <string name="local_open_param">Настройки</string>
     <string name="notification_friend_speak">Общаться с</string>
     <string name="notification_friend_founded">Нашли вам чат !</string>
+    <string name="update_button">Обновить</string>
+    <string name="update_content">Это обновление требуется, чтобы продолжить использовать это приложение.</string>
+    <string name="update_subtitle"> Обновление доступно на PlayStore.</string>
+    <string name="update_title">Необходимое обновление</string>
+    <string name="missed_button">Ок</string>
+    <string name="missed_conversation">Вы пропустили слишком много разговора.</string>
 
 </resources>
