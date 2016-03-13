@@ -55,5 +55,7 @@
     <string name="update_title">Mise à jour nécessaire</string>
     <string name="missed_button">Ok</string>
     <string name="missed_conversation">Vous avez raté trop de conversation.</string>
+    <bool name="is_right_to_left">false</bool>
+    <string name="range_worldwide">monde entier -</string>
 
 </resources>

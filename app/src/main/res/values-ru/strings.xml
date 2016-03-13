@@ -42,5 +42,7 @@
     <string name="update_title">Необходимое обновление</string>
     <string name="missed_button">Ок</string>
     <string name="missed_conversation">Вы пропустили слишком много разговора.</string>
+    <bool name="is_right_to_left">false</bool>
+    <string name="range_worldwide">по всему миру -</string>
 
 </resources>

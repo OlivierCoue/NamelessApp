@@ -42,4 +42,6 @@
     <string name="update_subtitle">هناك تحديث متوفر على متجر غوغل </string>
     <string name="update_content">هذا التحديث مطلوب لإستعمال هذا التطبيق</string>
     <string name="update_button">تحديث</string>
+    <bool name="is_right_to_left">true</bool>
+    <string name="range_worldwide">في جميع أنحاء العالم -</string>
 </resources>
