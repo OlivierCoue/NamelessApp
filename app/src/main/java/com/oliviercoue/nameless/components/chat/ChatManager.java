@@ -62,7 +62,8 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
     }
 
     private void initFriendUserHere(){
-        if(extras.getString("COMMING_FROM_CLASS_NAME").equals(SearchActivity.class.getName())) {
+        String commingFromClassName = extras.getString("COMMING_FROM_CLASS_NAME");
+        if(commingFromClassName!=null && commingFromClassName.equals(SearchActivity.class.getName())) {
             friendUserHere = true;
             postFriendEnterConversation();
         }else
@@ -235,7 +236,8 @@ public class ChatManager extends ActivityManager implements ActivityManagerImp{
         }
     }
 
-    public boolean isFriendUserHere() {
+    // TODO uncomment in next update
+    /*public boolean isFriendUserHere() {
         return friendUserHere;
-    }
+    }*/
 }

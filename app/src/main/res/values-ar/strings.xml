@@ -36,4 +36,7 @@
     <string name="notification_friend_speak">تكلم مع</string>
     <string name="search_cancel">إلغاء</string>
     <string name="search_content">جاري البحث</string>
+    <bool name="is_right_to_left">true</bool>
+    <string name="range_worldwide">في جميع أنحاء العالم -</string>
+
 </resources>

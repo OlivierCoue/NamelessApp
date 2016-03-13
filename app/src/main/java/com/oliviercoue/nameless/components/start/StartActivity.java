@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -41,7 +42,7 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     private final int MAX_RANGE = 999999;
 
     private EditText usernameView;
-    private TextView rangeValueView, closeFiendNbView;
+    private TextView rangeValueView, closeFiendNbView, rangeAboutView, rangeKmView;
     private LinearLayout seekBarGradientLayout, gradientBackgroundLayout;
     private SeekBar rangeSeekBar;
     private Button startChatButton;
@@ -182,7 +183,17 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         seekBarGradientLayout    = (LinearLayout) findViewById(R.id.sb_gradient_layout);
         rangeValueView           = (TextView) findViewById(R.id.range_value);
         closeFiendNbView         = (TextView) findViewById(R.id.close_friend_nb);
+        rangeAboutView           = (TextView) findViewById(R.id.range_about_textview);
+        rangeKmView              = (TextView) findViewById(R.id.range_km_textview);
         gradientBackgroundLayout = (LinearLayout) findViewById(R.id.gradient_background_layout);
+        editIfRTL();
+    }
+
+    private void editIfRTL(){
+        if(getResources().getBoolean(R.bool.is_right_to_left)) {
+            View gradientView = findViewById(R.id.sb_gradient_view);
+            gradientView.setBackground(ContextCompat.getDrawable(this, R.drawable.sb_range_gradient_rtl));
+        }
     }
 
     private void initRangeSeekBar(){
@@ -197,8 +208,17 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     }
 
     private void updateRangeValueView(){
-        String rangeValueStr = searchRangeKm == MAX_RANGE ? "∞" : String.valueOf(searchRangeKm);
-        rangeValueView.setText(rangeValueStr);
+        String searchRangeTxt;
+        if(searchRangeKm == MAX_RANGE){
+            rangeKmView.setVisibility(View.GONE);
+            rangeAboutView.setVisibility(View.GONE);
+            searchRangeTxt = getResources().getString(R.string.range_worldwide);
+        }else{
+            rangeKmView.setVisibility(View.VISIBLE);
+            rangeAboutView.setVisibility(View.VISIBLE);
+            searchRangeTxt = String.valueOf(searchRangeKm);
+        }
+        rangeValueView.setText(searchRangeTxt);
     }
 
     public void initUsernameTextView(){

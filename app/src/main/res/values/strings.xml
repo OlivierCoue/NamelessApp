@@ -68,4 +68,7 @@
 
     <string name="notification_friend_founded">Friend found!</string>
     <string name="notification_friend_speak">Speak with </string>
+
+    <bool name="is_right_to_left">false</bool>
+    <string name="range_worldwide">worldwide -</string>
 </resources>

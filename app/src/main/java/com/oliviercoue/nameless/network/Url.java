@@ -6,6 +6,7 @@ package com.oliviercoue.nameless.network;
  */
 public interface Url {
 
+    // TODO use prod server before create apk
     // PROD SERVER
     /*
     String SOCKET_URL           = "http://www.prestapic.com:3000";

@@ -49,5 +49,7 @@
     <string name="local_open_param">Paramètres</string>
     <string name="notification_friend_founded">Ami trouvé !</string>
     <string name="notification_friend_speak">Discutez avec</string>
+    <bool name="is_right_to_left">false</bool>
+    <string name="range_worldwide">monde entier -</string>
 
 </resources>
