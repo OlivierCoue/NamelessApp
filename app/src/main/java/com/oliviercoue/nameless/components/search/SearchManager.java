@@ -29,12 +29,9 @@ import cz.msebera.android.httpclient.Header;
  */
 public class SearchManager extends ActivityManager implements ActivityManagerImp {
 
-    private final int MAX_FRIEND_MISS = 5;
-
     private Context context;
     private JSONObject serverResponse;
-    private boolean friendFound = false, haveMissedToMuch = false;
-    private int friendMissed = 0;
+    private boolean friendFound = false, haveMissed = false;
     private NotificationManager notificationManager;
 
     public SearchManager(SearchActivity searchActivity){
@@ -65,7 +62,7 @@ public class SearchManager extends ActivityManager implements ActivityManagerImp
             public void call(Object... args) {
                 friendFound = false;
                 notificationManager.cancel(NotificationTypes.FRIEND_FOUNDED);
-                handleFriendMissed();
+                haveMissed = true;
             }
         };
     }
@@ -92,32 +89,17 @@ public class SearchManager extends ActivityManager implements ActivityManagerImp
         thread.start();
     }
 
-    private void handleFriendMissed(){
-        friendMissed++;
-        if(friendMissed == MAX_FRIEND_MISS) {
-            changeUserState(States.CLOSED);
-            haveMissedToMuch = true;
-        }else
-            changeUserState(States.SEARCHING);
-    }
-
-    private void handleToMuchFriendMiss(){
-        Intent intentMainAct = new Intent(context, StartActivity.class);
-        intentMainAct.putExtra("HAVE_MISSED_TO_MUSH_FRIEND", true);
-        context.startActivity(intentMainAct);
-        ((Activity)context).finish();
-    }
 
     @Override
     public void activityResume(){
         super.activityResume();
 
-        if(haveMissedToMuch)
-            handleToMuchFriendMiss();
+        if(haveMissed)
+            changeUserState(States.SEARCHING);
         else if(friendFound)
             new FriendFoundHandler(context, serverResponse, false);
 
-        friendMissed = 0;
+        haveMissed = false;
     }
 
 }
