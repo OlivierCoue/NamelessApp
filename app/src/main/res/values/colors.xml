@@ -13,4 +13,25 @@
     <color name="black85">#D8000000</color>
     <color name="grey">#444444</color>
     <color name="lightGrey">#ccc</color>
+
+    <!-- SKY COLORS -->
+    <!-- Morning -->
+    <color name="morning_top">#197080</color>
+    <color name="morning_bottom">#F08D66</color>
+    <color name="morning_hills">#4E2C1F</color>
+
+    <!-- Day -->
+    <color name="day_top">#2399AE</color>
+    <color name="day_bottom">#7384C2</color>
+    <color name="day_hills">#242A40</color>
+
+    <!-- Evening -->
+    <color name="evening_top">#5F4A68</color>
+    <color name="evening_bottom">#E19AAA</color>
+    <color name="evening_hills">#4A3136</color>
+
+    <!-- Night -->
+    <color name="night_top">#181433</color>
+    <color name="night_bottom">#272D64</color>
+    <color name="night_hills">#0C0C21</color>
 </resources>

@@ -1,409 +1,425 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorPrimary"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal|center_vertical"
-    android:orientation="vertical"
-    tools:context=".activities.StartActivity"
-    android:transcriptMode="alwaysScroll">
+    android:layout_height="match_parent">
 
-    <!-- Setup container -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <!-- Logo -->
-        <ImageView
-            android:id="@+id/logoNameless"
-            android:background="@mipmap/logo_nameless"
-            android:contentDescription="@string/app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+        <include layout="@layout/activity_start_sky_morning"/>
+        <include layout="@layout/activity_start_sky_day"/>
+        <include layout="@layout/activity_start_sky_evening"/>
+        <include layout="@layout/activity_start_sky_night"/>
 
-        <!-- Setup your chat -->
-        <TextView
-            android:id="@+id/textStartNameless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/login_title"
-            android:textSize="@dimen/start_title"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" />
-
-        <!-- Input username -->
-        <EditText
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/login_input_username"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white75"
-            android:textSize="@dimen/start_text"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:inputType="textCapSentences"
-            android:textColorHighlight="@color/colorPrimaryDark"
-            android:cursorVisible="true"
-            android:textCursorDrawable="@null"
-            android:padding="@null"
-            android:theme="@style/username_input"/>
-
-        <!-- Range selection -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/login_range_title"
-            android:textSize="@dimen/start_text"
-            android:textColor="@color/white75"/>
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="vertical"
+        tools:context=".activities.StartActivity"
+        android:transcriptMode="alwaysScroll">
 
-        <!-- Range selection: icons -->
+        <!-- Setup container -->
         <LinearLayout
-            android:id="@+id/selector_icons_container"
             android:layout_width="match_parent"
-            android:layout_height="22dp"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:orientation="vertical">
 
-            <!-- Range selection: gradient background -->
-            <LinearLayout
-                android:id="@+id/gradient_background_layout"
-                android:background="@color/colorPrimaryDark"
+            <!-- Logo -->
+            <ImageView
+                android:id="@+id/logoNameless"
+                android:background="@mipmap/logo_nameless"
+                android:contentDescription="@string/app_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"/>
+
+            <!-- Setup your chat -->
+            <TextView
+                android:id="@+id/textStartNameless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/login_title"
+                android:textSize="@dimen/start_title"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+
+            <!-- Input username -->
+            <EditText
+                android:id="@+id/username"
                 android:layout_width="match_parent"
-                android:layout_height="24dp">
+                android:layout_height="wrap_content"
+                android:hint="@string/login_input_username"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white75"
+                android:textSize="@dimen/start_text"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:inputType="textCapSentences"
+                android:textColorHighlight="@color/colorPrimaryDark"
+                android:cursorVisible="true"
+                android:textCursorDrawable="@null"
+                android:padding="@null"
+                android:theme="@style/username_input"/>
 
-                <!-- Range selection: gradient bar -->
+            <!-- Range selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/login_range_title"
+                android:textSize="@dimen/start_text"
+                android:textColor="@color/white75"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Range selection: icons -->
+            <LinearLayout
+                android:id="@+id/selector_icons_container"
+                android:layout_width="match_parent"
+                android:layout_height="22dp"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <!-- Range selection: gradient background -->
                 <LinearLayout
-                    android:background="@android:color/transparent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:orientation="horizontal">
+                    android:id="@+id/gradient_background_layout"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp">
 
-                    <!-- Range selection: bar container -->
+                    <!-- Range selection: gradient bar -->
                     <LinearLayout
-                        android:id="@+id/sb_gradient_layout"
-                        android:background="@color/white"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content">
+                        android:background="@android:color/transparent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:orientation="horizontal">
 
-                        <!-- Range selection: bar color -->
+                        <!-- Range selection: bar container -->
+                        <LinearLayout
+                            android:id="@+id/sb_gradient_layout"
+                            android:background="@color/white"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content">
+
+                            <!-- Range selection: bar color -->
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/white"/>
+
+                        </LinearLayout>
+
+                        <!-- Range selection: gradient -->
                         <View
-                            android:layout_width="0dp"
+                            android:id="@+id/sb_gradient_view"
+                            android:gravity="start"
+                            android:layout_width="34dp"
                             android:layout_height="match_parent"
-                            android:background="@color/white"/>
+                            android:background="@drawable/sb_range_gradient"/>
 
                     </LinearLayout>
 
-                    <!-- Range selection: gradient -->
-                    <View
-                        android:id="@+id/sb_gradient_view"
-                        android:gravity="start"
-                        android:layout_width="34dp"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/sb_range_gradient"/>
+                </LinearLayout>
+
+                <!-- Range selection: icons container -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="-25dp"
+                    android:orientation="horizontal"
+                    android:weightSum="4"
+                    android:visibility="visible"
+                    android:baselineAligned="false">
+
+                    <!-- Range selection: sofa container -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+
+                        <View
+                            android:background="@color/colorPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toStartOf="@+id/icon_sofa"
+                            android:layout_toLeftOf="@+id/icon_sofa"/>
+
+                        <!-- Range selection: sofa icon -->
+                        <ImageView
+                            android:id="@+id/icon_sofa"
+                            android:background="@mipmap/icon_sofa"
+                            android:layout_centerInParent="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:contentDescription="@string/app_name"/>
+
+                        <View
+                            android:background="@color/colorPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_toEndOf="@+id/icon_sofa"
+                            android:layout_toRightOf="@+id/icon_sofa"/>
+
+                    </RelativeLayout>
+
+                    <!-- Range selection: walk container -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+
+                        <View
+                            android:background="@color/colorPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toStartOf="@+id/icon_walk"
+                            android:layout_toLeftOf="@+id/icon_walk"/>
+
+                        <!-- Range selection: walk icon -->
+                        <ImageView
+                            android:id="@+id/icon_walk"
+                            android:background="@mipmap/icon_walk"
+                            android:layout_centerInParent="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:contentDescription="@string/app_name"/>
+
+                        <View
+                            android:background="@color/colorPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_toEndOf="@+id/icon_walk"
+                            android:layout_toRightOf="@+id/icon_walk"/>
+
+                    </RelativeLayout>
+
+                    <!-- Range selection: car container -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+
+                        <View
+                            android:background="@color/colorPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toStartOf="@+id/icon_car"
+                            android:layout_toLeftOf="@+id/icon_car"/>
+
+                        <!-- Range selection: car icon -->
+                        <ImageView
+                            android:id="@+id/icon_car"
+                            android:background="@mipmap/icon_car"
+                            android:layout_centerInParent="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:contentDescription="@string/app_name"/>
+
+                        <View
+                            android:background="@color/colorPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_toEndOf="@+id/icon_car"
+                            android:layout_toRightOf="@+id/icon_car"/>
+
+                    </RelativeLayout>
+
+                    <!-- Range selection: world container -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="1">
+
+                        <View
+                            android:background="@color/colorPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_toStartOf="@+id/icon_world"
+                            android:layout_toLeftOf="@+id/icon_world"/>
+
+                        <!-- Range selection: world icon -->
+                        <ImageView
+                            android:id="@+id/icon_world"
+                            android:background="@mipmap/icon_world"
+                            android:layout_centerInParent="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:contentDescription="@string/app_name"/>
+
+                        <View
+                            android:background="@color/colorPrimary"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_toEndOf="@+id/icon_world"
+                            android:layout_toRightOf="@+id/icon_world"/>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
 
-            <!-- Range selection: icons container -->
+            <!-- Range selection: seek bar -->
+            <SeekBar
+                android:id="@+id/sb_range"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="34"
+                android:progressDrawable="@drawable/sb_progressbar"
+                android:thumb="@drawable/sb_bubble_thumb" />
+
+            <!-- Range selection: information -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="24dp"
-                android:layout_marginTop="-25dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal"
-                android:weightSum="4"
-                android:visibility="visible"
-                android:baselineAligned="false">
+                android:gravity="center_horizontal">
 
-                <!-- Range selection: sofa container -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/range_about_textview"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="1">
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginRight="3dp"
+                    android:text="@string/login_range_1"
+                    style="@style/range_text_bottom"/>
 
-                    <View
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toStartOf="@+id/icon_sofa"
-                        android:layout_toLeftOf="@+id/icon_sofa"/>
-
-                    <!-- Range selection: sofa icon -->
-                    <ImageView
-                        android:id="@+id/icon_sofa"
-                        android:background="@mipmap/icon_sofa"
-                        android:layout_centerInParent="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:contentDescription="@string/app_name"/>
-
-                    <View
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_toEndOf="@+id/icon_sofa"
-                        android:layout_toRightOf="@+id/icon_sofa"/>
-
-                </RelativeLayout>
-
-                <!-- Range selection: walk container -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <!-- Range selection: distance nb -->
+                <TextView
+                    android:id="@+id/range_value"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="1">
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginRight="3dp"
+                    android:text="@string/default_value"
+                    style="@style/range_text_bottom"/>
 
-                    <View
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toStartOf="@+id/icon_walk"
-                        android:layout_toLeftOf="@+id/icon_walk"/>
-
-                    <!-- Range selection: walk icon -->
-                    <ImageView
-                        android:id="@+id/icon_walk"
-                        android:background="@mipmap/icon_walk"
-                        android:layout_centerInParent="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:contentDescription="@string/app_name"/>
-
-                    <View
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_toEndOf="@+id/icon_walk"
-                        android:layout_toRightOf="@+id/icon_walk"/>
-
-                </RelativeLayout>
-
-                <!-- Range selection: car container -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/range_km_textview"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="1">
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginRight="3dp"
+                    android:text="@string/login_range_unity_km"
+                    style="@style/range_text_bottom"/>
 
-                    <View
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toStartOf="@+id/icon_car"
-                        android:layout_toLeftOf="@+id/icon_car"/>
-
-                    <!-- Range selection: car icon -->
-                    <ImageView
-                        android:id="@+id/icon_car"
-                        android:background="@mipmap/icon_car"
-                        android:layout_centerInParent="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:contentDescription="@string/app_name"/>
-
-                    <View
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_toEndOf="@+id/icon_car"
-                        android:layout_toRightOf="@+id/icon_car"/>
-
-                </RelativeLayout>
-
-                <!-- Range selection: world container -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <!-- Range selection: people nb -->
+                <TextView
+                    android:id="@+id/close_friend_nb"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="1">
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginRight="3dp"
+                    android:text="@string/default_value"
+                    style="@style/range_text_bottom"/>
 
-                    <View
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toStartOf="@+id/icon_world"
-                        android:layout_toLeftOf="@+id/icon_world"/>
-
-                    <!-- Range selection: world icon -->
-                    <ImageView
-                        android:id="@+id/icon_world"
-                        android:background="@mipmap/icon_world"
-                        android:layout_centerInParent="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:contentDescription="@string/app_name"/>
-
-                    <View
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_toEndOf="@+id/icon_world"
-                        android:layout_toRightOf="@+id/icon_world"/>
-
-                </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_range_2"
+                    style="@style/range_text_bottom"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Range selection: seek bar -->
-        <SeekBar
-            android:id="@+id/sb_range"
-            android:layout_marginTop="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="34"
-            android:progressDrawable="@drawable/sb_progressbar"
-            android:thumb="@drawable/sb_bubble_thumb" />
-
-        <!-- Range selection: information -->
+        <!-- Button container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal">
+            android:visibility="visible"
+            android:orientation="vertical"
+            android:paddingTop="32dp"
+            android:foregroundGravity="fill_horizontal|bottom">
 
-            <TextView
-                android:id="@+id/range_about_textview"
-                android:layout_width="wrap_content"
+            <!-- Button start chat -->
+            <Button
+                android:id="@+id/start_chat_button"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:layout_marginRight="3dp"
-                android:text="@string/login_range_1"
-                style="@style/range_text_bottom"/>
+                android:layout_gravity="center_horizontal"
+                android:text="@string/login_button_start"
+                android:theme="@style/button.start"/>
 
-            <!-- Range selection: distance nb -->
-            <TextView
-                android:id="@+id/range_value"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:layout_marginRight="3dp"
-                android:text="@string/default_value"
-                style="@style/range_text_bottom"/>
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="4dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/range_km_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:layout_marginRight="3dp"
-                android:text="@string/login_range_unity_km"
-                style="@style/range_text_bottom"/>
+                <!-- Copyright -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_copy"
+                    android:textColor="@color/white75"
+                    android:textSize="@dimen/start_copy"
+                    android:layout_gravity="center_horizontal"/>
 
-            <!-- Range selection: people nb -->
-            <TextView
-                android:id="@+id/close_friend_nb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:layout_marginRight="3dp"
-                android:text="@string/default_value"
-                style="@style/range_text_bottom"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/login_range_2"
-                style="@style/range_text_bottom"/>
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
-
-    <!-- Button container -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        android:orientation="vertical"
-        android:paddingTop="32dp"
-        android:foregroundGravity="fill_horizontal|bottom">
-
-        <!-- Button start chat -->
-        <Button
-            android:id="@+id/start_chat_button"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/login_button_start"
-            android:theme="@style/button.start"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="4dp"
-            android:orientation="vertical">
-
-            <!-- Copyright -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/login_copy"
-                android:textColor="@color/white75"
-                android:textSize="@dimen/start_copy"
-                android:layout_gravity="center_horizontal"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
