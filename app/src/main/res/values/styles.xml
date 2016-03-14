@@ -39,7 +39,7 @@
     </style>
 
     <style name="range_text_bottom">
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@color/white75</item>
         <item name="android:textSize">16sp</item>
     </style>
 
