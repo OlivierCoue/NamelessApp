@@ -28,21 +28,13 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:orientation="vertical">
 
-            <!-- Logo -->
-            <ImageView
-                android:id="@+id/logoNameless"
-                android:background="@mipmap/logo_nameless"
-                android:contentDescription="@string/app_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"/>
 
             <!-- Setup your chat -->
             <TextView
                 android:id="@+id/textStartNameless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="72dp"
                 android:layout_marginBottom="16dp"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/login_title"

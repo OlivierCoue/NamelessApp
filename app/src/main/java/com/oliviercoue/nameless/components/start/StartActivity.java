@@ -162,9 +162,7 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     }
 
     private void instantiateUIReferences(){
-        ActionBar actionBar      = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
-
+        customActionBar();
         startChatButton          = (Button) findViewById(R.id.start_chat_button);
         rangeSeekBar             = (SeekBar) findViewById(R.id.sb_range);
         usernameView             = (EditText) findViewById(R.id.username);
@@ -175,6 +173,16 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
         rangeKmView              = (TextView) findViewById(R.id.range_km_textview);
         gradientBackgroundLayout = (LinearLayout) findViewById(R.id.gradient_background_layout);
         editIfRTL();
+            new StartBackground(this);
+    }
+
+    private void customActionBar(){
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null) {
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.activity_start_action_bar);
+        }
     }
 
     private void editIfRTL(){
