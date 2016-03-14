@@ -62,7 +62,7 @@
                 android:background="@drawable/background_hills_night"
                 android:layout_width="match_parent"
                 android:layout_height="78dp"
-                android:contentDescription="Lol"/>
+                android:contentDescription="Hills"/>
 
             <View
                 android:background="@color/night_hills"
