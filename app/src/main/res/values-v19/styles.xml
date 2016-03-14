@@ -19,6 +19,7 @@
         <item name="actionBarStyle">@style/NamelessActionBar</item>
         <item name="android:homeAsUpIndicator">@mipmap/close</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="AppThemeMultiTask" parent="Theme.AppCompat.Light">
@@ -26,6 +27,7 @@
     </style>
 
     <!-- CUSTOM ACTION BAR -->
+
     <style name="NamelessActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:background">@drawable/actionbar_background</item>
         <item name="background">@drawable/actionbar_background</item>

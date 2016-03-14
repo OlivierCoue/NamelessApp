@@ -8,12 +8,20 @@
     android:background="@color/night_bottom"
     android:weightSum="100">
 
-    <LinearLayout
+    <RelativeLayout
         android:background="@drawable/background_gradient_night"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="33"
-        android:gravity="center"/>
+        android:gravity="center">
+
+        <ImageView
+            android:src="@drawable/background_stars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"/>
+
+    </RelativeLayout>
 
 
     <RelativeLayout

@@ -8,9 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/activity_start_sky_morning"/>
-        <include layout="@layout/activity_start_sky_day"/>
-        <include layout="@layout/activity_start_sky_evening"/>
         <include layout="@layout/activity_start_sky_night"/>
 
     </RelativeLayout>
@@ -100,7 +97,7 @@
                 <!-- Range selection: gradient background -->
                 <LinearLayout
                     android:id="@+id/gradient_background_layout"
-                    android:background="@color/colorPrimaryDark"
+                    android:background="#26FFFFFF"
                     android:layout_width="match_parent"
                     android:layout_height="24dp">
 
@@ -156,7 +153,7 @@
                         android:layout_weight="1">
 
                         <View
-                            android:background="@color/colorPrimary"
+                            android:background="@color/night_hills"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignParentTop="true"
@@ -177,7 +174,7 @@
                             android:contentDescription="@string/app_name"/>
 
                         <View
-                            android:background="@color/colorPrimary"
+                            android:background="@color/night_hills"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignParentTop="true"
@@ -197,7 +194,7 @@
                         android:layout_weight="1">
 
                         <View
-                            android:background="@color/colorPrimary"
+                            android:background="@color/night_hills"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignParentTop="true"
@@ -218,7 +215,7 @@
                             android:contentDescription="@string/app_name"/>
 
                         <View
-                            android:background="@color/colorPrimary"
+                            android:background="@color/night_hills"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignParentTop="true"
@@ -238,7 +235,7 @@
                         android:layout_weight="1">
 
                         <View
-                            android:background="@color/colorPrimary"
+                            android:background="@color/night_hills"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignParentTop="true"
@@ -259,7 +256,7 @@
                             android:contentDescription="@string/app_name"/>
 
                         <View
-                            android:background="@color/colorPrimary"
+                            android:background="@color/night_hills"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignParentTop="true"
@@ -279,7 +276,7 @@
                         android:layout_weight="1">
 
                         <View
-                            android:background="@color/colorPrimary"
+                            android:background="@color/night_hills"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignParentTop="true"
@@ -300,7 +297,7 @@
                             android:contentDescription="@string/app_name"/>
 
                         <View
-                            android:background="@color/colorPrimary"
+                            android:background="@color/night_hills"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_alignParentTop="true"

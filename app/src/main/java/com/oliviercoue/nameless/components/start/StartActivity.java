@@ -3,12 +3,15 @@ package com.oliviercoue.nameless.components.start;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -159,6 +162,9 @@ public class StartActivity extends AppCompatActivity implements StartManagerImp,
     }
 
     private void instantiateUIReferences(){
+        ActionBar actionBar      = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
+
         startChatButton          = (Button) findViewById(R.id.start_chat_button);
         rangeSeekBar             = (SeekBar) findViewById(R.id.sb_range);
         usernameView             = (EditText) findViewById(R.id.username);
